@@ -1,0 +1,647 @@
+---
+title: "Prescription Cost Analysis"
+pagetitle: PCA England
+always_allow_html: true
+output:
+  word_document:
+    toc: yes
+    toc_depth: '2'
+  html_document:
+    anchor_sections: no
+    css: www/style.css
+    toc: yes
+    toc_depth: 2
+    toc_float:
+      collapsed: no
+---
+
+<script>
+  $(document).ready(function() {
+    $('#TOC').prepend('<div><img src=`r knitr::image_uri("www/national-statistics-logo.svg")` alt=\"National Statistics logo\" style=\"position: relative; width: 50%; margin: 10% auto 10% auto; display: block;\"></div>');
+  });
+  
+  $(document).ready(function() {
+    $('#header').prepend('<img src=`r knitr::image_uri("www/bsa_logo.svg")` alt=\"NHSBSA logo\" style=\"position:absolute; top: 0; right: 0; padding: 10px; width: 25%;\">');
+  });
+</script>
+
+<style type="text/css">
+
+body, td {
+   font-size: 16px;
+   font-family: sans-serif;
+}
+
+* {
+   font-family: Arial;
+}
+
+</style>
+<html lang="en">
+
+```{r setup, include=FALSE}
+
+# set code chunk options to disable echo by default
+knitr::opts_chunk$set(echo = FALSE,
+                      warning = FALSE,
+                      message = FALSE)
+
+
+```
+
+<main>
+
+# England 2021/22 {.toc-ignore}
+
+published 9 June 2022
+
+## Key findings
+
+* The cost of prescription items dispensed in the community in England was £9.69 billion, a 0.87% increase of £83.7 million from £9.61 billion in 2020/21.
+
+* The number of prescription items dispensed in the community in England was 1.14 billion, a 2.58% increase of 28.7 million items from 1.11 billion in 2020/21.
+
+* Atorvastatin was the most dispensed drug in England in 2021/22 with 53.4 million items, while Apixaban was the drug with the highest cost of £401 million.
+
+* FreeStyle Libre 2 Sensor kit was the presentation with the largest absolute increase in cost between 2020/21 and 2021/22 of £69.8 million, from £2.84 million to £72.6 million.
+
+---
+
+## 1. Introduction
+
+### 1.1. Scope {.toc-ignore}
+
+Prescription Cost Analysis (PCA) includes information about the costs and volumes of prescription items that have been dispensed in England.
+
+We consulted on the content and methodology used in this publication during Winter 2020/21. As an outcome of this consultation we made changes to the methodology used in the 2020/21 release. You can see more information on these changes in the [Background Information and Methodology note](https://www.nhsbsa.nhs.uk/sites/default/files/2022-06/pca_2022_background_information_methodology_v001.odt) that accompanies this release. We will communicate any further changes ahead of time to users.
+
+This publication is a National Statistic release. National Statistics status means that PCA meets the highest standards of trustworthiness, quality, and public value and complies with all aspects of the [Code of Practice for Statistics](https://code.statisticsauthority.gov.uk/).
+
+The designation of this publication as a National Statistic was confirmed in May 2021 following an assessment by the Office for Statistics Regulation (OSR). You can read more about this confirmation and the assessment of these statistics on the [OSR website](https://osr.statisticsauthority.gov.uk/correspondence/ed-humpherson-to-matthew-wilson-confirmation-of-national-statistics-designation-for-prescription-cost-analysis-england-statistics/).
+
+### 1.2. Definitions {.toc-ignore}
+
+These statistics describe prescription items that were prescribed in England, Scotland, Wales, Northern Ireland, and the Channel Islands that were subsequently dispensed in the community in England and submitted to the NHSBSA for reimbursement. 'Dispensed in the community' means a prescription was dispensed in a pharmacy, by an appliance contractor, dispensing doctor, or as a personally administered item. If a prescription item has been prescribed in England but has been dispensed elsewhere in the United Kingdom it will not be included in these statistics.
+
+Throughout this publication the term ‘item’, short for ‘prescription item’, refers to a single instance of a drug that is listed as a separate entry on a prescription form. For example, Paracetamol 500mg tablets x28 would be listed as one item, as would Ibuprofen 200mg tablets x56.
+
+There are many costs incurred when a dispensing contractor fulfils a prescription. The term cost refers to the basic price of the item and quantity prescribed that is reimbursed back to the contractor. This is sometimes called the ‘Net Ingredient Cost’ (NIC).
+
+These statistics use the therapeutic classifications defined in the British National Formulary (BNF) to group medicines together based on their primary therapeutic indication. The NHSBSA uses and maintains the classification system of the BNF implemented prior to the release of edition 70, including the six pseudo BNF chapters (18 to 23) created by NHS Prescription Services used to classify products that fall outside of chapters 1 to 15.
+
+Generic prescribing describes the use in prescribing of a non-proprietary title for a pharmaceutical preparation. This allows for any suitable drug, rather than a particular brand of drug, to be dispensed. This can lead to cost savings because cheaper alternatives can be prescribed. Branded prescribing refers to when a medicine is prescribed by brand name.
+
+---
+
+## 2. Results and commentary
+
+### `r paste0("Figure 1: Cost of prescription items dispensed in England 2014/15 to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+
+```{r total_nic, out.width = "100%"}
+
+chart <- add_anl_1 %>%  
+  rename(YEAR_DESC = 1,
+         TOTAL_NIC = 3) %>%
+  basic_chart_hc(
+    x = YEAR_DESC,
+    y = TOTAL_NIC,
+    type = "line",
+    xLab = "Financial year",
+    yLab = "Total cost (GBP)",
+    title = "",
+    currency = TRUE
+  )
+
+chart$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
+
+chart
+
+```
+
+Source: [Summary Tables - Prescription Cost Analysis - National](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_summary_tables_2021_22_v001.xlsx)
+
+The cost of prescription items dispensed in England in 2021/22 was £9.69 billion. This was a 0.87% increase of £83.7 million from £9.61 billion in 2020/21 and a 8.35% increase of £746 million from £8.94 billion in 2014/15. This is the third consecutive year that the cost of items dispensed in England has increased following 3 consecutive years of decreases between 2015/16 and 2018/19.
+
+### `r paste0("Figure 2: Number of prescription items dispensed in England 2014/15 to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+
+```{r total_items, out.width = "100%"}
+
+chart <- add_anl_1 %>% 
+  rename(YEAR_DESC = 1,
+         TOTAL_NIC = 2) %>%
+  basic_chart_hc(
+    x = YEAR_DESC,
+    y = TOTAL_NIC,
+    type = "line",
+    xLab = "Financial year",
+    yLab = "Number of items dispensed",
+    title = ""
+  )
+
+chart$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
+
+chart
+
+```
+
+Source: [Summary Tables - Prescription Cost Analysis - National](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_summary_tables_2021_22_v001.xlsx)
+
+There were 1.14 billion prescription items dispensed in England in 2021/22. This was a 2.58% increase of 28.7 million from 1.11 billion items in the previous year and a 6.37% increase of 68.2 million from 1.07 billion items in 2014/15.
+
+### `r paste0("Figure 3: Distribution of items dispensed in England amongst BNF chapters ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+
+These statistics use the therapeutic classifications defined in the BNF to group medicines together based on their primary therapeutic indication. The NHSBSA uses and maintains the classification system of the BNF implemented prior to the release of edition 70, including the six pseudo BNF chapters (18 to 23) created by NHS Prescription Services used to classify products that fall outside of chapters 1 to 15. Most of the presentations held in these pseudo chapters are dressings, appliances, and medical devices.
+
+The BNF has multiple levels, in descending order from the largest grouping to smallest they are chapter, section, paragraph, sub-paragraph, chemical substance, product, and individual presentation. Presentations in chapters 20 to 23 do not have assigned BNF paragraphs, sub-paragraphs, chemical substances, or products.
+
+```{r bnf_chapters_items, out.width = "100%"}
+
+chart <- nat_data_fy %>%
+  group_by(BNF_CHAPTER) %>% 
+  summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS)) %>% 
+  ungroup() %>% 
+  basic_chart_hc(
+    x = BNF_CHAPTER,
+    y = TOTAL_ITEMS,
+    type = "column",
+    xLab = "BNF chapter",
+    yLab = "Number of items dispensed",
+    title = ""
+  )
+
+chart$x$hc_opts$series[[1]]$dataLabels$formatter <- JS("function(){
+                                                       var ynum = this.point.TOTAL_ITEMS ;
+                                                       if(ynum >= 1000000) {
+                                                       result = ynum/1000000
+                                                       result = result.toPrecision(3) + 'M'
+                                                       } else {
+                                                       result = ynum.toLocaleString('en-GB', {maximumSignificantDigits: 3});
+                                                       }
+                                                       return result
+}")
+
+chart
+
+```
+
+Source: [Summary Tables - Prescription Cost Analysis - Chapter](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_summary_tables_2021_22_v001.xlsx)
+
+BNF chapter 02 - Cardiovascular System had 334 million prescription items dispensed, the largest proportion dispensed in England in 2021/22 accounting for 29.3% of all items. This was followed by chapter 04 - Central Nervous System with 224 million and 19.6% of items, and chapter 06 - Endocrine System with 119 million and 10.5% of items.
+
+### `r paste0("Figure 4: Distribution of cost of items dispensed in England amongst BNF chapters ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+
+```{r bnf_chapters_costs, out.width = "100%"}
+
+chart <- nat_data_fy %>% 
+  group_by(BNF_CHAPTER) %>% 
+  summarise(TOTAL_NIC = sum(TOTAL_NIC)) %>% 
+  ungroup() %>% 
+  basic_chart_hc(
+    x = BNF_CHAPTER,
+    y = TOTAL_NIC,
+    type = "column",
+    xLab = "BNF chapter",
+    yLab = "Cost of items dispensed (GBP)",
+    title = ""
+  )
+
+chart$x$hc_opts$series[[1]]$dataLabels$formatter <- JS("function(){
+                                                       var ynum = this.point.TOTAL_NIC ;
+                                                      
+                                                       if(ynum >= 1000000){
+                                                       result = ynum/1000000
+                                                       result = result.toLocaleString('en-GB', {maximumSignificantDigits: 3, style: 'currency', currency: 'GBP'}) + 'M';
+                                                       } else {
+                                                       result = ynum/1000000
+                                                       result = '£' + result.toFixed(2) + 'M';
+                                                       } /*else {
+                                                       result = ynum/1000000
+                                                       result = result.toLocaleString('en-GB', {maximumSignificantDigits: 3, style: 'currency', currency: 'GBP'}) + 'M';
+                                                       }*/
+                                                       return result
+}")
+
+chart$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
+
+chart
+
+
+```
+
+Source: [Summary Tables - Prescription Cost Analysis - Chapter](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_summary_tables_2021_22_v001.xlsx)
+
+BNF chapter 02 - Cardiovascular System accounted for the largest proportion of costs in 2021/22, £1.62 billion, equal to 16.7% of all costs. This was followed by chapter 06 - Endocrine System with £1.56 billion and 16.1% of costs, and chapter 04 - Central Nervous System with £1.55 billion and 16.0% of the total cost. 
+
+The top three BNF chapters by both costs and items were the same in 2021/22. However the costs have a smaller spread with the top chapter having 64.4% more items than the third placed chapter but only 4.32% higher costs.
+
+### `r paste0("Figure 5: Proportion of items prescribed generically and proportion of costs excluding appliances England ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+
+```{r generic_presc, out.width = "100%"}
+
+add_anl_5 %>%
+  rename(
+    PRESC_GEN_ITEMS = 2,
+    TOTAL_ITEMS = 7,
+    APPLIANCE_ITEMS = 6,
+    PRESC_GEN_NIC = 13,
+    TOTAL_NIC = 18,
+    APPLIANCE_NIC = 17,
+    YEAR_DESC = 1
+  ) %>%
+  mutate(GEN_ITEMS = PRESC_GEN_ITEMS,
+         TOTAL_ITEMS = TOTAL_ITEMS - APPLIANCE_ITEMS,
+         GEN_NIC = PRESC_GEN_NIC,
+         TOTAL_NIC = TOTAL_NIC - APPLIANCE_NIC) %>%
+  mutate(Items = GEN_ITEMS/TOTAL_ITEMS*100,
+         `Net ingredient cost` = GEN_NIC/TOTAL_NIC*100) %>% 
+  select(-(GEN_ITEMS:TOTAL_NIC)) %>% 
+  pivot_longer(cols = c(Items,`Net ingredient cost`),
+               names_to = "measure") %>% 
+  group_chart_hc(
+    x = YEAR_DESC,
+    y = value,
+    group = measure,
+    type = "line",
+    xLab = "Financial year",
+    yLab = "Proportion (%)",
+    title = ""
+  )
+
+
+```
+
+Source: [Additional Tables - Prescription Cost Analysis - table A5](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
+
+In 2021/22, 84.3% of prescription items were prescribed generically. This was a decrease of 0.50 percentage points from 2020/21, and a 0.90 percentage point decrease from highest rate in the period during 2014/15. The rate of generic prescribing has remained consistent during the period, showing 1.1 percentage points of variation between 2014/15 and 2021/22. These figures exclude preparation class 4 products - appliances.
+
+In 2021/22, generic prescribing accounted for 60.6% of the total cost of reimbursement, the lowest rate of the reporting period. This was a 2.50 percentage point decrease from 2020/21, and a 7.40 percentage point decrease from a high of 68.0% in 2014/15. The proportion of costs that generic prescribing accounts for have shown greater variation of 7.40 percentage points over the period. The proportion of costs for generic prescribing increased for 3 consecutive years between 2018/19 and 2020/21.
+
+### `r paste0("Figure 6: The 10 most dispensed chemical substances by total items in ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+
+A chemical substance is the standard registered name for the active constituent of that medicine, for example Omeprazole. A chemical substance groups together individual presentations that share this active constituent. For example, Omeprazole 20mg gastro-resistant capsules and Omeprazole 40mg gastro-resistant capsules. Products in BNF chapters 20 to 23 are not assigned a chemical substance as these are dressings and appliances.
+
+```{r top_10_items, out.width = "100%"}
+
+add_anl_3 %>% 
+  rename(
+    CHEMICAL_SUBSTANCE_BNF_DESCR = 1,
+    BNF_CHEMICAL_SUBSTANCE = 2
+  ) %>%
+  group_by(CHEMICAL_SUBSTANCE_BNF_DESCR,BNF_CHEMICAL_SUBSTANCE) %>% 
+  rename(TOTAL_ITEMS = 5) %>%
+  summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS)) %>% 
+  ungroup() %>% 
+  mutate(RANK = row_number(desc(TOTAL_ITEMS))) %>% 
+  filter(RANK <= 10) %>% 
+  arrange(RANK) %>% 
+  basic_chart_hc(
+    x = CHEMICAL_SUBSTANCE_BNF_DESCR,
+    y = TOTAL_ITEMS,
+    type = "bar",
+    xLab = "Chemical substance",
+    yLab = "Number of items dispensed",
+    title = ""
+  )
+
+```
+
+Source: [Additional Tables - Prescription Cost Analysis - A3](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
+
+Atorvastatin was the most dispensed chemical substance in 2021/22 with 53.4 million items. [Atorvastatin](https://www.nhs.uk/medicines/atorvastatin/) is a type of statin that is used to lower cholesterol and to prevent heart disease. Four of the top 10 dispensed chemical substances belong to BNF chapter 02 - Cardiovascular System (Atorvastatin, Amlodipine, Ramipril, and Bisoprolol fumarate).
+
+### `r paste0("Figure 7: The 10 most dispensed chemical substances by cost in ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+
+```{r top_10_costs, out.width = "100%"}
+
+add_anl_2 %>% 
+  rename(
+    CHEMICAL_SUBSTANCE_BNF_DESCR = 1, 
+    BNF_CHEMICAL_SUBSTANCE = 2
+  ) %>%
+  group_by(CHEMICAL_SUBSTANCE_BNF_DESCR,BNF_CHEMICAL_SUBSTANCE) %>% 
+  rename(TOTAL_NIC = 5) %>%
+  summarise(TOTAL_NIC = sum(TOTAL_NIC)) %>% 
+  ungroup() %>% 
+  mutate(RANK = row_number(desc(TOTAL_NIC))) %>% 
+  filter(RANK <= 10) %>% 
+  arrange(RANK) %>% 
+  basic_chart_hc(
+    x = CHEMICAL_SUBSTANCE_BNF_DESCR,
+    y = TOTAL_NIC,
+    type = "bar",
+    xLab = "Chemical substance",
+    yLab = "Cost of items dispensed (GBP)",
+    title = "",
+    currency = TRUE
+  )
+
+```
+
+Source: [Additional Tables - Prescription Cost Analysis - A2](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
+
+In 2021/22, Apixaban had the highest cost for items dispensed in the community in England of £401 million. [Apixaban](https://www.nhs.uk/medicines/apixaban/) is an anticoagulant used to treat people who have had a health problem caused by a blood clot, or to prevent future blood clots. The top 10 chemical substances by cost feature 3 drugs used to treat respiratory illnesses - Beclometasone dipropionate, Fluticasone propionate (Inhalation), and Budesonide.
+
+### `r paste0("Figure ",8,": Dispensed items per capita by Sustainability and Transformation Partnership (STP) ",year_tidy)`
+
+Sustainability and transformation partnerships (STP) are health geographies that are formed by NHS organisations, local councils, and others to set out proposals to improve health and care for the local population. In these statistics the STP recorded here is that of the dispensing contractor as listed in NHSBSA administrative records and not the prescribing organisation of an item.
+
+Regional variation in prescribing and dispensing trends can be influenced by a variety of factors, such as population demographics, prevalence of chronic disease, and the presence of specialist dispensing contractors within the geography. For more information on STPs and how we've used them in these statistics please see the [Background Information and Methodology note](https://www.nhsbsa.nhs.uk/sites/default/files/2022-06/pca_2022_background_information_methodology_v001.odt) that accompanies this release.
+
+```{r items_per_pop, out.width = "100%"}
+  df <- stp_data_fy %>%
+    dplyr::group_by(STP_NAME, STP_CODE) %>%
+    dplyr::summarise("TOTAL_ITEMS" = sum(TOTAL_ITEMS)) %>%
+    dplyr::ungroup() %>%
+    dplyr::left_join(stp_pop, by = c("STP_CODE" = "STP21CDH")) %>%
+    dplyr::mutate("TOTAL_ITEMS_PER_POP" = TOTAL_ITEMS / POP)
+  
+  mean <- round(sum(df$TOTAL_ITEMS) / sum(ref_data$stp_pop$POP), 1)
+  
+  map <- highcharter::highchart() %>%
+    highcharter::hc_title(
+      text = ""
+    ) %>%
+    highcharter::hc_subtitle(text = paste0("National mean: ", mean)) %>%
+    highcharter::hc_add_series_map(
+      map = map_df,
+      df = df,
+      name = "",
+      value = "TOTAL_ITEMS_PER_POP",
+      joinBy = c("SUB_GEOGRAPHY_CODE", "STP21_CD"),
+      tooltip = list(
+        headerFormat = "",
+        pointFormat = paste0(
+          "<b>{point.properties.SUB_GEOGRAPHY_NAME}:<br><b>{point.value}"
+        )
+      )
+    ) %>%
+    hc_colorAxis(
+      minColor = "#fff",
+      maxColor = "#005EB8",
+      min = round_any(min(df$TOTAL_ITEMS_PER_POP), 10, floor),
+      max = round_any(max(df$TOTAL_ITEMS_PER_POP), 10, ceiling)
+    ) %>%
+    highcharter::hc_legend(verticalAlign = "bottom",
+                           title = list(text = "Items")) %>%
+    highcharter::hc_tooltip(valueDecimals = 1) %>%
+    highcharter::hc_mapNavigation(
+      enabled = TRUE,
+      enableMouseWheelZoom = TRUE,
+      enableDoubleClickZoom = TRUE
+    )
+  
+  map
+    
+```
+
+Source: [Summary Tables - Prescription Cost Analysis - STP National](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_stp_summary_tables_2021_22_v001.xlsx) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/clinicalcommissioninggroupmidyearpopulationestimates)
+
+The mean number of items dispensed per capita in England was 20.1 in 2021/22. Lincolnshire STP had the highest dispensed items per capita with 28.1 while Surrey Heartlands Health and Care Partnership STP had the lowest with 13.0. 
+
+### `r paste0("Figure ",9,": Cost per capita (£) by Sustainability and Transformation Partnership (STP) ",year_tidy)`
+
+```{r nic_per_pop, out.width = "100%"}
+
+df <- stp_data_fy %>%
+    dplyr::group_by(STP_NAME, STP_CODE) %>%
+    dplyr::summarise("TOTAL_NIC" = sum(TOTAL_NIC)) %>%
+    dplyr::ungroup() %>%
+    dplyr::left_join(stp_pop, by = c("STP_CODE" = "STP21CDH")) %>%
+    dplyr::mutate("TOTAL_NIC_PER_POP" = TOTAL_NIC / POP)
+  
+  mean <- round(sum(df$TOTAL_NIC) / sum(ref_data$stp_pop$POP), 2)
+  
+  map <- highcharter::highchart() %>%
+    highcharter::hc_title(
+      text = ""
+    ) %>%
+    highcharter::hc_subtitle(text = paste0("National mean: £", mean)) %>%
+    highcharter::hc_add_series_map(
+      map = map_df,
+      df = df,
+      name = "",
+      value = "TOTAL_NIC_PER_POP",
+      joinBy = c("SUB_GEOGRAPHY_CODE", "STP21_CD"),
+      tooltip = list(
+        headerFormat = "",
+        pointFormat = paste0(
+          "<b>{point.properties.SUB_GEOGRAPHY_NAME}:<br><b>{point.value}"
+        )
+      )
+    ) %>%
+    hc_colorAxis(
+      minColor = "#fff",
+      maxColor = "#005EB8",
+      min = round_any(min(df$TOTAL_NIC_PER_POP), 10, floor),
+      max = round_any(max(df$TOTAL_NIC_PER_POP), 10, ceiling)
+    ) %>%
+    highcharter::hc_legend(verticalAlign = "bottom",
+                           title = list(text = "NIC (£)")) %>%
+    highcharter::hc_tooltip(valueDecimals = 2, valuePrefix = "£") %>%
+    highcharter::hc_mapNavigation(
+      enabled = TRUE,
+      enableMouseWheelZoom = TRUE,
+      enableDoubleClickZoom = TRUE
+    )
+  
+  map
+
+```
+
+Source: [Summary Tables - Prescription Cost Analysis - STP National](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_stp_summary_tables_2021_22_v001.xlsx) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/clinicalcommissioninggroupmidyearpopulationestimates)
+
+The mean cost per capita of prescription items dispensed in England was £171 in 2021/22. Cambridgeshire and Peterborough STP had the highest cost per capita of £355 while Our Healthier South East London STP had the lowest of £114. Cambridgeshire and Peterborough STP offer specialist stoma care, 33.6% of their total costs of £317 million in 2021/22 were in BNF chapter 23 (Stoma Appliances).
+
+### `r paste0("Figure 10: Top 10 presentations by percentage change in unit cost ",paste0(substr(max_data_fy_minus_1,1,5), substr(max_data_fy_minus_1, 8, 9)), " to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+
+The chart in this section has been limited to presentations with a total cost in 2021/22 greater than £1 million.
+
+```{r unit_cost, out.width = "100%"}
+
+add_anl_11 %>% 
+  rename(UNIT_COST_CHANGE = 24,
+         DISP_PRESEN_BNF_DESCR = 2) %>%
+  slice_max(UNIT_COST_CHANGE, n = 10) %>% 
+  basic_chart_hc(
+    x = DISP_PRESEN_BNF_DESCR,
+    y = UNIT_COST_CHANGE,
+    type = "bar",
+    xLab = "BNF presentation",
+    yLab = "Unit cost percentage change (%)",
+    title = ""
+  )
+
+```
+
+Source: [Additional Tables - Prescription Cost Analysis - A11](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
+
+A unit cost for a presentation is calculated by dividing the total cost of items dispensed in the period by the total quantity. Figure 10 shows the top 10 presentations by percentage increase in unit cost between 2020/21 and 2021/22. Cetirizine 1mg/ml oral solution sugar free increased in unit cost the most in 2021/22 by 604% from 0.79p per unit to 5.53p. The largest increase in actual value of unit cost for the top 10 drugs by percentage change occurred for Donepezil 10mg orodispersible tablets sugar free, from 35p per unit to 231p. 
+
+### `r paste0("Figure 11: Top 10 presentations by change in total cost ", paste0(substr(max_data_fy_minus_1,1,5), substr(max_data_fy_minus_1, 8, 9)), " to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+
+The chart in this section has been limited to presentations with a total cost in 2021/22 greater than £1 million.
+
+```{r abs_cost, out.width = "100%"}
+
+add_anl_12 %>% 
+  rename(NIC_CHANGE = 18,
+         DISP_PRESEN_BNF_DESCR = 2) %>%
+  slice_max(NIC_CHANGE, n = 10) %>% 
+  basic_chart_hc(
+    x = DISP_PRESEN_BNF_DESCR,
+    y = NIC_CHANGE,
+    type = "bar",
+    xLab = "BNF presentation",
+    yLab = "Total cost absolute change (GBP)",
+    title = "",
+    currency = TRUE
+  )
+
+```
+
+Source: [Additional Tables - Prescription Cost Analysis - A12](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
+
+Between 2020/21 and 2021/22 the total costs of FreeStyle Libre 2 Sensor kits increased by £69.8 million, the highest absolute change of all presentations. The FreeStyle Libre 2 Sensor was added to part IX of the drug tariff in November 2020.
+
+---
+
+## 3. UK comparisons
+
+Each devolved administration in the UK produces their own Prescription Cost Analysis statistics. There are numerous differences between each country's release including in the way that data measures are collected and classified, the different structures of the health social care systems in each country, and methodological differences. For these reasons, any comparisons made between PCA data produced by the UK nations should be made with caution and in the wider context of the health social care landscape in the UK.
+
+We have chosen some measures that allow high level comparisons to be made between the different devolved authorities. However, please refer to each country's individual publication for further details.
+
+We have used the latest available PCA data from each UK nation to make these comparisons along with the latest mid-year population estimates from the Office for National Statistics (ONS). Therefore these comparisons are based on the financial year 2020/21, and not 2021/22. We have used the 2020 mid-year population estimates - the latest figures available at the time of publication - to calculate any per capita measures. The data used in this section for Wales relates to prescriptions that have been issued by GPs in Wales and subsequently dispensed in Wales or other countries in the UK. No figures for prescriptions only dispsensed in Wales were available at the time of publication.
+
+For more information on the PCA publications of each UK nation and the differences between them, please read the [Background Information and Methodology note](https://www.nhsbsa.nhs.uk/sites/default/files/2022-06/pca_2022_background_information_methodology_v001.odt) released alongside this publication.
+
+### `r paste0("Figure 12: Items per capita for the UK nations ", max_data_fy_minus_1)`
+
+```{r uk_comparisons_items, out.width = "100%"}
+
+dev_nations_data %>%
+  arrange(desc(ITEMS_PER_CAPITA)) %>%
+  basic_chart_hc(
+    x = Country,
+    y = ITEMS_PER_CAPITA,
+    type = "column",
+    xLab = "Country",
+    yLab = "Items per capita",
+    title = ""
+  )
+
+```
+
+Source: [Additional Tables - Prescription Cost Analysis - A1](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx) | [Public Health Scotland - Dispenser payments and prescription cost analysis](https://beta.isdscotland.org/find-publications-and-data/health-services/pharmacy-and-prescribing/dispenser-payments-and-prescription-cost-analysis/) | [Welsh Government - Prescriptions in Wales](https://gov.wales/prescriptions-wales-april-2019-march-2020) | [HSC Business Services Organisation - General pharmaceutical services and prescribing statistics](http://www.hscbusiness.hscni.net/services/3176.htm) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatestimeseriesdataset)
+
+In 20/21, England dispensed 19.6 items per head of population. This was 0.9 items more than Scotland who had the fewest items dispensed per capita of 18.7, 3.6 fewer than Northern Ireland at 22.0 items, and 6.0 items fewer than Wales who had 25.6 items dispensed per capita.
+
+### `r paste0("Figure 13: Cost per capita for the UK nations ", max_data_fy_minus_1)`
+
+```{r uk_comparisons_costs, out.width = "100%"}
+
+dev_nations_data %>%
+  arrange(desc(COSTS_PER_CAPITA)) %>%
+  basic_chart_hc(
+    x = Country,
+    y = COSTS_PER_CAPITA,
+    type = "column",
+    xLab = "Country",
+    yLab = "Cost per capita (GBP)",
+    title = ""
+  )
+
+
+```
+
+Source: [Additional Tables - Prescription Cost Analysis - A1](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx) | [Public Health Scotland - Dispenser payments and prescription cost analysis](https://beta.isdscotland.org/find-publications-and-data/health-services/pharmacy-and-prescribing/dispenser-payments-and-prescription-cost-analysis/) | [Welsh Government - Prescriptions in Wales](https://gov.wales/prescriptions-wales-april-2019-march-2020) | [HSC Business Services Organisation - General pharmaceutical services and prescribing statistics](http://www.hscbusiness.hscni.net/services/3176.htm) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatestimeseriesdataset)
+
+England had the lowest prescription item cost per head of population in 2020/21 of £170. This was £70 less than Northern Ireland, £35 less than Scotland, and £27 less than Wales.
+
+---
+
+## 4. About these statistics
+
+### 4.1. Monthly PCA data {.toc-ignore}
+
+NHSBSA Information Services also release a [monthly administrative management information dataset](https://www.nhsbsa.nhs.uk/prescription-data/dispensing-data/prescription-cost-analysis-pca-data) for PCA. The monthly data set is produced in line with the same methodology used in these statistics however, it is not an Official Statistic.
+
+There is a small difference between the annual National Statistics and the monthly administrative. The geographical structure used in the annual publication is the structure at the 31 March of the given year. For the monthly data the geographical structure used is the one at the end of the given month. In the rare event that a dispensing contractor changes parent organisation during the year this will reflect in the monthly data, and may mean that STP level totals will not match between aggregated monthly data and the annual National Statistics. This will not impact national totals.
+
+### 4.2. Uses of these statistics {.toc-ignore}
+
+These statistics have a variety of uses including:
+
+* obtaining a national view of costs and volumes for prescriptions dispensed in the community in England across the calendar year
+
+* analysis of cost and volume trends across various levels of the BNF hierarchy
+
+* allowing public scrutiny of national prescribing habits
+
+* monitoring uptake of new to market proprietary presentations
+
+* monitoring the proportion of prescriptions dispensed generically
+
+### 4.3. Changes to this publication {.toc-ignore}
+
+We have updated figures 8 and 9 relating to the items and costs per capita by STP to use maps to visualise the data.
+
+Data in the summary tables is no longer provided to the lowest level of SNOMED code. Data at this level will be provided via our [Open Data Portal (ODP)](https://opendata.nhsbsa.net/).
+
+For full details of the changes made please refer to the [Background Information and Methodology note](https://www.nhsbsa.nhs.uk/sites/default/files/2022-06/pca_2022_background_information_methodology_v001.odt) released alongside these statistics.
+
+### 4.4. Timeliness of this publication {.toc-ignore}
+
+This publication has historically been released in the month of April. To accommodate the inclusion of financial year information these statistics will now be released in June, after March data becomes available each year. Calendar year data is currently released at the same time as financial year information. We are going to get user’s views on publishing calendar year data earlier.
+
+---
+
+## 5. Rounding
+
+The high-level figures in this statistical summary have been rounded where appropriate for clarity, in most cases to three significant figures. This is to make this narrative as accessible as possible to all readers. The summary tables released with this publication allow users to investigate this data at lower levels of granularity. Figures in the supplementary tables have not been rounded.
+
+---
+
+## 6. Accessibility
+
+### 6.1. How to request content in an accessible format {.toc-ignore}
+
+If you need information on this website in a different format like accessible PDF, large print, easy read, audio recording or braille, you can contact us by:
+
+**Email**: nhsbsa.accessibility@nhs.net
+
+**Phone**: 0191 203 5318
+
+[Find out about call charges](https://www.nhsbsa.nhs.uk/contact-us/call-charges-and-phone-numbers)
+
+We’ll consider your request and get back to you in 5 working days.
+
+These contact details are only for accessibility queries. This inbox is not for technical queries or IT problems. If you have a query that is not about accessibility, go to the ‘Contact us’ section of this page.
+
+---
+
+## 7. Feedback and contact us
+
+Feedback is important to us. We welcome any questions and comments relating to these statistics. 
+
+You can complete a [short survey about this publication](https://wh1.snapsurveys.com/s.asp?k=159366616170) to help us improve the Official Statistics that we produce. All responses will remain anonymous, and individuals will not be identifiable in any report that we produce.
+
+You can view our [privacy policy](https://www.nhsbsa.nhs.uk/our-policies/privacy) on our website to see how your data is used and stored.
+
+You can contact us by:
+
+**Email:** nhsbsa.statistics@nhs.net
+
+**You can also write to us at:**
+
+NHSBSA - Statistics  
+NHS Business Services Authority  
+Stella House  
+Goldcrest Way  
+Newburn Riverside  
+Newcastle upon Tyne  
+NE15 8NY
+
+**Responsible statistician:** Graham Platten
+
+</main>
