@@ -18,8 +18,8 @@ req_pkgs <-
     "tidyverse"
   )
 
-#uncomment if package installs are needed
-# utils::install.packages(req_pkgs, dependencies = TRUE)
+# uncomment if package installs are needed
+ utils::install.packages(req_pkgs, dependencies = TRUE)
 # 
 # devtools::install_github("nhsbsa-data-analytics/pcaR",
 #                          auth_token = Sys.getenv("GITHUB_PAT"))
