@@ -348,49 +348,49 @@ Sustainability and transformation partnerships (STP) are health geographies that
 Regional variation in prescribing and dispensing trends can be influenced by a variety of factors, such as population demographics, prevalence of chronic disease, and the presence of specialist dispensing contractors within the geography. For more information on STPs and how we've used them in these statistics please see the [Background Information and Methodology note](https://www.nhsbsa.nhs.uk/sites/default/files/2022-06/pca_2022_background_information_methodology_v001.odt) that accompanies this release.
 
 ```{r items_per_pop, out.width = "100%"}
-  df <- stp_data_fy %>%
-    dplyr::group_by(STP_NAME, STP_CODE) %>%
-    dplyr::summarise("TOTAL_ITEMS" = sum(TOTAL_ITEMS)) %>%
-    dplyr::ungroup() %>%
-    dplyr::left_join(stp_pop, by = c("STP_CODE" = "STP21CDH")) %>%
-    dplyr::mutate("TOTAL_ITEMS_PER_POP" = TOTAL_ITEMS / POP)
-  
-  mean <- round(sum(df$TOTAL_ITEMS) / sum(ref_data$stp_pop$POP), 1)
-  
-  map <- highcharter::highchart() %>%
-    highcharter::hc_title(
-      text = ""
-    ) %>%
-    highcharter::hc_subtitle(text = paste0("National mean: ", mean)) %>%
-    highcharter::hc_add_series_map(
-      map = map_df,
-      df = df,
-      name = "",
-      value = "TOTAL_ITEMS_PER_POP",
-      joinBy = c("SUB_GEOGRAPHY_CODE", "STP21_CD"),
-      tooltip = list(
-        headerFormat = "",
-        pointFormat = paste0(
-          "<b>{point.properties.SUB_GEOGRAPHY_NAME}:<br><b>{point.value}"
-        )
-      )
-    ) %>%
-    hc_colorAxis(
-      minColor = "#fff",
-      maxColor = "#005EB8",
-      min = round_any(min(df$TOTAL_ITEMS_PER_POP), 10, floor),
-      max = round_any(max(df$TOTAL_ITEMS_PER_POP), 10, ceiling)
-    ) %>%
-    highcharter::hc_legend(verticalAlign = "bottom",
-                           title = list(text = "Items")) %>%
-    highcharter::hc_tooltip(valueDecimals = 1) %>%
-    highcharter::hc_mapNavigation(
-      enabled = TRUE,
-      enableMouseWheelZoom = TRUE,
-      enableDoubleClickZoom = TRUE
-    )
-  
-  map
+  # df <- stp_data_fy %>%
+  #   dplyr::group_by(STP_NAME, STP_CODE) %>%
+  #   dplyr::summarise("TOTAL_ITEMS" = sum(TOTAL_ITEMS)) %>%
+  #   dplyr::ungroup() %>%
+  #   dplyr::left_join(stp_pop, by = c("STP_CODE" = "STP21CDH")) %>%
+  #   dplyr::mutate("TOTAL_ITEMS_PER_POP" = TOTAL_ITEMS / POP)
+  # 
+  # mean <- round(sum(df$TOTAL_ITEMS) / sum(ref_data$stp_pop$POP), 1)
+  # 
+  # map <- highcharter::highchart() %>%
+  #   highcharter::hc_title(
+  #     text = ""
+  #   ) %>%
+  #   highcharter::hc_subtitle(text = paste0("National mean: ", mean)) %>%
+  #   highcharter::hc_add_series_map(
+  #     map = map_df,
+  #     df = df,
+  #     name = "",
+  #     value = "TOTAL_ITEMS_PER_POP",
+  #     joinBy = c("SUB_GEOGRAPHY_CODE", "STP21_CD"),
+  #     tooltip = list(
+  #       headerFormat = "",
+  #       pointFormat = paste0(
+  #         "<b>{point.properties.SUB_GEOGRAPHY_NAME}:<br><b>{point.value}"
+  #       )
+  #     )
+  #   ) %>%
+  #   hc_colorAxis(
+  #     minColor = "#fff",
+  #     maxColor = "#005EB8",
+  #     min = round_any(min(df$TOTAL_ITEMS_PER_POP), 10, floor),
+  #     max = round_any(max(df$TOTAL_ITEMS_PER_POP), 10, ceiling)
+  #   ) %>%
+  #   highcharter::hc_legend(verticalAlign = "bottom",
+  #                          title = list(text = "Items")) %>%
+  #   highcharter::hc_tooltip(valueDecimals = 1) %>%
+  #   highcharter::hc_mapNavigation(
+  #     enabled = TRUE,
+  #     enableMouseWheelZoom = TRUE,
+  #     enableDoubleClickZoom = TRUE
+  #   )
+  # 
+  # map
     
 ```
 
@@ -402,49 +402,49 @@ The mean number of items dispensed per capita in England was 20.1 in 2021/22. Li
 
 ```{r nic_per_pop, out.width = "100%"}
 
-df <- stp_data_fy %>%
-    dplyr::group_by(STP_NAME, STP_CODE) %>%
-    dplyr::summarise("TOTAL_NIC" = sum(TOTAL_NIC)) %>%
-    dplyr::ungroup() %>%
-    dplyr::left_join(stp_pop, by = c("STP_CODE" = "STP21CDH")) %>%
-    dplyr::mutate("TOTAL_NIC_PER_POP" = TOTAL_NIC / POP)
-  
-  mean <- round(sum(df$TOTAL_NIC) / sum(ref_data$stp_pop$POP), 2)
-  
-  map <- highcharter::highchart() %>%
-    highcharter::hc_title(
-      text = ""
-    ) %>%
-    highcharter::hc_subtitle(text = paste0("National mean: £", mean)) %>%
-    highcharter::hc_add_series_map(
-      map = map_df,
-      df = df,
-      name = "",
-      value = "TOTAL_NIC_PER_POP",
-      joinBy = c("SUB_GEOGRAPHY_CODE", "STP21_CD"),
-      tooltip = list(
-        headerFormat = "",
-        pointFormat = paste0(
-          "<b>{point.properties.SUB_GEOGRAPHY_NAME}:<br><b>{point.value}"
-        )
-      )
-    ) %>%
-    hc_colorAxis(
-      minColor = "#fff",
-      maxColor = "#005EB8",
-      min = round_any(min(df$TOTAL_NIC_PER_POP), 10, floor),
-      max = round_any(max(df$TOTAL_NIC_PER_POP), 10, ceiling)
-    ) %>%
-    highcharter::hc_legend(verticalAlign = "bottom",
-                           title = list(text = "NIC (£)")) %>%
-    highcharter::hc_tooltip(valueDecimals = 2, valuePrefix = "£") %>%
-    highcharter::hc_mapNavigation(
-      enabled = TRUE,
-      enableMouseWheelZoom = TRUE,
-      enableDoubleClickZoom = TRUE
-    )
-  
-  map
+# df <- stp_data_fy %>%
+#     dplyr::group_by(STP_NAME, STP_CODE) %>%
+#     dplyr::summarise("TOTAL_NIC" = sum(TOTAL_NIC)) %>%
+#     dplyr::ungroup() %>%
+#     dplyr::left_join(stp_pop, by = c("STP_CODE" = "STP21CDH")) %>%
+#     dplyr::mutate("TOTAL_NIC_PER_POP" = TOTAL_NIC / POP)
+#   
+#   mean <- round(sum(df$TOTAL_NIC) / sum(ref_data$stp_pop$POP), 2)
+#   
+#   map <- highcharter::highchart() %>%
+#     highcharter::hc_title(
+#       text = ""
+#     ) %>%
+#     highcharter::hc_subtitle(text = paste0("National mean: £", mean)) %>%
+#     highcharter::hc_add_series_map(
+#       map = map_df,
+#       df = df,
+#       name = "",
+#       value = "TOTAL_NIC_PER_POP",
+#       joinBy = c("SUB_GEOGRAPHY_CODE", "STP21_CD"),
+#       tooltip = list(
+#         headerFormat = "",
+#         pointFormat = paste0(
+#           "<b>{point.properties.SUB_GEOGRAPHY_NAME}:<br><b>{point.value}"
+#         )
+#       )
+#     ) %>%
+#     hc_colorAxis(
+#       minColor = "#fff",
+#       maxColor = "#005EB8",
+#       min = round_any(min(df$TOTAL_NIC_PER_POP), 10, floor),
+#       max = round_any(max(df$TOTAL_NIC_PER_POP), 10, ceiling)
+#     ) %>%
+#     highcharter::hc_legend(verticalAlign = "bottom",
+#                            title = list(text = "NIC (£)")) %>%
+#     highcharter::hc_tooltip(valueDecimals = 2, valuePrefix = "£") %>%
+#     highcharter::hc_mapNavigation(
+#       enabled = TRUE,
+#       enableMouseWheelZoom = TRUE,
+#       enableDoubleClickZoom = TRUE
+#     )
+#   
+#   map
 
 ```
 

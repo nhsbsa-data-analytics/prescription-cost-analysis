@@ -1,0 +1,3009 @@
+# pipeline.R --------------------------------------------------------------
+# This script is used to run the RAP for the PCA annual publication
+start_time <- Sys.time()
+# 1. install/load required packages --------------------------------------------
+# TODO: investigate using renv package for dependency management
+req_pkgs <-
+  c(
+    "dplyr",
+    "stringr",
+    "data.table",
+    "yaml",
+    "openxlsx",
+    "rmarkdown",
+    "logr",
+    "highcharter",
+    "lubridate",
+    "vroom",
+    "tidyverse"
+  )
+
+# uncomment if package installs are needed
+ utils::install.packages(req_pkgs, dependencies = TRUE)
+# 
+#devtools::install_github("nhsbsa-data-analytics/pcaR",
+#                         auth_token = Sys.getenv("GITHUB_PAT"))
+# 
+# devtools::install_github("nhsbsa-data-analytics/nhsbsaR")
+#
+
+invisible(lapply(c(req_pkgs, "pca", "nhsbsaR"), library, character.only = TRUE))
+
+# 2. set options ----------------------------------------------------------
+
+# prevent scientific notation
+options(scipen = 999)
+
+# prevent printing of groups from summarise
+options(dplyr.summarise.inform = FALSE)
+
+# thousand separator for highcharts
+hcoptslang <- getOption("highcharter.lang")
+hcoptslang$thousandsSep <- ","
+hcoptslang$numericSymbols <- c("k", "M", "B", "T", "P", "E")
+options(highcharter.lang = hcoptslang)
+
+# 3. connect to DWH and pull max CY/FY  ---------
+#build connection to warehouse
+con <- con_nhsbsa(
+  dsn = "FBS_8192k",
+  driver = "Oracle in OraClient19Home1",
+  "DWCP",
+  username = rstudioapi::showPrompt(title = "Username", message = "Username"),
+  password = rstudioapi::askForPassword()
+)
+
+#get max fy from pca table
+max_dw_fy <- dplyr::tbl(con,
+                        from = dbplyr::in_schema("AML", "PCA_MY_FY_CY_FACT")) %>%
+  dplyr::filter(MONTH_TYPE %in% c("FY")) %>%
+  dplyr::select(YEAR_DESC) %>%
+  dplyr::filter(YEAR_DESC == max(YEAR_DESC, na.rm = TRUE)) %>%
+  distinct() %>%
+  collect %>%
+  pull()
+
+#get max cy from pca table
+max_dw_cy <- dplyr::tbl(con,
+                        from = dbplyr::in_schema("AML", "PCA_MY_FY_CY_FACT")) %>%
+  dplyr::filter(MONTH_TYPE %in% c("CY")) %>%
+  dplyr::select(YEAR_DESC) %>%
+  dplyr::filter(YEAR_DESC == max(YEAR_DESC, na.rm = TRUE)) %>%
+  distinct() %>%
+  collect %>%
+  pull()
+
+# 4. load latest data  ---------
+#load latest available data
+#get most recent monthly file
+recent_file_nat_fy <- rownames(file.info(
+  list.files(
+    "Y:/Official Stats/PCA/data",
+    full.names = T,
+    pattern = "nat_data_fy"
+  )
+))[which.max(file.info(
+  list.files(
+    "Y:/Official Stats/PCA/data",
+    full.names = T,
+    pattern = "nat_data_fy"
+  )
+)$mtime)]
+
+#read recent data
+recent_file_nat_fy <- vroom::vroom(recent_file_nat_fy,
+                                   #read snomed code as character
+                                   col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))
+
+ref_data <- list()
+
+ref_data$ni_pca <- data_extract_NI("Y:\\Official Stats\\PCA\\data\\PCA_NI_202021.xlsx")
+
+ref_data$scot_pca <- pca_import_scotland()
+
+ref_data$wales_pca <- data_extract_wales("Y:\\Official Stats\\PCA\\data\\PCA_Wales_202021.xlsx")
+
+ref_data$national_pop <- ons_national_pop(year = c(2014:2022),
+                                          area = "ENPOP")
+
+ref_data$wales_pop <- ons_national_pop(year = c(2014:2022),
+                                          area = "WAPOP")
+
+ref_data$ni_pop <- ons_national_pop(year = c(2014:2022),
+                                          area = "NIPOP")
+
+ref_data$scotland_pop <- ons_national_pop(year = c(2014:2022),
+                                          area = "SCPOP")
+
+temp <- tempfile()
+
+stp_url <- utils::download.file(url = "https://www.ons.gov.uk/file?uri=%2fpeoplepopulationandcommunity%2fpopulationandmigration%2fpopulationestimates%2fdatasets%2fclinicalcommissioninggroupmidyearpopulationestimates%2fmid2020sape23dt6a/sape23dt6amid2020ccg2021estimatesunformatted.xlsx",
+                                temp,
+                                mode = "wb")
+
+#read xlsx population file
+stp_pop <- readxl::read_xlsx(temp,
+                             sheet = 4,
+                             range = "A9:G114",
+                             col_names = c("CCG_CD","CCG_NM","STP21_CD","STP21_NM",
+                                           "REGION_CD","REGION_NM","POP"), 
+                             skip = 8)
+
+
+#join population data to ods lookup
+stp_pop_df <- stp_pop %>% 
+  dplyr::group_by(STP21_NM,STP21_CD) %>% 
+  dplyr::summarise(POP = sum(POP)) %>% 
+  ungroup()
+
+
+ref_data$stp_pop <- stp_pop_df
+
+ref_data$stp_lookup <- vroom("Y:/Official Stats/PCA/CCG_to_STP_lookup_arp_21.csv")
+
+# 5. pull data from warehouse if more recent data is available ------
+#check max DWH fy against max data fy and pull data if different
+#get max fy from latest data
+max_data_fy <- recent_file_nat_fy %>%
+  dplyr::select(YEAR_DESC) %>%
+  dplyr::filter(YEAR_DESC == max(YEAR_DESC, na.rm = TRUE)) %>%
+  distinct() %>%
+  pull()
+
+if (max_dw_fy <= max_data_fy) {
+  #read most recent data to use
+  print("No new data in DWH, using most recent saved data")
+  
+  #national data by fy
+  nat_data_fy <- rownames(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "nat_data_fy"
+    )
+  ))[which.max(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "nat_data_fy"
+    )
+  )$mtime)]
+  
+  #read recent data
+  nat_data_fy <- vroom::vroom(nat_data_fy,
+                              #read snomed code as character
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))
+  
+  #national data by cy
+  nat_data_cy <- rownames(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "nat_data_cy"
+    )
+  ))[which.max(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "nat_data_cy"
+    )
+  )$mtime)]
+  
+  #read recent data
+  nat_data_cy <- vroom::vroom(nat_data_cy,
+                              #read snomed code as character
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))
+  
+  #stp data by fy
+  stp_data_fy <- rownames(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "stp_data_fy"
+    )
+  ))[which.max(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "stp_data_fy"
+    )
+  )$mtime)]
+  
+  #read recent data
+  stp_data_fy <- vroom::vroom(stp_data_fy,
+                              #read snomed code as character
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))
+  
+  #stp data by cy
+  stp_data_cy <- rownames(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "stp_data_cy"
+    )
+  ))[which.max(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "stp_data_cy"
+    )
+  )$mtime)]
+  
+  #read recent data
+  stp_data_cy <- vroom::vroom(stp_data_cy,
+                              #read snomed code as character
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))
+} else {
+  # Pull data from DWH and save to Y drive
+  nat_data_fy <-
+    extract_nat_data(con, year_type = "financial", year = max_dw_fy)
+  nat_data_cy <-
+    extract_nat_data(con, year_type = "calendar", year = max_dw_cy)
+  
+  stp_data_fy <-
+    extract_stp_data(con, year_type = "financial", year = max_dw_fy)
+  stp_data_cy <-
+    extract_stp_data(con, year_type = "calendar", year = max_dw_cy)
+  
+  #save new extracts to Y drive
+  save_data(nat_data_cy,
+            dir = "Y:/Official Stats/PCA",
+            filename = "nat_data_cy",
+            quote = TRUE)
+  
+  save_data(nat_data_fy,
+            dir = "Y:/Official Stats/PCA",
+            filename = "nat_data_fy",
+            quote = TRUE)
+  
+  save_data(stp_data_cy,
+            dir = "Y:/Official Stats/PCA",
+            filename = "stp_data_cy",
+            quote = TRUE)
+  
+  save_data(stp_data_fy,
+            dir = "Y:/Official Stats/PCA",
+            filename = "stp_data_fy",
+            quote = TRUE)
+}
+
+# 6. build variable for max and prev fy to use in headers ------
+#get max fy from latest data
+max_data_fy <- nat_data_fy %>%
+  dplyr::filter(MONTH_TYPE %in% c("FY")) %>%
+  dplyr::select(YEAR_DESC) %>%
+  dplyr::filter(YEAR_DESC == max(YEAR_DESC, na.rm = TRUE)) %>%
+  distinct() %>%
+  pull()
+
+#get max fy minus 1 from latest data
+max_data_fy_minus_1 <-
+  paste0(as.numeric(substr(max_data_fy, 1, 4)) - 1,
+         "/",
+         as.numeric(substr(max_data_fy, 6, 9)) - 1)
+
+#get max cy from latest data
+max_data_cy <- nat_data_cy %>%
+  dplyr::filter(MONTH_TYPE %in% c("CY")) %>%
+  dplyr::select(YEAR_DESC) %>%
+  dplyr::filter(YEAR_DESC == max(YEAR_DESC, na.rm = TRUE)) %>%
+  distinct() %>%
+  pull()
+
+# 7. create aggregate data for main tables ------
+
+nat_data_fy_agg <- pca_aggregations(nat_data_fy, area = "national")
+nat_data_cy_agg <- pca_aggregations(nat_data_cy, area = "national")
+
+stp_data_fy_agg <- pca_aggregations(stp_data_fy, area = "STP")
+stp_data_cy_agg <- pca_aggregations(stp_data_cy, area = "STP")
+
+# 8. create sheet names and meta data for main tables ------
+# 
+# #create workbook
+# sheetNames_main <-
+#   c(
+#     "National",
+#     "BNF_Chapters",
+#     "BNF_Sections",
+#     "BNF_Paragraphs",
+#     "Chemical_Substances",
+#     "Presentations"
+#   )
+# 
+# #create metadata tab (will need to open file and auto row heights once ran)
+# meta_fields <- c(
+#   "BNF Chapter Code",
+#   "BNF Chapter Name",
+#   "BNF Chemical Substance Code",
+#   "BNF Chemical Substance Name",
+#   "BNF Paragraph Code",
+#   "BNF Paragraph Name",
+#   "BNF Presentation Code",
+#   "BNF Presentation Name",
+#   "BNF Section Code",
+#   "BNF Section Name",
+#   "Cost Per Item (GBP)",
+#   "Cost Per Quantity (GBP)",
+#   "Financial Year",
+#   "Generic BNF Presentation Code",
+#   "Generic BNF Presentation Name",
+#   "Preparation Class",
+#   "Prescribed Preparation Class",
+#   "Quantity Per Item",
+#   "SNOMED Code",
+#   "Supplier Name",
+#   "Total Cost (GBP)",
+#   "Total Items",
+#   "Total Quantity",
+#   "Unit of Measure"
+# )
+# 
+# meta_descs <-
+#   c(
+#     "The unique code used to refer to the British National Formulary (BNF) chapter.",
+#     "The name given to a British National Formulary (BNF) chapter. This is the broadest grouping of the BNF therapeutical classification system.",
+#     "The unique code used to refer to the British National Formulary (BNF) chemical substance.",
+#     "The name of the main active ingredient in a drug. Appliances do not hold a chemical substance, but instead inherit the corresponding BNF section. Determined by the British National Formulary (BNF) for drugs, or the NHS BSA for appliances. For example, Amoxicillin.",
+#     "The unique code used to refer to the British National Formulary (BNF) paragraph.",
+#     "The name given to the British National Formulary (BNF) paragraph. This level of grouping of the BNF Therapeutical classification system sits below BNF section.",
+#     "The unique code used to refer to the British National Formulary (BNF) presentation.",
+#     "The name given to the specific type, strength, and formulation of a drug; or, the specific type of an appliance. For example, Paracetamol 500mg tablets.",
+#     "The unique code used to refer to the British National Formulary (BNF) section.",
+#     "The name given to a British National Formulary (BNF) section. This is the next broadest grouping of the BNF therapeutical classification system after chapter.",
+#     "Cost per item is calculated by dividing the 'Total Cost (GBP)' by the number of 'Total Items'.",
+#     "Cost per quantity is calculated by dividing the 'Total Cost (GBP)' by the 'Total Quantity'.",
+#     "The financial year to which the data belongs.",
+#     "In the cases of proprietary drugs, their generic equivalent BNF presentation code. For generic drugs, a repeat of the already provided BNF code.",
+#     "In the cases of proprietary drugs, their generic equivalent BNF presentation name. For generic drugs, a repeat of the already provided BNF name.",
+#     "The NHSBSA specifies and maintains the preparation classes of drugs, appliances, and medical devices to more easily distinguish between generic, proprietary, and appliance products. A product can be classified in one of five ways:\n
+# Class 1 - drugs prescribed and available generically
+# Class 2 - drugs prescribed generically but only available as a proprietary product
+# Class 3 - drugs prescribed and dispensed by proprietary brand name
+# Class 4 - dressings, appliances, and medical devices
+# Class 5 - drugs prescribed generically with a named supplier",
+#     "The preparation class of the product listed on the prescription form. Used to determine if an item was prescribed generically.",
+#     "Quantity Per Item is calculated by dividing the 'Total Quantity' by the number of 'Total Items'.",
+#     "A SNOMED CT (Systemised Nomenclature of Medicine Clinical Terms) is a clinical vocabulary readable by computers. The SNOMED code contained within the data is a unique identifier for each Medicinal Product (both VMP and AMP level). The identifier will not be re-used and or allocated to another presentation.",
+#     "The name of the manufacturer or wholesaler of a product. For example, TEVA or A A H Pharmaceuticals.",
+#     "Total Cost is the amount that would be paid using the basic price of the prescribed drug or appliance and the quantity prescribed. Sometimes called the 'Net Ingredient Cost' (NIC). The basic price is given either in the Drug Tariff or is determined from prices published by manufacturers, wholesalers or suppliers. Basic price is set out in Parts 8 and 9 of the Drug Tariff. For any drugs or appliances not in Part 8, the price is usually taken from the manufacturer, wholesaler or supplier of the product. This is given in GBP.",
+#     "The number of prescription items dispensed. 'Items' is the number of times a product appears on a prescription form. Prescription forms include both paper prescriptions and electronic messages.",
+#     "The total quantity of a drug or appliance that was prescribed. This is calculated by multiplying Quantity by Items. For example, if 2 items of Paracetamol 500mg tablets with a quantity of 28 were prescribed, the total quantity will be 56.",
+#     "The unit of measure given to the smallest available unit of a product. For example, tablet, capsule, unit dose, vial, gram, millilitre etc."
+#   )
+# 
+# # 9. create national excel for fy ------
+# 
+# #create workbook and meta data
+# fy_nat_wb <- create_wb(sheetNames_main)
+# 
+# create_metadata(fy_nat_wb,
+#                 meta_fields,
+#                 meta_descs)
+# 
+# #### National tab
+# # write data to sheet
+# pca::write_sheet(
+#   fy_nat_wb,
+#   "National",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_fy,
+#     " overall totals"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   nat_data_fy_agg$National,
+#   13
+# )
+# 
+# #left align column A
+# format_data(fy_nat_wb,
+#             "National",
+#             c("A"),
+#             "left",
+#             "")
+# 
+# #right align column B and format number
+# format_data(fy_nat_wb,
+#             "National",
+#             c("B"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(fy_nat_wb,
+#             "National",
+#             c("C", "D"),
+#             "right",
+#             "#,##0.00")
+# 
+# #### BNF CHAPTER tab
+# # write data to sheet
+# pca::write_sheet(
+#   fy_nat_wb,
+#   "BNF_Chapters",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_fy,
+#     " totals by BNF chapter"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   nat_data_fy_agg$BNF_Chapters,
+#   13
+# )
+# 
+# #left align column A
+# format_data(fy_nat_wb,
+#             "BNF_Chapters",
+#             c("A", "B", "C"),
+#             "left",
+#             "")
+# 
+# #right align column B and format number
+# format_data(fy_nat_wb,
+#             "BNF_Chapters",
+#             c("D"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(fy_nat_wb,
+#             "BNF_Chapters",
+#             c("E", "F"),
+#             "right",
+#             "#,##0.00")
+# 
+# #### BNF SECTION tab
+# # write data to sheet
+# pca::write_sheet(
+#   fy_nat_wb,
+#   "BNF_Sections",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_fy,
+#     " totals by BNF section"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   nat_data_fy_agg$BNF_Sections,
+#   13
+# )
+# 
+# #left align column A
+# format_data(fy_nat_wb,
+#             "BNF_Sections",
+#             c("A", "B", "C", "D", "E"),
+#             "left",
+#             "")
+# 
+# #right align column B and format number
+# format_data(fy_nat_wb,
+#             "BNF_Sections",
+#             c("F"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(fy_nat_wb,
+#             "BNF_Sections",
+#             c("G", "H"),
+#             "right",
+#             "#,##0.00")
+# 
+# #### BNF PARAGRAPH tab
+# # write data to sheet
+# pca::write_sheet(
+#   fy_nat_wb,
+#   "BNF_Paragraphs",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_fy,
+#     " totals by BNF Paragraph"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   nat_data_fy_agg$BNF_Paragraphs,
+#   13
+# )
+# 
+# #left align column A
+# format_data(fy_nat_wb,
+#             "BNF_Paragraphs",
+#             c("A", "B", "C", "D", "E", "F", "G"),
+#             "left",
+#             "")
+# 
+# #right align column B and format number
+# format_data(fy_nat_wb,
+#             "BNF_Paragraphs",
+#             c("H"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(fy_nat_wb,
+#             "BNF_Paragraphs",
+#             c("I", "J"),
+#             "right",
+#             "#,##0.00")
+# 
+# #### CHEMICAL SUBSTANCE tab
+# # write data to sheet
+# pca::write_sheet(
+#   fy_nat_wb,
+#   "Chemical_Substances",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_fy,
+#     " totals by BNF Chemical Substance"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   nat_data_fy_agg$Chemical_Substances,
+#   13
+# )
+# 
+# #left align column A
+# format_data(
+#   fy_nat_wb,
+#   "Chemical_Substances",
+#   c("A", "B", "C", "D", "E", "F", "G", "H", "I"),
+#   "left",
+#   ""
+# )
+# 
+# #right align column B and format number
+# format_data(fy_nat_wb,
+#             "Chemical_Substances",
+#             c("J"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(fy_nat_wb,
+#             "Chemical_Substances",
+#             c("K", "L"),
+#             "right",
+#             "#,##0.00")
+# 
+# #### PRESENTATIONS tab
+# # write data to sheet
+# pca::write_sheet(
+#   fy_nat_wb,
+#   "Presentations",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_fy,
+#     " totals by BNF presentation"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   nat_data_fy_agg$Presentations,
+#   13
+# )
+# 
+# #left align column A
+# format_data(
+#   fy_nat_wb,
+#   "Presentations",
+#   c(
+#     "A",
+#     "B",
+#     "C",
+#     "D",
+#     "E",
+#     "F",
+#     "G",
+#     "H",
+#     "I",
+#     "J",
+#     "K",
+#     "L",
+#     "M",
+#     "N",
+#     "O",
+#     "P"
+#   ),
+#   "left",
+#   ""
+# )
+# 
+# #right align column B and format number
+# format_data(fy_nat_wb,
+#             "Presentations",
+#             c("Q", "R"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(fy_nat_wb,
+#             "Presentations",
+#             c("S", "T", "U", "V"),
+#             "right",
+#             "#,##0.00")
+# 
+# #save file into outputs folder
+# openxlsx::saveWorkbook(
+#   fy_nat_wb,
+#   #automate names
+#   paste0(
+#     "outputs/pca_summary_tables_",
+#     substr(max_data_fy, 1, 4),
+#     "_",
+#     substr(max_data_fy, 8, 9),
+#     "_v001.xlsx"
+#   ),
+#   overwrite = TRUE
+# )
+# 
+# # 10. create national excel for cy ------
+# 
+# #create workbook and meta data
+# cy_nat_wb <- create_wb(sheetNames_main)
+# 
+# create_metadata(cy_nat_wb,
+#                 meta_fields,
+#                 meta_descs)
+# 
+# #### National tab
+# # write data to sheet
+# pca::write_sheet(
+#   cy_nat_wb,
+#   "National",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_cy,
+#     " overall totals"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   nat_data_cy_agg$National,
+#   13
+# )
+# 
+# #left align column A
+# format_data(cy_nat_wb,
+#             "National",
+#             c("A"),
+#             "left",
+#             "")
+# 
+# #right align column B and format number
+# format_data(cy_nat_wb,
+#             "National",
+#             c("B"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(cy_nat_wb,
+#             "National",
+#             c("C", "D"),
+#             "right",
+#             "#,##0.00")
+# 
+# #### BNF CHAPTER tab
+# # write data to sheet
+# pca::write_sheet(
+#   cy_nat_wb,
+#   "BNF_Chapters",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_cy,
+#     " totals by BNF chapter"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   nat_data_cy_agg$BNF_Chapters,
+#   13
+# )
+# 
+# #left align column A
+# format_data(cy_nat_wb,
+#             "BNF_Chapters",
+#             c("A", "B", "C"),
+#             "left",
+#             "")
+# 
+# #right align column B and format number
+# format_data(cy_nat_wb,
+#             "BNF_Chapters",
+#             c("D"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(cy_nat_wb,
+#             "BNF_Chapters",
+#             c("E", "F"),
+#             "right",
+#             "#,##0.00")
+# 
+# #### BNF SECTION tab
+# # write data to sheet
+# pca::write_sheet(
+#   cy_nat_wb,
+#   "BNF_Sections",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_cy,
+#     " totals by BNF section"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   nat_data_cy_agg$BNF_Sections,
+#   13
+# )
+# 
+# #left align column A
+# format_data(cy_nat_wb,
+#             "BNF_Sections",
+#             c("A", "B", "C", "D", "E"),
+#             "left",
+#             "")
+# 
+# #right align column B and format number
+# format_data(cy_nat_wb,
+#             "BNF_Sections",
+#             c("F"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(cy_nat_wb,
+#             "BNF_Sections",
+#             c("G", "H"),
+#             "right",
+#             "#,##0.00")
+# 
+# #### BNF PARAGRAPH tab
+# # write data to sheet
+# pca::write_sheet(
+#   cy_nat_wb,
+#   "BNF_Paragraphs",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_cy,
+#     " totals by BNF Paragraph"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   nat_data_cy_agg$BNF_Paragraphs,
+#   13
+# )
+# 
+# #left align column A
+# format_data(cy_nat_wb,
+#             "BNF_Paragraphs",
+#             c("A", "B", "C", "D", "E", "F", "G"),
+#             "left",
+#             "")
+# 
+# #right align column B and format number
+# format_data(cy_nat_wb,
+#             "BNF_Paragraphs",
+#             c("H"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(cy_nat_wb,
+#             "BNF_Paragraphs",
+#             c("I", "J"),
+#             "right",
+#             "#,##0.00")
+# 
+# #### CHEMICAL SUBSTANCE tab
+# # write data to sheet
+# pca::write_sheet(
+#   cy_nat_wb,
+#   "Chemical_Substances",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_cy,
+#     " totals by BNF Chemical Substance"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   nat_data_cy_agg$Chemical_Substances,
+#   13
+# )
+# 
+# #left align column A
+# format_data(
+#   cy_nat_wb,
+#   "Chemical_Substances",
+#   c("A", "B", "C", "D", "E", "F", "G", "H", "I"),
+#   "left",
+#   ""
+# )
+# 
+# #right align column B and format number
+# format_data(cy_nat_wb,
+#             "Chemical_Substances",
+#             c("J"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(cy_nat_wb,
+#             "Chemical_Substances",
+#             c("K", "L"),
+#             "right",
+#             "#,##0.00")
+# 
+# #### PRESENTATIONS tab
+# # write data to sheet
+# pca::write_sheet(
+#   cy_nat_wb,
+#   "Presentations",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_cy,
+#     " totals by BNF presentation"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   nat_data_cy_agg$Presentations,
+#   13
+# )
+# 
+# #left align column A
+# format_data(
+#   cy_nat_wb,
+#   "Presentations",
+#   c(
+#     "A",
+#     "B",
+#     "C",
+#     "D",
+#     "E",
+#     "F",
+#     "G",
+#     "H",
+#     "I",
+#     "J",
+#     "K",
+#     "L",
+#     "M",
+#     "N",
+#     "O",
+#     "P"
+#   ),
+#   "left",
+#   ""
+# )
+# 
+# #right align column B and format number
+# format_data(cy_nat_wb,
+#             "Presentations",
+#             c("Q", "R"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(cy_nat_wb,
+#             "Presentations",
+#             c("S", "T", "U", "V"),
+#             "right",
+#             "#,##0.00")
+# 
+# #save file into outputs folder
+# openxlsx::saveWorkbook(
+#   cy_nat_wb,
+#   #automate names
+#   paste0("outputs/pca_summary_tables_",
+#          max_data_cy,
+#          "_v001.xlsx"),
+#   overwrite = TRUE
+# )
+# 
+# # 11. create stp excel for fy ------
+# 
+# #create workbook and meta data
+# fy_stp_wb <- create_wb(sheetNames_main)
+# 
+# create_metadata(fy_stp_wb,
+#                 meta_fields,
+#                 meta_descs)
+# 
+# #### National tab
+# # write data to sheet
+# pca::write_sheet(
+#   fy_stp_wb,
+#   "National",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_fy,
+#     " overall totals"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   stp_data_fy_agg$National,
+#   13
+# )
+# 
+# #left align column A to E
+# format_data(fy_stp_wb,
+#             "National",
+#             c("A", "B", "C", "D", "E"),
+#             "left",
+#             "")
+# 
+# #right align column B and format number
+# format_data(fy_stp_wb,
+#             "National",
+#             c("F"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(fy_stp_wb,
+#             "National",
+#             c("G", "H"),
+#             "right",
+#             "#,##0.00")
+# 
+# 
+# #### BNF CHAPTER tab
+# # write data to sheet
+# pca::write_sheet(
+#   fy_stp_wb,
+#   "BNF_Chapters",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_fy,
+#     " totals by BNF chapter"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   stp_data_fy_agg$BNF_Chapters,
+#   13
+# )
+# 
+# #left align column A
+# format_data(fy_stp_wb,
+#             "BNF_Chapters",
+#             c("A", "B", "C", "D", "E", "F", "G"),
+#             "left",
+#             "")
+# 
+# #right align column B and format number
+# format_data(fy_stp_wb,
+#             "BNF_Chapters",
+#             c("H"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(fy_stp_wb,
+#             "BNF_Chapters",
+#             c("I", "J"),
+#             "right",
+#             "#,##0.00")
+# 
+# #### BNF SECTION tab
+# # write data to sheet
+# pca::write_sheet(
+#   fy_stp_wb,
+#   "BNF_Sections",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_fy,
+#     " totals by BNF section"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   stp_data_fy_agg$BNF_Sections,
+#   13
+# )
+# 
+# #left align column A
+# format_data(fy_stp_wb,
+#             "BNF_Sections",
+#             c("A", "B", "C", "D", "E", "F", "G", "H", "I"),
+#             "left",
+#             "")
+# 
+# #right align column B and format number
+# format_data(fy_stp_wb,
+#             "BNF_Sections",
+#             c("J"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(fy_stp_wb,
+#             "BNF_Sections",
+#             c("K", "L"),
+#             "right",
+#             "#,##0.00")
+# 
+# #### BNF PARAGRAPH tab
+# # write data to sheet
+# pca::write_sheet(
+#   fy_stp_wb,
+#   "BNF_Paragraphs",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_fy,
+#     " totals by BNF Paragraph"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   stp_data_fy_agg$BNF_Paragraphs,
+#   13
+# )
+# 
+# #left align column A
+# format_data(
+#   fy_stp_wb,
+#   "BNF_Paragraphs",
+#   c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"),
+#   "left",
+#   ""
+# )
+# 
+# #right align column B and format number
+# format_data(fy_stp_wb,
+#             "BNF_Paragraphs",
+#             c("L"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(fy_stp_wb,
+#             "BNF_Paragraphs",
+#             c("M", "N"),
+#             "right",
+#             "#,##0.00")
+# 
+# #### CHEMICAL SUBSTANCE tab
+# # write data to sheet
+# pca::write_sheet(
+#   fy_stp_wb,
+#   "Chemical_Substances",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_fy,
+#     " totals by BNF Chemical Substance"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   stp_data_fy_agg$Chemical_Substances,
+#   13
+# )
+# 
+# #left align column A
+# format_data(
+#   fy_stp_wb,
+#   "Chemical_Substances",
+#   c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"),
+#   "left",
+#   ""
+# )
+# 
+# #right align column B and format number
+# format_data(fy_stp_wb,
+#             "Chemical_Substances",
+#             c("N"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(fy_stp_wb,
+#             "Chemical_Substances",
+#             c("O", "P"),
+#             "right",
+#             "#,##0.00")
+# 
+# 
+# #### PRESENTATIONS tab
+# # write data to sheet
+# pca::write_sheet(
+#   fy_stp_wb,
+#   "Presentations",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_fy,
+#     " totals by BNF presentation"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   stp_data_fy_agg$Presentations,
+#   13
+# )
+# 
+# #left align column A
+# format_data(
+#   fy_stp_wb,
+#   "Presentations",
+#   c(
+#     "A",
+#     "B",
+#     "C",
+#     "D",
+#     "E",
+#     "F",
+#     "G",
+#     "H",
+#     "I",
+#     "J",
+#     "K",
+#     "L",
+#     "M",
+#     "N",
+#     "O",
+#     "P",
+#     "Q",
+#     "R",
+#     "S",
+#     "T"
+#   ),
+#   "left",
+#   ""
+# )
+# 
+# #right align column B and format number
+# format_data(fy_stp_wb,
+#             "Presentations",
+#             c("U", "V"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(fy_stp_wb,
+#             "Presentations",
+#             c("W", "X", "Y", "Z"),
+#             "right",
+#             "#,##0.00")
+# 
+# #save file into outputs folder
+# openxlsx::saveWorkbook(
+#   fy_stp_wb,
+#   #automate names
+#   paste0(
+#     "outputs/pca_stp_summary_tables_",
+#     substr(max_data_fy, 1, 4),
+#     "_",
+#     substr(max_data_fy, 8, 9),
+#     "_v001.xlsx"
+#   ),
+#   overwrite = TRUE
+# )
+# 
+# # 12 create stp excel for cy ------
+# 
+# #create workbook and meta data
+# cy_stp_wb <- create_wb(sheetNames_main)
+# 
+# create_metadata(cy_stp_wb,
+#                 meta_fields,
+#                 meta_descs)
+# 
+# #### National tab
+# # write data to sheet
+# pca::write_sheet(
+#   cy_stp_wb,
+#   "National",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_cy,
+#     " overall totals"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   stp_data_cy_agg$National,
+#   13
+# )
+# 
+# #left align column A to E
+# format_data(cy_stp_wb,
+#             "National",
+#             c("A", "B", "C", "D", "E"),
+#             "left",
+#             "")
+# 
+# #right align column B and format number
+# format_data(cy_stp_wb,
+#             "National",
+#             c("F"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(cy_stp_wb,
+#             "National",
+#             c("G", "H"),
+#             "right",
+#             "#,##0.00")
+# 
+# 
+# #### BNF CHAPTER tab
+# # write data to sheet
+# pca::write_sheet(
+#   cy_stp_wb,
+#   "BNF_Chapters",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_cy,
+#     " totals by BNF chapter"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   stp_data_cy_agg$BNF_Chapters,
+#   13
+# )
+# 
+# #left align column A
+# format_data(cy_stp_wb,
+#             "BNF_Chapters",
+#             c("A", "B", "C", "D", "E", "F", "G"),
+#             "left",
+#             "")
+# 
+# #right align column B and format number
+# format_data(cy_stp_wb,
+#             "BNF_Chapters",
+#             c("H"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(cy_stp_wb,
+#             "BNF_Chapters",
+#             c("I", "J"),
+#             "right",
+#             "#,##0.00")
+# 
+# #### BNF SECTION tab
+# # write data to sheet
+# pca::write_sheet(
+#   cy_stp_wb,
+#   "BNF_Sections",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_cy,
+#     " totals by BNF section"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   stp_data_cy_agg$BNF_Sections,
+#   13
+# )
+# 
+# #left align column A
+# format_data(cy_stp_wb,
+#             "BNF_Sections",
+#             c("A", "B", "C", "D", "E", "F", "G", "H", "I"),
+#             "left",
+#             "")
+# 
+# #right align column B and format number
+# format_data(cy_stp_wb,
+#             "BNF_Sections",
+#             c("J"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(cy_stp_wb,
+#             "BNF_Sections",
+#             c("K", "L"),
+#             "right",
+#             "#,##0.00")
+# 
+# #### BNF PARAGRAPH tab
+# # write data to sheet
+# pca::write_sheet(
+#   cy_stp_wb,
+#   "BNF_Paragraphs",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_cy,
+#     " totals by BNF Paragraph"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   stp_data_cy_agg$BNF_Paragraphs,
+#   13
+# )
+# 
+# #left align column A
+# format_data(
+#   cy_stp_wb,
+#   "BNF_Paragraphs",
+#   c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"),
+#   "left",
+#   ""
+# )
+# 
+# #right align column B and format number
+# format_data(cy_stp_wb,
+#             "BNF_Paragraphs",
+#             c("L"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(cy_stp_wb,
+#             "BNF_Paragraphs",
+#             c("M", "N"),
+#             "right",
+#             "#,##0.00")
+# 
+# #### CHEMICAL SUBSTANCE tab
+# # write data to sheet
+# pca::write_sheet(
+#   cy_stp_wb,
+#   "Chemical_Substances",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_cy,
+#     " totals by BNF Chemical Substance"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   stp_data_cy_agg$Chemical_Substances,
+#   13
+# )
+# 
+# #left align column A
+# format_data(
+#   cy_stp_wb,
+#   "Chemical_Substances",
+#   c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"),
+#   "left",
+#   ""
+# )
+# 
+# #right align column B and format number
+# format_data(cy_stp_wb,
+#             "Chemical_Substances",
+#             c("N"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(cy_stp_wb,
+#             "Chemical_Substances",
+#             c("O", "P"),
+#             "right",
+#             "#,##0.00")
+# 
+# #### PRESENTATIONS tab
+# # write data to sheet
+# pca::write_sheet(
+#   cy_stp_wb,
+#   "Presentations",
+#   paste0(
+#     "Prescription Cost Analysis - England ",
+#     max_data_cy,
+#     " totals by BNF presentation"
+#   ),
+#   c(
+#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+#   ),
+#   stp_data_cy_agg$Presentations,
+#   13
+# )
+# 
+# #left align column A
+# format_data(
+#   cy_stp_wb,
+#   "Presentations",
+#   c(
+#     "A",
+#     "B",
+#     "C",
+#     "D",
+#     "E",
+#     "F",
+#     "G",
+#     "H",
+#     "I",
+#     "J",
+#     "K",
+#     "L",
+#     "M",
+#     "N",
+#     "O",
+#     "P",
+#     "Q",
+#     "R",
+#     "S",
+#     "T"
+#   ),
+#   "left",
+#   ""
+# )
+# 
+# #right align column B and format number
+# format_data(cy_stp_wb,
+#             "Presentations",
+#             c("U", "V"),
+#             "right",
+#             "#,##0")
+# 
+# #right align column C and D and format numbers
+# format_data(cy_stp_wb,
+#             "Presentations",
+#             c("W", "X", "Y", "Z"),
+#             "right",
+#             "#,##0.00")
+# 
+# #save file into outputs folder
+# openxlsx::saveWorkbook(
+#   cy_stp_wb,
+#   #automate names
+#   paste0("outputs/pca_stp_summary_tables_",
+#          max_data_cy,
+#          "_v001.xlsx"),
+#   overwrite = TRUE
+# )
+# 
+# # 13. create additional analysis excel ------
+# 
+# #create workbook and meta data
+# sheetNames_add_anl <- c(
+#   "Table_A1",
+#   "Table_A2",
+#   "Table_A3",
+#   "Table_A4",
+#   "Table_A5",
+#   "Table_A6",
+#   "Table_A7",
+#   "Table_A8",
+#   "Table_A9",
+#   "Table_A10",
+#   "Table_A11",
+#   "Table_A12"
+# )
+# 
+# add_anl_wb <- create_wb(sheetNames_add_anl)
+# 
+# meta_fields_add_anl <- c(
+#   "BNF Chapter Code",
+#   "BNF Chapter Name",
+#   "BNF Chemical Substance Code",
+#   "BNF Chemical Substance Name",
+#   "BNF Presentation Code",
+#   "BNF Presentation Name",
+#   "BNF Section Code",
+#   "BNF Section Name",
+#   "Change in Cost Per Item YYYY to YYYY (%)",
+#   "Change in Cost Per Item YYYY to YYYY (GBP)",
+#   "Change in Costs YYYY to YYYY (%)",
+#   "Change in Costs YYYY to YYYY (GBP)",
+#   "Change in Items YYYY to YYYY",
+#   "Change in Items YYYY to YYYY (%)",
+#   "Change YYYY to YYYY",
+#   "Change YYYY to YYYY (%)",
+#   "Change YYYY to YYYY (GBP)",
+#   "Cost of dressings and appliances (GBP)",
+#   "Cost of items prescribed and dispensed generically (%)",
+#   "Cost of items prescribed and dispensed generically (GBP)",
+#   "Cost of items prescribed and dispensed proprietary (%)",
+#   "Cost of items prescribed and dispensed proprietary (GBP)",
+#   "Cost of items prescribed generically (%)",
+#   "Cost of items prescribed generically (GBP)",
+#   "Cost of items prescribed generically, dispensed and reimbursed as proprietary (%)",
+#   "Cost of items prescribed generically, dispensed and reimbursed as proprietary (GBP)",
+#   "Cost Per Capita (GBP)",
+#   "Cost per dressing and appliance (GBP)",
+#   "Cost Per Item (GBP)",
+#   "Cost per item prescribed and dispensed generically (GBP)",
+#   "Cost per item prescribed and dispensed proprietary (GBP)",
+#   "Cost per item prescribed generically, dispensed and reimbursed as proprietary (GBP)",
+#   "Cost per item YYYY (GBP)",
+#   "Dressings and appliances",
+#   "England population",
+#   "Exempt Cost (%)",
+#   "Exempt Items (%)",
+#   "Financial Year",
+#   "Items dispensed generically",
+#   "Items dispensed generically (%)",
+#   "Items Per Capita",
+#   "Items prescribed and dispensed generically",
+#   "Items prescribed and dispensed generically (%)",
+#   "Items prescribed and dispensed proprietary",
+#   "Items prescribed and dispensed proprietary (%)",
+#   "Items prescribed generically",
+#   "Items prescribed generically (%)",
+#   "Items prescribed generically, dispensed and reimbursed as proprietary",
+#   "Items prescribed generically, dispensed and reimbursed as proprietary (%)",
+#   "Rank YYYY",
+#   "Total Charged Cost (GBP)",
+#   "Total Charged Items",
+#   "Total Cost (GBP)",
+#   "Total Cost YYYY (GBP)",
+#   "Total Exempt Cost (GBP)",
+#   "Total Exempt Items",
+#   "Total Items",
+#   "Total Items YYYY",
+#   "Unit Cost",
+#   "Unit of Measure"
+# )
+# 
+# meta_descs_add_anl <- c(
+#   "The unique code used to refer to the British National Formulary (BNF) chapter.",
+#   "The name given to a British National Formulary (BNF) chapter. This is the broadest grouping of the BNF therapeutical classification system.",
+#   "The unique code used to refer to the British National Formulary (BNF) chemical substance.",
+#   "The name of the main active ingredient in a drug. Appliances do not hold a chemical substance, but instead inherit the corresponding BNF section. Determined by the British National Formulary (BNF) for drugs, or the NHS BSA for appliances. For example, Amoxicillin.",
+#   "The unique code used to refer to the British National Formulary (BNF) presentation.",
+#   "The name given to the specific type, strength, and formulation of a drug; or, the specific type of an appliance. For example, Paracetamol 500mg tablets.",
+#   "The unique code used to refer to the British National Formulary (BNF) section.",
+#   "The name give to a British National Formulary (BNF) section. This is the next broadest grouping of the BNF Therapeutical classification system after chapter.",
+#   "The difference in 'Cost Per Item (GBP)' between the financial years displayed expressed as a percentage.",
+#   "The difference in 'Cost Per Item (GBP)' between the financial years displayed.",
+#   "The difference in 'Total Cost (GBP)' between the financial years displayed expressed as a percentage.",
+#   "The difference in 'Total Cost (GBP)' between the financial years displayed.",
+#   "The difference in 'Total Items' between the financial years displayed.",
+#   "The difference in 'Total Items' between the financial years displayed expressed as a percentage.",
+#   "The difference between the measures listed (e.g. Items or Cost) for the financial years displayed.",
+#   "The difference between the measures listed (e.g. Items or Cost) for the financial years displayed expressed as a percentage.",
+#   "The difference between the measures listed (e.g. Items or Cost) for the financial years displayed. Displayed as GBP.",
+#   "The 'Total Cost (GBP)' of prescription items with a preparation class of 4.",
+#   "The 'Total Cost (GBP)' of prescription items with a preparation class of 1 expressed as a percentage.",
+#   "The 'Total Cost (GBP)' of prescription items with a preparation class of 1.",
+#   "The 'Total Cost (GBP)' of prescription items with a preparation class of 3 expressed as a percentage.",
+#   "The 'Total Cost (GBP)' of prescription items with a preparation class of 3.",
+#   "The 'Total Cost (GBP)' of prescription items with a preparation class of 1 or 2 expressed as percentage.",
+#   "The 'Total Cost (GBP)' of prescription items with a preparation class of 1 or 2.",
+#   "The 'Total Cost (GBP)' of prescription items with a preparation class of 2 expressed as a percentage.",
+#   "The 'Total Cost (GBP)' of prescription items with a preparation class of 2.",
+#   "Cost per capita is calculated by dividing the 'Total Cost (GBP)' by the 'England population'.",
+#   "Cost per dressing and appliance is calculated by dividing the 'Total Cost (GBP)' of dressings and appliances by the number of 'Total Items' for dressings and appliances.",
+#   "Cost per item is calculated by dividing the 'Total Cost (GBP)' by the number of 'Total Items'.",
+#   "This is calculated by dividing the relevant 'Total Cost (GBP)' by the relevant number of 'Total Items'.",
+#   "This is calculated by dividing the relevant 'Total Cost (GBP)' by the relevant number of 'Total Items'.",
+#   "This is calculated by dividing the relevant 'Total Cost (GBP)' by the relevant number of 'Total Items'.",
+#   "This is calculated by dividing the relevant 'Total Cost (GBP)' by the relevant number of 'Total Items'.",
+#   "The total number of items for dressings and appliances (prescription items with a preparation class of 4).",
+#   "England population estimates taken from Office for National Statistics (ONS) - https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates",
+#   "The 'Total Cost (GBP)' of prescription items that are exempt from prescription charges expressed as a percentage.",
+#   "The number of prescription items that are exempt from prescription charges expressed as a percentage.",
+#   "The financial year to which the data belongs.",
+#   "The number of prescription items that have a preparation class of 1 or 5.",
+#   "The number of prescription items that have a preparation class of 1 or 5 expressed as a percentage.",
+#   "Items per capita calculated by dividing 'Total Items' by 'England population'.",
+#   "The number of prescription items with a preparation class of 1, 2, or 5 that were dispensed as items with class of 1 or 5",
+#   "The number of prescription items with a preparation class of 1, 2, or 5 that were dispensed as items with class of 1 or 5 expressed as a percentage.",
+#   "The number of prescription items with a preparation class of 3.",
+#   "The number of prescription items with a preparation class of 3 expressed as a percentage.",
+#   "The number of prescription items with a preparation class of 1, 2, or 5.",
+#   "The number of prescription items with a preparation class of 1, 2 or 5 expressed as a percentage.",
+#   "The number of prescription items with a preparation class of 1, 2, or 5 that were dispensed as items with a class of 3.",
+#   "The number of prescription items with a preparation class of 1, 2, or 5 that were dispensed as items with a class of 3 expressed as a percentage.",
+#   "The rank assigned to that record for the displayed financial year based upon the measure that the table is displaying.",
+#   "The 'Total Cost (GBP)' of prescription items that are not exempt from prescription charges.",
+#   "The number of prescription items that are exempt from prescription charges.",
+#   "Total Cost is the amount that would be paid using the basic price of the prescribed drug or appliance and the quantity prescribed. Sometimes called the 'Net Ingredient Cost' (NIC). The basic price is given either in the Drug Tariff or is determined from prices published by manufacturers, wholesalers or suppliers. Basic price is set out in Parts 8 and 9 of the Drug Tariff. For any drugs or appliances not in Part 8, the price is usually taken from the manufacturer, wholesaler or supplier of the product. This is given in GBP.",
+#   "The 'Total Cost (GBP)' for the displayed financial year.",
+#   "The 'Total Cost (GBP)' of prescription items that are exempt from prescription charges.",
+#   "The number of prescription items that are exempt from prescription charges.",
+#   "The number prescription items dispensed. 'Items' is the number of times a product appears on a prescription form. Prescription forms include both paper prescriptions and electronic messages.",
+#   "The 'Total Items' for the displayed financial year.",
+#   "Unit cost is calculated by dividing the 'Total Cost (GBP)' by the 'Total Quantity' for the given presentation.",
+#   "The unit of measure given to the smallest available unit of a product. For example, tablet, capsule, unit dose, vial, gram, millilitre etc."
+# )
+# 
+# create_metadata(add_anl_wb,
+#                 meta_fields_add_anl,
+#                 meta_descs_add_anl)
+# 
+# #additional analysis - table a1
+# add_anl_1 <- item_cost_per_capita(con = con)
+# names(add_anl_1) <- c(
+#   "Financial Year",
+#   "Total Items",
+#   "Total Cost (GBP)",
+#   "England Population",
+#   "Cost Per Item",
+#   "Items Per Capita",
+#   "Cost Per Capita (GBP)"
+# )
+# 
+# # write data to sheet
+# pca::write_sheet(
+#   add_anl_wb,
+#   "Table_A1",
+#   paste0(
+#     "Table A1: Total items, cost, number of items and cost per capita, 2014/2015 to ",
+#     max_data_fy
+#   ),
+#   c(
+#     "ONS population estimates for 2022 were not available prior to publication",
+#     "ONS population estimates taken from https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates"
+#   ),
+#   add_anl_1,
+#   13
+# )
+# 
+# #left align column A
+# format_data(add_anl_wb,
+#             "Table_A1",
+#             c("A"),
+#             "left",
+#             "")
+# 
+# #format columns B and D
+# format_data(add_anl_wb,
+#             "Table_A1",
+#             c("B", "D"),
+#             "right",
+#             "#,##0")
+# 
+# #format columns C, E, F, G
+# format_data(add_anl_wb,
+#             "Table_A1",
+#             c("C", "E", "F", "G"),
+#             "right",
+#             "#,##0.00")
+# 
+# #additional analysis - table a2
+# add_anl_2 <- top_drug_cost(con = con)
+# names(add_anl_2) <- c(
+#   "BNF Chemical Substance Name",
+#   "BNF Chemical Substance Code",
+#   "Total Cost 2014/2015 (GBP) ",
+#   paste0("Total Cost ", max_data_fy_minus_1 , " (GBP)"),
+#   paste0("Total Cost ", max_data_fy , " (GBP)"),
+#   "Rank 2014/2015",
+#   paste0("Rank ", max_data_fy_minus_1),
+#   paste0("Rank ", max_data_fy),
+#   paste0("Change in Costs 2014/2015 to ", max_data_fy, " (GBP)"),
+#   paste0(
+#     "Change in Costs ",
+#     max_data_fy_minus_1 ,
+#     " to ",
+#     max_data_fy,
+#     " (GBP)"
+#   ),
+#   paste0("Change in Costs 2014/2015 to ", max_data_fy, " (%)"),
+#   paste0("Change in Costs ", max_data_fy_minus_1 , " to ", max_data_fy, " (%)")
+# )
+# 
+# # write data to sheet
+# pca::write_sheet(
+#   add_anl_wb,
+#   "Table_A2",
+#   paste0("Table A2: Top 20 drugs by cost, ", max_data_fy),
+#   c(
+#     "Top 20 calculations are made excluding BNF chapters 20 to 23, as presentations in these chapters do not hold chemical substances."
+#   ),
+#   add_anl_2,
+#   42
+# )
+# 
+# #left align column A:B
+# format_data(add_anl_wb,
+#             "Table_A2",
+#             c("A", "B"),
+#             "left",
+#             "")
+# 
+# #format columns F:H
+# format_data(add_anl_wb,
+#             "Table_A2",
+#             c("F", "G", "H"),
+#             "right",
+#             "#,##0")
+# 
+# #format columns C:E and I:L
+# format_data(add_anl_wb,
+#             "Table_A2",
+#             c("C", "D", "E", "I", "J", "K", "L"),
+#             "right",
+#             "#,##0.00")
+# 
+# #additional analysis - table a3
+# add_anl_3 <- top_item_cost(con = con)
+# names(add_anl_3) <- c(
+#   "BNF Chemical Substance Name",
+#   "BNF Chemical Substance Code",
+#   "Total Items 2014/2015",
+#   paste0("Total Items ", max_data_fy_minus_1),
+#   paste0("Total Items ", max_data_fy),
+#   "Rank 2014/2015",
+#   paste0("Rank ", max_data_fy_minus_1),
+#   paste0("Rank ", max_data_fy),
+#   paste0("Change in Items 2014/2015 to ", max_data_fy),
+#   paste0("Change in Items ", max_data_fy_minus_1 , " to ", max_data_fy),
+#   paste0("Change in Items 2014/2015 to ", max_data_fy, " (%)"),
+#   paste0("Change in Items ", max_data_fy_minus_1 , " to ", max_data_fy, " (%)")
+# )
+# 
+# # write data to sheet
+# pca::write_sheet(
+#   add_anl_wb,
+#   "Table_A3",
+#   paste0("Table A3: Top 20 drugs by items dispensed, ", max_data_fy),
+#   c(
+#     "Top 20 calculations are made excluding BNF chapters 20 to 23, as presentations in these chapters do not hold chemical substances."
+#   ),
+#   add_anl_3,
+#   40
+# )
+# 
+# #left align column A:B
+# format_data(add_anl_wb,
+#             "Table_A3",
+#             c("A", "B"),
+#             "left",
+#             "")
+# 
+# #format columns C:J
+# format_data(add_anl_wb,
+#             "Table_A3",
+#             c("C", "D", "E", "F", "G", "H", "I", "J"),
+#             "right",
+#             "#,##0")
+# 
+# #format columns K:L
+# format_data(add_anl_wb,
+#             "Table_A3",
+#             c("K", "L"),
+#             "right",
+#             "#,##0.00")
+# 
+# #additional analysis - table a4
+# add_anl_4 <- top_items_status(con = con)
+# names(add_anl_4) <- c(
+#   "Financial Year",
+#   "Total Exempt Items",
+#   "Total Charged Items",
+#   "Exempt Items (%)",
+#   "Total Exempt Cost (GBP)",
+#   "Total Charged Cost (GBP)",
+#   "Exempt Cost (%)"
+# )
+# 
+# # write data to sheet
+# pca::write_sheet(
+#   add_anl_wb,
+#   "Table_A4",
+#   paste0(
+#     "Table A4: Total items and cost by charge status, 2014/2015 to ",
+#     max_data_fy
+#   ),
+#   c(
+#     "A charged item is one where the patient has paid the set fee that has been collected by the dispensing contractor.",
+#     "An exempt item is one where the patient has not paid the set fee for their prescription as they hold a valid exemption. More information on exemption categories can be found at https://www.nhsbsa.nhs.uk/help-nhs-prescription-costs/free-nhs-prescriptions."
+#   ),
+#   add_anl_4,
+#   14
+# )
+# 
+# #left align column A
+# format_data(add_anl_wb,
+#             "Table_A4",
+#             c("A"),
+#             "left",
+#             "")
+# 
+# #format columns B:C
+# format_data(add_anl_wb,
+#             "Table_A4",
+#             c("B", "C"),
+#             "right",
+#             "#,##0")
+# 
+# #format columns D:G
+# format_data(add_anl_wb,
+#             "Table_A4",
+#             c("D", "E", "F", "G"),
+#             "right",
+#             "#,##0.00")
+# 
+# #additional analysis - table a5
+# add_anl_5 <- item_cost_class(con = con)
+# names(add_anl_5) <- c(
+#   "Financial Year",
+#   "Items prescribed
+#  generically",
+#   "Items prescribed
+#  and dispensed
+#  generically",
+#   "Items prescribed
+#  generically,
+#  dispensed and
+#  reimbursed as
+#  proprietary",
+#   "Items prescribed
+#  and dispensed
+#  proprietary",
+#   "Dressings and appliances",
+#   "Total Items",
+#   "Items prescribed
+#  generically
+#  (%)",
+#   "Items prescribed
+#  and dispensed
+#  generically
+#  (%)",
+#   "Items prescribed generically,
+#  dispensed and reimbursed
+#  as proprietary
+#  (%)",
+#   "Items prescribed
+#  and dispensed
+#  proprietary
+#  (%)",
+#   "Dressings and Appliances prescribed
+#  (%)",
+#   "Cost of items
+#  prescribed
+#  generically
+#  (GBP)",
+#   "Cost of items
+#  prescribed and
+#  dispensed
+#  generically
+#  (GBP)",
+#   "Cost of items
+#  prescribed
+#  generically,
+#  dispensed and
+#  reimbursed as
+#  proprietary
+#  (GBP)",
+#   "Cost of items
+#  prescribed and
+#  dispensed
+#  proprietary
+#  (GBP)",
+#   "Cost of Appliances and Dressings prescribed
+#  (GBP) ",
+#   "Total Cost
+#  (GBP)",
+#   "Cost of items
+#  prescribed
+#  generically
+#  (%)",
+#   "Cost of items
+#  prescribed and
+#  dispensed
+#  generically
+#  (%)",
+#   "Cost of items
+#  prescribed
+#  generically,
+#  dispensed and
+#  reimbursed as
+#  proprietary
+#  (%)",
+#   "Cost of items
+#  prescribed and
+#  dispensed
+#  as proprietary
+#  (%)",
+#   "Dressings and appliances
+#  prescribed
+#  (%)",
+#   "Cost per item
+#  prescribed
+#  generically
+#  (GBP)",
+#   "Cost per item
+#  prescribed and
+#  dispensed
+#  generically
+#  (GBP)",
+#   "Cost per item
+#  prescribed
+#  generically,
+#  dispensed and
+#  reimbursed as
+#  proprietary
+#  (GBP)",
+#   "Cost per item
+#  prescribed and
+#  dispensed
+#  proprietary
+#  (GBP)",
+#   "Cost per dressing
+#  and appliance
+#  (GBP)",
+#   "Cost Per Item
+#  (GBP)"
+# )
+# 
+# # write data to sheet
+# pca::write_sheet(
+#   add_anl_wb,
+#   "Table_A5",
+#   paste0(
+#     "Table A5: Generic Prescribing and dispensing by preparation class, 2014/2015 to ",
+#     max_data_fy
+#   ),
+#   c(
+#     "Generically prescribed items are those with a prescribed preparation class of 1, 2, or 5.",
+#     "Generically prescribed and dispensed items are those with a prescribed preparation class of 1, 2, or 5 and dispensed as items with a class of 1 or 5.",
+#     "Generically prescribed/proprietary dispensed items are those with a prescribed preparation class of 1, 2 or 5 and dispensed as items with a class of 2 or 3.",
+#     "Proprietary prescribed and dispensed items are those with a prescribed preparation class of 3 and dispensed as items with a class of 3.",
+#     "Dressings and appliances are items which were dispensed as a preparation class of 4"
+#   ),
+#   add_anl_5,
+#   14
+# )
+# 
+# #left align column A
+# format_data(add_anl_wb,
+#             "Table_A5",
+#             c("A"),
+#             "left",
+#             "")
+# 
+# #format columns B:G
+# format_data(add_anl_wb,
+#             "Table_A5",
+#             c("B", "C", "D", "E", "F", "G"),
+#             "right",
+#             "#,##0")
+# 
+# #format columns H:AC
+# format_data(
+#   add_anl_wb,
+#   "Table_A5",
+#   c(
+#     "H",
+#     "I",
+#     "J",
+#     "K",
+#     "L",
+#     "M",
+#     "N",
+#     "O",
+#     "P",
+#     "Q",
+#     "R",
+#     "S",
+#     "T",
+#     "U",
+#     "V",
+#     "W",
+#     "X",
+#     "Y",
+#     "Z",
+#     "AA",
+#     "AB",
+#     "AC"
+#   ),
+#   "right",
+#   "#,##0.00"
+# )
+# 
+# #additional analysis - table a6
+# add_anl_6 <- item_generic_bnf(con = con)
+# names(add_anl_6) <- c(
+#   "Financial Year",
+#   "BNF Chapter Code",
+#   "BNF Chapter Name",
+#   "Items prescribed generically",
+#   "Items dispensed generically",
+#   "Total Items",
+#   "Items prescribed generically (%)",
+#   "Items dispensed generically (%)"
+# )
+# 
+# # write data to sheet
+# pca::write_sheet(
+#   add_anl_wb,
+#   "Table_A6",
+#   paste0(
+#     "Table A6: Generic prescribing and dispensing by BNF Chapters, 2014/2015 to ",
+#     max_data_fy
+#   ),
+#   c(),
+#   add_anl_6,
+#   14
+# )
+# 
+# #left align column A:C
+# format_data(add_anl_wb,
+#             "Table_A6",
+#             c("A", "B", "C"),
+#             "left",
+#             "")
+# 
+# #format columns D:F
+# format_data(add_anl_wb,
+#             "Table_A6",
+#             c("D", "E", "F"),
+#             "right",
+#             "#,##0")
+# 
+# #format columns G:H
+# format_data(add_anl_wb,
+#             "Table_A6",
+#             c("G", "H"),
+#             "right",
+#             "#,##0.00")
+# 
+# #additional analysis - table a7
+# add_anl_7 <- item_cost_BNF(con = con)
+# names(add_anl_7) <- c(
+#   "BNF Chapter Code",
+#   "BNF Chapter Name",
+#   "Total Items 2014/2015",
+#   paste0("Total Items ",
+#          max_data_fy_minus_1),
+#   paste0("Total Items ",
+#          max_data_fy),
+#   "Total Cost 2014/2015 (GBP)",
+#   paste0("Total Cost ",
+#          max_data_fy_minus_1,
+#          "(GBP)"),
+#   paste0("Total Cost ",
+#          max_data_fy,
+#          "(GBP)"),
+#   "Cost Per Item 2014/2015 (GBP)",
+#   paste0("Cost Per Item ",
+#          max_data_fy_minus_1,
+#          " (GBP)"),
+#   paste0("Cost Per Item ",
+#          max_data_fy,
+#          " (GBP)"),
+#   paste0("Change in Items 2014/2015 to ",
+#          max_data_fy),
+#   paste0("Change in Items ",
+#          max_data_fy_minus_1,
+#          " to ",
+#          max_data_fy),
+#   paste0("Change in Items 2014/2015 to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Items ",
+#          max_data_fy_minus_1,
+#          " to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Costs 2014/2015 to ",
+#          max_data_fy,
+#          " (GBP)"),
+#   paste0(
+#     "Change in Costs ",
+#     max_data_fy_minus_1,
+#     " to ",
+#     max_data_fy,
+#     " (GBP)"
+#   ),
+#   paste0("Change in Costs 2014/2015 to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Costs ",
+#          max_data_fy_minus_1,
+#          " to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Costs Per Item 2014/2015 to ",
+#          max_data_fy,
+#          " (GBP)"),
+#   paste0(
+#     "Change in Costs Per Item ",
+#     max_data_fy_minus_1,
+#     " to ",
+#     max_data_fy,
+#     " (GBP)"
+#   ),
+#   paste0("Change in Costs Per Item 2014/2015 to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0(
+#     "Change in Costs Per Item ",
+#     max_data_fy_minus_1,
+#     " to ",
+#     max_data_fy,
+#     " (%)"
+#   )
+# )
+# 
+# # write data to sheet
+# pca::write_sheet(
+#   add_anl_wb,
+#   "Table_A7",
+#   paste0(
+#     "Table A7: Number, cost and cost per item by BNF Chapters, 2014/2015, ",
+#     max_data_fy_minus_1,
+#     " and ",
+#     max_data_fy
+#   ),
+#   c(),
+#   add_anl_7,
+#   19
+# )
+# 
+# #left align column A:B???
+# format_data(add_anl_wb,
+#             "Table_A7",
+#             c("A", "B"),
+#             "left",
+#             "")
+# 
+# #format columns C:E, L:M
+# format_data(add_anl_wb,
+#             "Table_A7",
+#             c("C", "D", "E", "L", "M"),
+#             "right",
+#             "#,##0")
+# 
+# #format columns F:K, N:W
+# format_data(
+#   add_anl_wb,
+#   "Table_A7",
+#   c(
+#     "F",
+#     "G",
+#     "H",
+#     "I",
+#     "J",
+#     "K",
+#     "N",
+#     "O",
+#     "P",
+#     "Q",
+#     "R",
+#     "S",
+#     "T",
+#     "U",
+#     "V",
+#     "W"
+#   ),
+#   "right",
+#   "#,##0.00"
+# )
+# 
+# #additional analysis - table a8
+# add_anl_8 <- item_cost_BNF_sect(con = con)
+# names(add_anl_8) <- c(
+#   "BNF Section Code",
+#   "BNF Section Name",
+#   "Rank
+#  2014/2015",
+#   paste0("Rank ", max_data_fy_minus_1),
+#   paste0("Rank ", max_data_fy),
+#   "Total Items 2014/2015",
+#   paste0("Total Items ",
+#          max_data_fy_minus_1),
+#   paste0("Total Items ",
+#          max_data_fy),
+#   "Total Cost 2014/2015 (GBP)",
+#   paste0("Total Cost ",
+#          max_data_fy_minus_1,
+#          "(GBP)"),
+#   paste0("Total Cost ",
+#          max_data_fy,
+#          "(GBP)"),
+#   "Cost Per Item 2014/2015 (GBP)",
+#   paste0("Cost Per Item ",
+#          max_data_fy_minus_1,
+#          " (GBP)"),
+#   paste0("Cost Per Item ",
+#          max_data_fy,
+#          " (GBP)"),
+#   paste0("Change in Items 2014/2015 to ",
+#          max_data_fy),
+#   paste0("Change in Items ",
+#          max_data_fy_minus_1,
+#          " to ",
+#          max_data_fy),
+#   paste0("Change in Items 2014/2015 to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Items ",
+#          max_data_fy_minus_1,
+#          " to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Costs 2014/2015 to ",
+#          max_data_fy,
+#          " (GBP)"),
+#   paste0(
+#     "Change in Costs ",
+#     max_data_fy_minus_1,
+#     " to ",
+#     max_data_fy,
+#     " (GBP)"
+#   ),
+#   paste0("Change in Costs 2014/2015 to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Costs ",
+#          max_data_fy_minus_1,
+#          " to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Costs Per Item 2014/2015 to ",
+#          max_data_fy,
+#          " (GBP)"),
+#   paste0(
+#     "Change in Costs Per Item ",
+#     max_data_fy_minus_1,
+#     " to ",
+#     max_data_fy,
+#     " (GBP)"
+#   ),
+#   paste0("Change in Costs Per Item 2014/2015 to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0(
+#     "Change in Costs Per Item ",
+#     max_data_fy_minus_1,
+#     " to ",
+#     max_data_fy,
+#     " (%)"
+#   )
+# )
+# 
+# # write data to sheet
+# pca::write_sheet(
+#   add_anl_wb,
+#   "Table_A8",
+#   paste0(
+#     "Table A8: Top 20 BNF Sections by Cost, 2014/2015, ",
+#     max_data_fy_minus_1,
+#     " and ",
+#     max_data_fy
+#   ),
+#   c(),
+#   add_anl_8,
+#   19
+# )
+# 
+# #left align column A:B
+# format_data(add_anl_wb,
+#             "Table_A8",
+#             c("A", "B"),
+#             "left",
+#             "")
+# 
+# #format columns C:H, O:P
+# format_data(add_anl_wb,
+#             "Table_A8",
+#             c("C", "D", "E", "F", "G", "H", "O", "P"),
+#             "right",
+#             "#,##0")
+# 
+# #format columns I:N, P:Z
+# format_data(
+#   add_anl_wb,
+#   "Table_A8",
+#   c(
+#     "I",
+#     "J",
+#     "K",
+#     "L",
+#     "M",
+#     "N",
+#     "P",
+#     "Q",
+#     "R",
+#     "S",
+#     "T",
+#     "U",
+#     "V",
+#     "W",
+#     "X",
+#     "Y",
+#     "Z"
+#   ),
+#   "right",
+#   "#,##0.00"
+# )
+# 
+# #additional analysis - table a9
+# add_anl_9 <- item_cost_BNF_sect_increase(con = con)
+# 
+# names(add_anl_9) <- c(
+#   "BNF Section Code",
+#   "BNF Section Name",
+#   "Total Items 2014/2015",
+#   paste0("Total Items ",
+#          max_data_fy_minus_1),
+#   paste0("Total Items ",
+#          max_data_fy),
+#   "Total Cost 2014/2015 (GBP)",
+#   paste0("Total Cost ",
+#          max_data_fy_minus_1,
+#          "(GBP)"),
+#   paste0("Total Cost ",
+#          max_data_fy,
+#          "(GBP)"),
+#   "Cost Per Item 2014/2015 (GBP)",
+#   paste0("Cost Per Item ",
+#          max_data_fy_minus_1,
+#          " (GBP)"),
+#   paste0("Cost Per Item ",
+#          max_data_fy,
+#          " (GBP)"),
+#   paste0("Change in Items 2014/2015 to ",
+#          max_data_fy),
+#   paste0("Change in Items ",
+#          max_data_fy_minus_1,
+#          " to ",
+#          max_data_fy),
+#   paste0("Change in Items 2014/2015 to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Items ",
+#          max_data_fy_minus_1,
+#          " to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Costs 2014/2015 to ",
+#          max_data_fy,
+#          " (GBP)"),
+#   paste0(
+#     "Change in Costs ",
+#     max_data_fy_minus_1,
+#     " to ",
+#     max_data_fy,
+#     " (GBP)"
+#   ),
+#   paste0("Change in Costs 2014/2015 to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Costs ",
+#          max_data_fy_minus_1,
+#          " to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Costs Per Item 2014/2015 to ",
+#          max_data_fy,
+#          " (GBP)"),
+#   paste0(
+#     "Change in Costs Per Item ",
+#     max_data_fy_minus_1,
+#     " to ",
+#     max_data_fy,
+#     " (GBP)"
+#   ),
+#   paste0("Change in Costs Per Item 2014/2015 to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0(
+#     "Change in Costs Per Item ",
+#     max_data_fy_minus_1,
+#     " to ",
+#     max_data_fy,
+#     " (%)"
+#   )
+# )
+# 
+# # write data to sheet
+# pca::write_sheet(
+#   add_anl_wb,
+#   "Table_A9",
+#   paste0(
+#     "Table A9: Top 20 BNF Sections by increase in cost, 2014/2015, ",
+#     max_data_fy_minus_1,
+#     " and ",
+#     max_data_fy
+#   ),
+#   c(),
+#   add_anl_9,
+#   19
+# )
+# 
+# #left align column A:B???
+# format_data(add_anl_wb,
+#             "Table_A9",
+#             c("A", "B"),
+#             "left",
+#             "")
+# 
+# #format columns C:E, L:M
+# format_data(add_anl_wb,
+#             "Table_A9",
+#             c("C", "D", "E", "L", "M"),
+#             "right",
+#             "#,##0")
+# 
+# #format columns F:K, N:W
+# format_data(
+#   add_anl_wb,
+#   "Table_A9",
+#   c(
+#     "F",
+#     "G",
+#     "H",
+#     "I",
+#     "J",
+#     "K",
+#     "N",
+#     "O",
+#     "P",
+#     "Q",
+#     "R",
+#     "S",
+#     "T",
+#     "U",
+#     "V",
+#     "W"
+#   ),
+#   "right",
+#   "#,##0.00"
+# )
+# 
+# #additional analysis - table a10
+# add_anl_10 <- item_cost_BNF_sect_decrease(con = con)
+# 
+# names(add_anl_10) <- c(
+#   "BNF Section Code",
+#   "BNF Section Name",
+#   "Total Items 2014/2015",
+#   paste0("Total Items ",
+#          max_data_fy_minus_1),
+#   paste0("Total Items ",
+#          max_data_fy),
+#   "Total Cost 2014/2015 (GBP)",
+#   paste0("Total Cost ",
+#          max_data_fy_minus_1,
+#          "(GBP)"),
+#   paste0("Total Cost ",
+#          max_data_fy,
+#          "(GBP)"),
+#   "Cost Per Item 2014/2015 (GBP)",
+#   paste0("Cost Per Item ",
+#          max_data_fy_minus_1,
+#          " (GBP)"),
+#   paste0("Cost Per Item ",
+#          max_data_fy,
+#          " (GBP)"),
+#   paste0("Change in Items 2014/2015 to ",
+#          max_data_fy),
+#   paste0("Change in Items ",
+#          max_data_fy_minus_1,
+#          " to ",
+#          max_data_fy),
+#   paste0("Change in Items 2014/2015 to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Items ",
+#          max_data_fy_minus_1,
+#          " to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Costs 2014/2015 to ",
+#          max_data_fy,
+#          " (GBP)"),
+#   paste0(
+#     "Change in Costs ",
+#     max_data_fy_minus_1,
+#     " to ",
+#     max_data_fy,
+#     " (GBP)"
+#   ),
+#   paste0("Change in Costs 2014/2015 to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Costs ",
+#          max_data_fy_minus_1,
+#          " to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Costs Per Item 2014/2015 to ",
+#          max_data_fy,
+#          " (GBP)"),
+#   paste0(
+#     "Change in Costs Per Item ",
+#     max_data_fy_minus_1,
+#     " to ",
+#     max_data_fy,
+#     " (GBP)"
+#   ),
+#   paste0("Change in Costs Per Item 2014/2015 to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0(
+#     "Change in Costs Per Item ",
+#     max_data_fy_minus_1,
+#     " to ",
+#     max_data_fy,
+#     " (%)"
+#   )
+# )
+# 
+# # write data to sheet
+# pca::write_sheet(
+#   add_anl_wb,
+#   "Table_A10",
+#   paste0(
+#     "Table A10: Top 20 BNF Sections by decrease in cost, 2014/2015, ",
+#     max_data_fy_minus_1,
+#     " and ",
+#     max_data_fy
+#   ),
+#   c(),
+#   add_anl_10,
+#   19
+# )
+# 
+# #left align column A:B???
+# format_data(add_anl_wb,
+#             "Table_A10",
+#             c("A", "B"),
+#             "left",
+#             "")
+# 
+# #format columns C:E, L:M
+# format_data(add_anl_wb,
+#             "Table_A10",
+#             c("C", "D", "E", "L", "M"),
+#             "right",
+#             "#,##0")
+# 
+# #format columns F:K, N:W
+# format_data(
+#   add_anl_wb,
+#   "Table_A10",
+#   c(
+#     "F",
+#     "G",
+#     "H",
+#     "I",
+#     "J",
+#     "K",
+#     "N",
+#     "O",
+#     "P",
+#     "Q",
+#     "R",
+#     "S",
+#     "T",
+#     "U",
+#     "V",
+#     "W"
+#   ),
+#   "right",
+#   "#,##0.00"
+# )
+# 
+# #additional analysis - table a11
+# add_anl_11 <- top_percentage_change(con = con)
+# 
+# names(add_anl_11) <- c(
+#   "BNF Presentation Code",
+#   "BNF Presentation Name",
+#   "Unit of Measure",
+#   "Total Cost 2014/2015 (GBP)",
+#   paste0("Total Cost ",
+#          max_data_fy_minus_1,
+#          " (GBP)"),
+#   paste0("Total Cost ",
+#          max_data_fy,
+#          " (GBP)"),
+#   "Total Items 2014/2015",
+#   paste0("Total Items ",
+#          max_data_fy_minus_1),
+#   paste0("Total Items ",
+#          max_data_fy),
+#   "Unit Cost 2014/2015 (GBP)",
+#   paste0("Unit Cost ",
+#          max_data_fy_minus_1,
+#          " (GBP)"),
+#   paste0("Unit Cost ",
+#          max_data_fy,
+#          " (GBP)"),
+#   paste0("Change in Items 2014/2015 to ",
+#          max_data_fy),
+#   paste0("Change in Items ",
+#          max_data_fy_minus_1,
+#          " to ",
+#          max_data_fy),
+#   paste0("Change in Items 2014/2015 to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Items ",
+#          max_data_fy_minus_1,
+#          " to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Costs 2014/2015 to ",
+#          max_data_fy,
+#          " (GBP)"),
+#   paste0(
+#     "Change in Costs ",
+#     max_data_fy_minus_1,
+#     " to ",
+#     max_data_fy,
+#     " (GBP)"
+#   ),
+#   paste0("Change in Costs 2014/2015 to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Costs ",
+#          max_data_fy_minus_1,
+#          " to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Unit Cost 2014/2015 to ",
+#          max_data_fy,
+#          " (GBP)"),
+#   paste0(
+#     "Change in Unit Cost ",
+#     max_data_fy_minus_1,
+#     " to ",
+#     max_data_fy,
+#     " (GBP)"
+#   ),
+#   paste0("Change in Unit Cost 2014/2015 to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0(
+#     "Change in Unit Cost ",
+#     max_data_fy_minus_1,
+#     " to ",
+#     max_data_fy,
+#     " (%)"
+#   )
+# )
+# 
+# # write data to sheet
+# pca::write_sheet(
+#   add_anl_wb,
+#   "Table_A11",
+#   paste0(
+#     "Table A11: Top 20 BNF Presentations by increase in Unit Cost, 2014/2015, ",
+#     max_data_fy_minus_1,
+#     " and ",
+#     max_data_fy
+#   ),
+#   c(
+#     "Analysis is limited to presentations with a total cost greater than 1 million GBP"
+#   ),
+#   add_anl_11,
+#   23
+# )
+# 
+# #left align column A:C
+# format_data(add_anl_wb,
+#             "Table_A11",
+#             c("A", "B", "C"),
+#             "left",
+#             "")
+# 
+# #format columns G:I, M:N
+# format_data(add_anl_wb,
+#             "Table_A11",
+#             c("G", "H", "I", "M", "N"),
+#             "right",
+#             "#,##0")
+# 
+# #format columns D:F, J:L, O:X
+# format_data(
+#   add_anl_wb,
+#   "Table_A11",
+#   c(
+#     "D",
+#     "E",
+#     "F",
+#     "J",
+#     "K",
+#     "L",
+#     "O",
+#     "P",
+#     "Q",
+#     "R",
+#     "S",
+#     "T",
+#     "U",
+#     "V",
+#     "W",
+#     "X"
+#   ),
+#   "right",
+#   "#,##0.00"
+# )
+# 
+# #additional analysis - table a12
+# add_anl_12 <- top_total_cost_change(con = con)
+# 
+# names(add_anl_12) <- c(
+#   "BNF Presentation Code",
+#   "BNF Presentation Name",
+#   "Unit of Measure",
+#   "Total Cost 2014/2015 (GBP)",
+#   paste0("Total Cost ",
+#          max_data_fy_minus_1,
+#          " (GBP)"),
+#   paste0("Total Cost ",
+#          max_data_fy,
+#          " (GBP)"),
+#   "Total Items 2014/2015",
+#   paste0("Total Items ",
+#          max_data_fy_minus_1),
+#   paste0("Total Items ",
+#          max_data_fy),
+#   "Unit Cost 2014/2015 (GBP)",
+#   paste0("Unit Cost ",
+#          max_data_fy_minus_1,
+#          " (GBP)"),
+#   paste0("Unit Cost ",
+#          max_data_fy,
+#          " (GBP)"),
+#   paste0("Change in Items 2014/2015 to ",
+#          max_data_fy),
+#   paste0("Change in Items ",
+#          max_data_fy_minus_1,
+#          " to ",
+#          max_data_fy),
+#   paste0("Change in Items 2014/2015 to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Items ",
+#          max_data_fy_minus_1,
+#          " to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Costs 2014/2015 to ",
+#          max_data_fy,
+#          " (GBP)"),
+#   paste0(
+#     "Change in Costs ",
+#     max_data_fy_minus_1,
+#     " to ",
+#     max_data_fy,
+#     " (GBP)"
+#   ),
+#   paste0("Change in Costs 2014/2015 to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Costs ",
+#          max_data_fy_minus_1,
+#          " to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0("Change in Unit Cost 2014/2015 to ",
+#          max_data_fy,
+#          " (GBP)"),
+#   paste0(
+#     "Change in Unit Cost ",
+#     max_data_fy_minus_1,
+#     " to ",
+#     max_data_fy,
+#     " (GBP)"
+#   ),
+#   paste0("Change in Unit Cost 2014/2015 to ",
+#          max_data_fy,
+#          " (%)"),
+#   paste0(
+#     "Change in Unit Cost ",
+#     max_data_fy_minus_1,
+#     " to ",
+#     max_data_fy,
+#     " (%)"
+#   )
+# )
+# 
+# # write data to sheet
+# pca::write_sheet(
+#   add_anl_wb,
+#   "Table_A12",
+#   paste0(
+#     "Table A12: Top 20 BNF Presentations by increase in Costs, 2014/2015, ",
+#     max_data_fy_minus_1,
+#     " and ",
+#     max_data_fy
+#   ),
+#   c(
+#     "Analysis is limited to presentations with a total cost greater than 1 million GBP"
+#   ),
+#   add_anl_12,
+#   23
+# )
+# 
+# #left align column A:C
+# format_data(add_anl_wb,
+#             "Table_A12",
+#             c("A", "B", "C"),
+#             "left",
+#             "")
+# 
+# #format columns G:I, M:N
+# format_data(add_anl_wb,
+#             "Table_A12",
+#             c("G", "H", "I", "M", "N"),
+#             "right",
+#             "#,##0")
+# 
+# #format columns D:F, J:L, O:X
+# format_data(
+#   add_anl_wb,
+#   "Table_A12",
+#   c(
+#     "D",
+#     "E",
+#     "F",
+#     "J",
+#     "K",
+#     "L",
+#     "O",
+#     "P",
+#     "Q",
+#     "R",
+#     "S",
+#     "T",
+#     "U",
+#     "V",
+#     "W",
+#     "X"
+#   ),
+#   "right",
+#   "#,##0.00"
+# )
+# 
+# #save file into outputs folder
+# openxlsx::saveWorkbook(
+#   add_anl_wb,
+#   #automate names
+#   paste0(
+#     "outputs/pca_additional_tables_",
+#     substr(max_data_fy, 1, 4),
+#     "_",
+#     substr(max_data_fy, 8, 9),
+#     "_v001.xlsx"
+#   ),
+#   overwrite = TRUE
+# )
+
+# 14. create objects used in map (not using function as ONS change columns every year------
+# round function to get number to nearest 10 in required direction
+round_any <- function(x, accuracy, f=round){f(x/ accuracy) * accuracy}
+
+ods_stp_lookup <- ref_data$stp_lookup
+
+stp_pop <- ods_stp_lookup %>%
+  left_join(ref_data$stp_pop,
+            by = c("STP21CD" = "STP21_CD")) %>%
+  group_by(STP21_NM, STP21CDH, STP21CD) %>%
+  summarise(POP = max(POP)) %>%
+  ungroup()
+
+# get geospatial data for mapping
+map_df_raw <- bind_rows(
+  # STP
+  sf::read_sf(
+    "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Sustainability_and_Transformation_Partnerships_April_2021_EN_BFE_2022/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson"
+  ) %>%
+    dplyr::mutate(GEOGRAPHY = "STP/ICS") %>%
+    select(
+      GEOGRAPHY,
+      SUB_GEOGRAPHY_CODE = STP21CD,
+      SUB_GEOGRAPHY_NAME = STP21NM,
+      GEOMETRY = geometry
+    )
+)
+
+map_df <- map_df_raw %>%
+  geojsonsf::sf_geojson() %>%
+  jsonlite::fromJSON(simplifyVector = FALSE)
+
+#tidy max year to automate title
+year <- stp_data_fy %>%
+  select(YEAR_DESC) %>%
+  unique() %>%
+  pull()
+
+year_tidy <- paste0(substr(year, 1, 5), substr(year, 8, 9))
+
+# 15. build items/costs per capita by nation table ------
+ add_anl_1 <- item_cost_per_capita(con = con)
+ names(add_anl_1) <- c(
+   "Financial Year",
+  "Total Items",
+   "Total Cost (GBP)",
+   "England Population",
+   "Cost Per Item",
+   "Items Per Capita",
+   "Cost Per Capita (GBP)"
+ )
+ 
+dev_nations_data <- data.frame(
+  "Country" = c(
+    "England", 
+    "Wales", 
+    "Scotland", 
+    "Northern Ireland"
+    ),
+  "TOTAL_ITEMS" = c(
+    add_anl_1 %>%
+      filter(
+        `Financial Year` == max_data_fy_minus_1
+      ) %>%
+      select(`Total Items`) %>%
+      pull(),
+    ref_data$wales_pca %>%
+      select(TOTAL_ITEMS) %>%
+      pull(),
+    ref_data$scot_pca %>%
+      select(TOTAL_ITEMS) %>%
+      pull(),
+    ref_data$ni_pca %>%
+      select(TOTAL_ITEMS) %>%
+      pull()
+    ),
+  "TOTAL_COSTS" = c(
+    add_anl_1 %>%
+      filter(
+        `Financial Year` == max_data_fy_minus_1
+      ) %>%
+      select(`Total Cost (GBP)`) %>%
+      pull(),
+    ref_data$wales_pca %>%
+      select(TOTAL_COST) %>%
+      pull(),
+    ref_data$scot_pca %>%
+      select(TOTAL_COST) %>%
+      pull(),
+    ref_data$ni_pca %>%
+      select(TOTAL_COST) %>%
+      pull()
+    ),
+  "POP" = c(
+    ref_data$national_pop %>%
+      filter(YEAR == max(YEAR)) %>%
+      select(ENPOP) %>%
+      pull(),
+    ref_data$wales_pop %>%
+      filter(YEAR == max(YEAR)) %>%
+      select(WAPOP) %>%
+      pull(),
+    ref_data$scotland_pop %>%
+      filter(YEAR == max(YEAR)) %>%
+      select(SCPOP) %>%
+      pull(),
+    ref_data$ni_pop %>%
+      filter(YEAR == max(YEAR)) %>%
+      select(NIPOP) %>%
+      pull()
+    )
+) %>%
+  mutate(
+    ITEMS_PER_CAPITA = round(TOTAL_ITEMS/POP,1),
+    COSTS_PER_CAPITA = round(TOTAL_COSTS/POP,2)
+  )
+
+# 16. disconnect DWH session ------
+
+DBI::dbDisconnect(con)
+
+# 17. export markdown as html and .docx ------
+
+
+rmarkdown::render("pca-narrative-markdown.Rmd",
+                  output_format = "html_document",
+                  output_file = "outputs/pca_summary_narrative_2021_22_v001.html")
+
+rmarkdown::render("pca-narrative-markdown.Rmd",
+                  output_format = "word_document",
+                  output_file = "outputs/pca_summary_narrative_2021_22_v001.docx")
+
+end_time <- Sys.time()
+end_time - start_time
