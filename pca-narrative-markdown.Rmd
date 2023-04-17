@@ -27,10 +27,13 @@ output:
 
 <style type="text/css">
 
-body, td {
-   font-size: 16px;
-   font-family: sans-serif;
-}
+body, td { font-size: 16px; font-family: sans-serif; } 
+
+.list-group-item.active { background-color: #005EB8!important; border-color: #005EB8!important; } 
+
+a { color: #005EB8!important; } 
+
+.tocify { border-radius: 0px!important; }
 
 * {
    font-family: Arial;
@@ -53,9 +56,24 @@ knitr::opts_chunk$set(echo = FALSE,
 
 # England 2021/22 {.toc-ignore}
 
-published 9 June 2022
+Published 9 June 2022
+
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-12} 
+`r infoBox_border(header = "Changes to these statistics", text = paste0("CHANGES HERE. We are interested in any feedback about the publication or these changes, which you can send by using our ", htmltools::HTML("<a href='https://online1.snapsurveys.com/Official_Statistics_Feedback'>Official Statistics feedback survey</a>"),"."), width = "100%")` 
+::: 
+::::
 
 ## Key findings
+
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-6} 
+`r infoBox_no_border(header = "", text = "test", width = "100%")` 
+::: 
+:::{.col-md-6} 
+`r infoBox_no_border(header = "", text = "test", width = "100%")` 
+:::
+::::
 
 * The cost of prescription items dispensed in the community in England was £9.69 billion, a 0.87% increase of £83.7 million from £9.61 billion in 2020/21.
 

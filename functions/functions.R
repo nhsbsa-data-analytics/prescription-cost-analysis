@@ -56,7 +56,6 @@ infoBox_no_border <- function(
     "<div class='infobox_no_border',
     style = 'background-color: ",backgroundColour,
     "!important;padding: 10px;
-    margin-bottom: 20px;
     width: ",width,";
     display: inline-block;
     vertical-align: top;

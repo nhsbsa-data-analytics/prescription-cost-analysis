@@ -3113,7 +3113,66 @@ dev_nations_data <- data.frame(
   )
 
 #additional analysis - table a3
-add_anl_3 <- top_item_cost(con = con)
+add_anl_3 <- dplyr::tbl(con,
+                       from = dbplyr::in_schema("AML", "PCA_MY_FY_CY_FACT")) %>%
+  dplyr::filter(MONTH_TYPE %in% c("FY")) %>%
+  dplyr::filter(YEAR_DESC != "2013/2014") %>%
+  dplyr::filter(!BNF_CHAPTER %in% c("20","21","22","23")) %>% 
+  dplyr::select(
+    "YEAR_DESC",
+    "CHEMICAL_SUBSTANCE_BNF_DESCR",
+    "BNF_CHEMICAL_SUBSTANCE",
+    "ITEM_COUNT"
+  ) %>%
+  dplyr::group_by(YEAR_DESC,
+                  CHEMICAL_SUBSTANCE_BNF_DESCR,
+                  BNF_CHEMICAL_SUBSTANCE) %>%
+  dplyr::summarise(
+    TOTAL_ITEMS = sum(ITEM_COUNT, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%	
+  dplyr::group_by(YEAR_DESC) %>%	
+  collect()
+
+add_anl_3 <- add_anl_3 %>%
+  dplyr::mutate(RANK = row_number(desc(TOTAL_ITEMS)), FILTER_YEAR = as.numeric(substr(YEAR_DESC,1,4))) %>% 
+  dplyr::ungroup()	  %>%
+  dplyr::filter(
+    FILTER_YEAR == min(FILTER_YEAR, na.rm = TRUE) |
+      FILTER_YEAR == max(FILTER_YEAR, na.rm = TRUE) |
+      FILTER_YEAR == max(FILTER_YEAR, na.rm = TRUE) - 1
+  ) %>%
+  dplyr::select(-FILTER_YEAR) 
+
+
+#pull data from warehouse
+data <- add_anl_3 %>%
+  collect %>%
+  arrange(YEAR_DESC)
+
+#build column names based on max year
+filter_col <- sym(paste0("RANK_",max(data$YEAR_DESC)))
+mutate_col <- sym(paste0("TOTAL_ITEMS_",max(data$YEAR_DESC)))
+select_col <- paste0(max(data$YEAR_DESC),"_")
+#manipulate data as needed	
+add_anl_3 <- data %>%
+  tidyr::pivot_wider(
+    names_from = YEAR_DESC, 
+    values_from = c(TOTAL_ITEMS,RANK)
+  ) %>% 
+  dplyr::slice_max(desc(!!filter_col), n = 20) %>%
+  dplyr::mutate(
+    dplyr::across(
+      starts_with("TOTAL_ITEMS"),
+      .fns = ~!!mutate_col - .x,
+      .names = "{.col}_DIFF"),
+    dplyr::across(
+      matches("TOTAL_ITEMS.*/{1}\\d{4}$"),
+      .fns = ~ (!!mutate_col - .x) / .x * 100,
+      .names = "{.col}_CHANGE"
+    )
+  )%>%
+  dplyr::select(-contains(select_col))
 names(add_anl_3) <- c(
   "BNF Chemical Substance Name",
   "BNF Chemical Substance Code",
@@ -3129,7 +3188,66 @@ names(add_anl_3) <- c(
   paste0("Change in Items ", max_data_fy_minus_1 , " to ", max_data_fy, " (%)")
 )
 
-add_anl_2 <- top_drug_cost(con = con)
+raw_data <- dplyr::tbl(con,
+                       from = dbplyr::in_schema("AML", "PCA_MY_FY_CY_FACT")) %>%
+  dplyr::filter(MONTH_TYPE %in% c("FY")) %>%
+  dplyr::filter(YEAR_DESC != "2013/2014") %>%
+  dplyr::filter(!BNF_CHAPTER %in% c("20","21","22","23")) %>% 
+  dplyr::select(
+    "YEAR_DESC",
+    "CHEMICAL_SUBSTANCE_BNF_DESCR",
+    "BNF_CHEMICAL_SUBSTANCE",
+    "ITEM_PAY_DR_NIC"
+  ) %>%
+  dplyr::group_by(YEAR_DESC,
+                  CHEMICAL_SUBSTANCE_BNF_DESCR,
+                  BNF_CHEMICAL_SUBSTANCE) %>%
+  dplyr::summarise(
+    TOTAL_NIC = sum(ITEM_PAY_DR_NIC) / 100
+  ) %>%		
+  dplyr::ungroup()   %>%	
+  dplyr::group_by(YEAR_DESC)   %>%	
+  collect()
+
+raw_data <- raw_data %>%
+  dplyr::mutate(RANK= row_number(desc(TOTAL_NIC)),FILTER_YEAR = as.numeric(substr(YEAR_DESC,1,4))) %>% 
+  dplyr::ungroup()	  %>%
+  dplyr::filter(
+    FILTER_YEAR == min(FILTER_YEAR, na.rm = TRUE) |
+      FILTER_YEAR == max(FILTER_YEAR, na.rm = TRUE) |
+      FILTER_YEAR == max(FILTER_YEAR, na.rm = TRUE) - 1
+  ) %>%
+  dplyr::select(-FILTER_YEAR) 
+
+
+#pull data from warehouse
+data <- raw_data %>%
+  arrange(YEAR_DESC)
+
+#build column names based on max year
+filter_col <- sym(paste0("RANK_",max(data$YEAR_DESC)))
+mutate_col <- sym(paste0("TOTAL_NIC_",max(data$YEAR_DESC)))
+select_col <- paste0(max(data$YEAR_DESC),"_")
+#manipulate data as needed	
+add_anl_2 <- data %>%
+  tidyr::pivot_wider(
+    names_from = YEAR_DESC, 
+    values_from = c(TOTAL_NIC,RANK)
+  ) %>% 
+  dplyr::slice_max(desc(!!filter_col), n = 20) %>%
+  dplyr::mutate(
+    dplyr::across(
+      starts_with("TOTAL_NIC"),
+      .fns = ~!!mutate_col - .x,
+      .names = "{.col}_DIFF"),
+    dplyr::across(
+      matches("TOTAL_NIC.*/{1}\\d{4}$"),
+      .fns = ~ (!!mutate_col - .x) / .x * 100,
+      .names = "{.col}_CHANGE"
+    )
+  )%>%
+  dplyr::select(-contains(select_col))
+
 names(add_anl_2) <- c(
   "BNF Chemical Substance Name",
   "BNF Chemical Substance Code",
@@ -3312,6 +3430,10 @@ names(add_anl_12) <- c(
 # 16. disconnect DWH session ------
 
 DBI::dbDisconnect(con)
+
+# source functions
+# this is only a temporary step until all functions are built into packages
+source("./functions/functions.R")
 
 # 17. export markdown as html and .docx ------
 
