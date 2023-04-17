@@ -91,15 +91,13 @@ FreeStyle Libre 2 Sensor kit had the largest increase in cost between 2020/21 an
 
 Prescription Cost Analysis (PCA) includes information about the costs and volumes of prescription items that have been dispensed in England.
 
-We consulted on the content and methodology used in this publication during Winter 2020/21. As an outcome of this consultation we made changes to the methodology used in the 2020/21 release. You can see more information on these changes in the [Background Information and Methodology note](https://www.nhsbsa.nhs.uk/sites/default/files/2022-06/pca_2022_background_information_methodology_v001.odt) that accompanies this release. We will communicate any further changes ahead of time to users.
+These statistics cover prescription items that were prescribed in England, Scotland, Wales, Northern Ireland, and the Channel Islands that were subsequently dispensed in the community in England and submitted to the NHSBSA for reimbursement. When a prescription is 'dispensed in the community', it means that is was dispensed at a pharmacy, by and applicance contractor, dispensing doctor, or as a personally administered item. However, if a prescription item has been prescribed in England but dispensed elsewhere in the United Kingdom, it would not be included in these statistics.
 
 This publication is a National Statistic release. National Statistics status means that PCA meets the highest standards of trustworthiness, quality, and public value and complies with all aspects of the [Code of Practice for Statistics](https://code.statisticsauthority.gov.uk/).
 
 The designation of this publication as a National Statistic was confirmed in May 2021 following an assessment by the Office for Statistics Regulation (OSR). You can read more about this confirmation and the assessment of these statistics on the [OSR website](https://osr.statisticsauthority.gov.uk/correspondence/ed-humpherson-to-matthew-wilson-confirmation-of-national-statistics-designation-for-prescription-cost-analysis-england-statistics/).
 
 ### 1.2. Definitions {.toc-ignore}
-
-These statistics describe prescription items that were prescribed in England, Scotland, Wales, Northern Ireland, and the Channel Islands that were subsequently dispensed in the community in England and submitted to the NHSBSA for reimbursement. 'Dispensed in the community' means a prescription was dispensed in a pharmacy, by an appliance contractor, dispensing doctor, or as a personally administered item. If a prescription item has been prescribed in England but has been dispensed elsewhere in the United Kingdom it will not be included in these statistics.
 
 Throughout this publication the term ‘item’, short for ‘prescription item’, refers to a single instance of a drug that is listed as a separate entry on a prescription form. For example, Paracetamol 500mg tablets x28 would be listed as one item, as would Ibuprofen 200mg tablets x56.
 
