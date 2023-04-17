@@ -68,20 +68,20 @@ Published 9 June 2022
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "test", width = "100%")` 
+`r infoBox_no_border(header = "", text = "Prescription items dispensed in the community in England cost almost £10 billion.", width = "100%")` 
 ::: 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "test", width = "100%")` 
+`r infoBox_no_border(header = "", text = "1.14 billion items were dispensed in the community in England.", width = "100%")` 
 :::
 ::::
 
-* The cost of prescription items dispensed in the community in England was £9.69 billion, a 0.87% increase of £83.7 million from £9.61 billion in 2020/21.
+The cost of prescription items dispensed in the community in England was £9.7 billion, a 0.9% increase from £9.6 billion in 2020/21.
 
-* The number of prescription items dispensed in the community in England was 1.14 billion, a 2.58% increase of 28.7 million items from 1.11 billion in 2020/21.
+The number of prescription items dispensed in the community in England was 1.14 billion, a 2.6% increase from 1.11 billion in 2020/21.
 
-* Atorvastatin was the most dispensed drug in England in 2021/22 with 53.4 million items, while Apixaban was the drug with the highest cost of £401 million.
+The most dispensed drug in England in 2021/22 was Atorvastatin, with 53.4 million items, while Apixaban was the drug with the highest costs of £401 million.
 
-* FreeStyle Libre 2 Sensor kit was the presentation with the largest absolute increase in cost between 2020/21 and 2021/22 of £69.8 million, from £2.84 million to £72.6 million.
+FreeStyle Libre 2 Sensor kit had the largest increase in cost between 2020/21 and 2021/22 in England, with an absolute increase of £69.8 million.
 
 ---
 
