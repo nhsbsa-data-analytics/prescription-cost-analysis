@@ -196,7 +196,19 @@ chart
 
 Source: [Summary Tables - Prescription Cost Analysis - National](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_summary_tables_2021_22_v001.xlsx)
 
-There were 1.14 billion prescription items dispensed in England in 2021/22. This was a 2.58% increase of 28.7 million from 1.11 billion items in the previous year and a 6.37% increase of 68.2 million from 1.07 billion items in 2014/15.
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "1.14 billion items were dispensed in the community in England.", width = "100%")` 
+::: 
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "2.6% increase in items from 2020/21 to 2021/22.", width = "100%")` 
+:::
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "Items dispensed continue to trend upwards.", width = "100%")` 
+:::
+::::
+
+In England, there were 1.14 billion items dispensed in 2021/22, which is 2.6% more than the previous year's 1.11 billion items. Compared to 2014/15, the number of items has increased by 6.4%.
 
 ### `r paste0("Figure 3: Distribution of items dispensed in England amongst BNF chapters ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
