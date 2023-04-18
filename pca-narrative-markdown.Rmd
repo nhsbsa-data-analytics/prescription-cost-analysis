@@ -253,10 +253,10 @@ Source: [Summary Tables - Prescription Cost Analysis - Chapter](https://nhsbsa-o
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "BNF chapter 02 - Cardiovascular System accounted for 29% of all items dispensed.", text = "", width = "100%")` 
+`r infoBox_no_border(header = "", text = "BNF chapter 02 - Cardiovascular System accounted for 29% of all items dispensed.", width = "100%")` 
 ::: 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "BNF chapter 04 - Central Nervous System accounted for 20% of all items dispensed.", text = "", width = "100%")` 
+`r infoBox_no_border(header = "", text = "BNF chapter 04 - Central Nervous System accounted for 20% of all items dispensed.", width = "100%")` 
 :::
 :::{.col-md-4} 
 `r infoBox_no_border(header = "", text = "BNF chapter 06 - Endocrine System accounted for 11% of all items dispensed.", width = "100%")` 
@@ -307,9 +307,21 @@ chart
 
 Source: [Summary Tables - Prescription Cost Analysis - Chapter](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_summary_tables_2021_22_v001.xlsx)
 
-BNF chapter 02 - Cardiovascular System accounted for the largest proportion of costs in 2021/22, £1.62 billion, equal to 16.7% of all costs. This was followed by chapter 06 - Endocrine System with £1.56 billion and 16.1% of costs, and chapter 04 - Central Nervous System with £1.55 billion and 16.0% of the total cost. 
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "BNF chapter 02 - Cardiovascular System accounted for 17% of total costs.", width = "100%")` 
+::: 
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "BNF chapter 06 - Endocrine System accounted for 16% of total costs."", width = "100%")` 
+:::
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "BNF chapter 04 - Central Nervous System accounted for 16% of total costs."", width = "100%")` 
+:::
+::::
 
-The top three BNF chapters by both costs and items were the same in 2021/22. However the costs have a smaller spread with the top chapter having 64.4% more items than the third placed chapter but only 4.32% higher costs.
+In 2021/22, the BNF chapter on the Cardiovascular System had the highest costs, totalling £1.62 billion, which was equal to 16.7% of all costs. The Endocrine System chapter followed with costs of £1.56 billion, representing 16.1% of costs. The Cental Nervous System chapter had costs of £1.55 billion, 16.0% of the total costs.
+
+The top three BNF chapters by both costs and items were the same in 2021/22. However, there was a smaller difference in costs between chapters. The top chapter had only 4.32% higher costs than the third placed chapter, despite have 64.4% more items.
 
 ### `r paste0("Figure 5: Proportion of items prescribed generically and proportion of costs excluding appliances England ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
