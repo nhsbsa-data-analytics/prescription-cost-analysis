@@ -212,9 +212,12 @@ In England, there were 1.14 billion items dispensed in 2021/22, which is 2.6% mo
 
 ### `r paste0("Figure 3: Distribution of items dispensed in England amongst BNF chapters ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
-These statistics use the therapeutic classifications defined in the BNF to group medicines together based on their primary therapeutic indication. The NHSBSA uses and maintains the classification system of the BNF implemented prior to the release of edition 70, including the six pseudo BNF chapters (18 to 23) created by NHS Prescription Services used to classify products that fall outside of chapters 1 to 15. Most of the presentations held in these pseudo chapters are dressings, appliances, and medical devices.
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-12} 
+`r infoBox_border(header = "", text = paste0('These statistics use a system called the British National Formulary (BNF) to group medicines togther based on their primary theraputic indication. The BNF has multiple levels, starting with the largest grouping called chapters, follwed by sections, paragraphs, sub-paragraphs, chemical substances, products, and individual presentations.<br>The NHS Business Services Authority (NHSBSA) uses the BNF classification system implemented prior to the release of edition 70, which includes 6 additional chapters (18 to 23) created by NHS Prescription Services. These chapters are used to classify products that fall outside the chapters 1 to 15, and mainly include dressing, appliances and medical devices.<br>However, presentations in chapters 20 to 23 do not have assigned BNF paragraphs, sub-paragraphs, chemical substances, or products.'), width = "100%")` 
+::: 
+::::
 
-The BNF has multiple levels, in descending order from the largest grouping to smallest they are chapter, section, paragraph, sub-paragraph, chemical substance, product, and individual presentation. Presentations in chapters 20 to 23 do not have assigned BNF paragraphs, sub-paragraphs, chemical substances, or products.
 
 ```{r bnf_chapters_items, out.width = "100%"}
 
@@ -248,7 +251,19 @@ chart
 
 Source: [Summary Tables - Prescription Cost Analysis - Chapter](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_summary_tables_2021_22_v001.xlsx)
 
-BNF chapter 02 - Cardiovascular System had 334 million prescription items dispensed, the largest proportion dispensed in England in 2021/22 accounting for 29.3% of all items. This was followed by chapter 04 - Central Nervous System with 224 million and 19.6% of items, and chapter 06 - Endocrine System with 119 million and 10.5% of items.
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-4} 
+`r infoBox_no_border(header = "BNF chapter 02 - Cardiovascular System accounted for 29% of all items dispensed.", text = "", width = "100%")` 
+::: 
+:::{.col-md-4} 
+`r infoBox_no_border(header = "BNF chapter 04 - Central Nervous System accounted for 20% of all items dispensed.", text = "", width = "100%")` 
+:::
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "BNF chapter 06 - Endocrine System accounted for 11% of all items dispensed.", width = "100%")` 
+:::
+::::
+
+In 2021/22, the chapter on the Cardiovascular System in the BNF had the highest number of prescription items dispensed in England, with a total of 334 million items, accounting for 29.3% of all items dispensed. The Central Nevous System chapter followed with 224 million items, representiing 19.6% of items. The Endocrine System chapter had 119 million items, accounting for 10.5% of items.
 
 ### `r paste0("Figure 4: Distribution of cost of items dispensed in England amongst BNF chapters ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
