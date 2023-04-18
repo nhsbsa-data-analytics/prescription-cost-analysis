@@ -99,13 +99,35 @@ The designation of this publication as a National Statistic was confirmed in May
 
 ### 1.2. Definitions {.toc-ignore}
 
-Throughout this publication the term ‘item’, short for ‘prescription item’, refers to a single instance of a drug that is listed as a separate entry on a prescription form. For example, Paracetamol 500mg tablets x28 would be listed as one item, as would Ibuprofen 200mg tablets x56.
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-12} 
+`r infoBox_border(header = "Item", text = "A single unit of medication listed seperately on a prescription form. In this publication, an example of an item would be Paracetemol 500mg x28.", width = "100%")` 
+::: 
+::::
 
-There are many costs incurred when a dispensing contractor fulfils a prescription. The term cost refers to the basic price of the item and quantity prescribed that is reimbursed back to the contractor. This is sometimes called the ‘Net Ingredient Cost’ (NIC).
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-12} 
+`r infoBox_border("NIC", text = "The Net Ingredient Cost (NIC) is the basic price of the medication and the quantity prescribed. It does not include other fees incurred by dispensing contractors, such as controlled drug fees or the single activity fee. The basic price is determined by the [Drug Tariff](https://www.nhsbsa.nhs.uk/pharmacies-gp-practices-and-appliance-contractors/drug-tariff) or by the manufacturer, wholesaler, or supplier of the product.", width = "100%")`
+::: 
+::::
 
-These statistics use the therapeutic classifications defined in the British National Formulary (BNF) to group medicines together based on their primary therapeutic indication. The NHSBSA uses and maintains the classification system of the BNF implemented prior to the release of edition 70, including the six pseudo BNF chapters (18 to 23) created by NHS Prescription Services used to classify products that fall outside of chapters 1 to 15.
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-12} 
+`r mumhquarterly::infoBox_border("Classification", text = "This publication uses the British National Formulary (BNF), which lists medicines used in the UK and classifies them according to their primary therapeutic use. Medication may also be prescribed for other purposes beyond their intended use. For example, certain antidepressants may be recommended to individuals experiencing chronic pain. The NHSBSA does not capture the clinical indication of a prescription during processing.", width = "100%")`
+::: 
+::::
 
-Generic prescribing describes the use in prescribing of a non-proprietary title for a pharmaceutical preparation. This allows for any suitable drug, rather than a particular brand of drug, to be dispensed. This can lead to cost savings because cheaper alternatives can be prescribed. Branded prescribing refers to when a medicine is prescribed by brand name.
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-12} 
+`r mumhquarterly::infoBox_border("Generic prescribing", text = "This is when a drug is prescribed using its non-proprietory name instead of a specific brand name. This allows for any suitable drug that meets the same standards as the brand name drug to be dispensed, which can result in cost savings.", width = "100%")`
+::: 
+::::
+
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-12} 
+`r mumhquarterly::infoBox_border("Branded prescribing", text = "This is when a drug is prescribed using a specific brand name.", width = "100%")`
+::: 
+::::
 
 ---
 
