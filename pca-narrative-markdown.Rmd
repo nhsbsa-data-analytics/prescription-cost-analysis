@@ -312,10 +312,10 @@ Source: [Summary Tables - Prescription Cost Analysis - Chapter](https://nhsbsa-o
 `r infoBox_no_border(header = "", text = "BNF chapter 02 - Cardiovascular System accounted for 17% of total costs.", width = "100%")` 
 ::: 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "BNF chapter 06 - Endocrine System accounted for 16% of total costs."", width = "100%")` 
+`r infoBox_no_border(header = "", text = "BNF chapter 06 - Endocrine System accounted for 16% of total costs.", width = "100%")` 
 :::
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "BNF chapter 04 - Central Nervous System accounted for 16% of total costs."", width = "100%")` 
+`r infoBox_no_border(header = "", text = "BNF chapter 04 - Central Nervous System accounted for 16% of total costs.", width = "100%")` 
 :::
 ::::
 
@@ -361,9 +361,21 @@ add_anl_5 %>%
 
 Source: [Additional Tables - Prescription Cost Analysis - table A5](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
 
-In 2021/22, 84.3% of prescription items were prescribed generically. This was a decrease of 0.50 percentage points from 2020/21, and a 0.90 percentage point decrease from highest rate in the period during 2014/15. The rate of generic prescribing has remained consistent during the period, showing 1.1 percentage points of variation between 2014/15 and 2021/22. These figures exclude preparation class 4 products - appliances.
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "84% of prescription items prescibed generically in 2021/22.", width = "100%")` 
+::: 
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "Rate of generic prescrbing has remained consistent between 2014/15 and 2021/22.", width = "100%")` 
+:::
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "Generic prescribing accounted for 61% of costs in 2021/22.", width = "100%")` 
+:::
+::::
 
-In 2021/22, generic prescribing accounted for 60.6% of the total cost of reimbursement, the lowest rate of the reporting period. This was a 2.50 percentage point decrease from 2020/21, and a 7.40 percentage point decrease from a high of 68.0% in 2014/15. The proportion of costs that generic prescribing accounts for have shown greater variation of 7.40 percentage points over the period. The proportion of costs for generic prescribing increased for 3 consecutive years between 2018/19 and 2020/21.
+In 2021/22, 84.3% of prescription items were prescribed generically, which is slightly lower then the previous year and the highest rate which was recorded in 2014/15. However, the rate of generic prescribing has remained consistent over the period. There has been a 1.1 percentage point variation between 2014/15 and 2021/22. Note that these figures exclude preparation class 4 products - appliances.
+
+Regarding the cost of reimbursement, in 2021/22, generic prescribing accounted for 60.6% of the total cost. This is the lowest rate in the reporting period. This is a decrease of 2.50 percentage points from the previous year. The proportion of costs attributed to generic prescribing has shown greater variation, with a range of 7.40 percentage points over the period. The proportion of costs for generic prescrbing had increased for three consecutive years from 2018/19 to 2020/21.
 
 ### `r paste0("Figure 6: The 10 most dispensed chemical substances by total items in ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
