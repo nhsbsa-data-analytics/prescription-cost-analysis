@@ -379,7 +379,11 @@ Regarding the cost of reimbursement, in 2021/22, generic prescribing accounted f
 
 ### `r paste0("Figure 6: The 10 most dispensed chemical substances by total items in ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
-A chemical substance is the standard registered name for the active constituent of that medicine, for example Omeprazole. A chemical substance groups together individual presentations that share this active constituent. For example, Omeprazole 20mg gastro-resistant capsules and Omeprazole 40mg gastro-resistant capsules. Products in BNF chapters 20 to 23 are not assigned a chemical substance as these are dressings and appliances.
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-12} 
+`r infoBox_border(header = "A chemical substance is the registered name for the active ingredient in a medicine, such as Omeparzole. Different presentations of the same active ingredient are grouped together under the chemical substance name. For instance, Omeprazole 20mg and Omeprazole 40mg capsules both contain the same active ingredient. Products like dressing and appliances in BNF chapters 20 to 23 do not have a chemical substance assigned to them", text = "", width = "100%")` 
+::: 
+::::
 
 ```{r top_10_items, out.width = "100%"}
 
@@ -408,7 +412,16 @@ add_anl_3 %>%
 
 Source: [Additional Tables - Prescription Cost Analysis - A3](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
 
-Atorvastatin was the most dispensed chemical substance in 2021/22 with 53.4 million items. [Atorvastatin](https://www.nhs.uk/medicines/atorvastatin/) is a type of statin that is used to lower cholesterol and to prevent heart disease. Four of the top 10 dispensed chemical substances belong to BNF chapter 02 - Cardiovascular System (Atorvastatin, Amlodipine, Ramipril, and Bisoprolol fumarate).
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-6} 
+`r infoBox_no_border(header = "", text = "Atorvastatin was the most dispensed chemical susbtance with 53.4 million items.", width = "100%")` 
+::: 
+:::{.col-md-6} 
+`r infoBox_no_border(header = "", text = "Fout of the top ten chemical substances by itesm belong to BNF chapter 02 - Cardiovascular System.", width = "100%")` 
+:::
+::::
+
+[Atorvastatin](https://www.nhs.uk/medicines/atorvastatin/) was the most dispensed chemical substance in 2021/22, with 53.4 million items. This medication is a type of statin that is commonly used to lower cholesterol and help prevent heart disease. Four of the top ten dispensed chemical substances belong to BNF chapter 02 - Cardiovascular System. These susstances are Atorvastatin, Amlodipine, Ramipril, and Bisoprolol fumarate.
 
 ### `r paste0("Figure 7: The 10 most dispensed chemical substances by cost in ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
