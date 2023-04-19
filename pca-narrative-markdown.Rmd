@@ -417,7 +417,7 @@ Source: [Additional Tables - Prescription Cost Analysis - A3](https://nhsbsa-ope
 `r infoBox_no_border(header = "", text = "Atorvastatin was the most dispensed chemical susbtance with 53.4 million items.", width = "100%")` 
 ::: 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "Fout of the top ten chemical substances by itesm belong to BNF chapter 02 - Cardiovascular System.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "Four of the top ten chemical substances by items belong to BNF chapter 02 - Cardiovascular System.", width = "100%")` 
 :::
 ::::
 
@@ -453,7 +453,18 @@ add_anl_2 %>%
 
 Source: [Additional Tables - Prescription Cost Analysis - A2](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
 
-In 2021/22, Apixaban had the highest cost for items dispensed in the community in England of £401 million. [Apixaban](https://www.nhs.uk/medicines/apixaban/) is an anticoagulant used to treat people who have had a health problem caused by a blood clot, or to prevent future blood clots. The top 10 chemical substances by cost feature 3 drugs used to treat respiratory illnesses - Beclometasone dipropionate, Fluticasone propionate (Inhalation), and Budesonide.
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-6} 
+`r infoBox_no_border(header = "", text = "Apixiban had the highest costs of £401 million.", width = "100%")` 
+::: 
+:::{.col-md-6} 
+`r infoBox_no_border(header = "", text = "Three of the top ten chemical substances by costs are used to treat repiratory illnesses.", width = "100%")` 
+:::
+::::
+
+Apixiban had the highest cost for items dispensed in the community in England, with a total cost of £401 million. [Apixaban](https://www.nhs.uk/medicines/apixaban/) is an anticoagulant that is primarily used to treat individuals who have had a health problem caused by a blood clot or to prevent future blood clots.
+
+The top ten chemical substances by cost included three drugs that are commonly used to treat respiratory illnesses. These are Beclometasone dipropionate, Fluticasone propionate (Inhalation), and Budesonide.
 
 ### `r paste0("Figure ",8,": Dispensed items per capita by Sustainability and Transformation Partnership (STP) ",year_tidy)`
 
