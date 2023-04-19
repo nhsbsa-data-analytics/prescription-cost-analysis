@@ -214,7 +214,7 @@ In England, there were 1.14 billion items dispensed in 2021/22, which is 2.6% mo
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
-`r infoBox_border(header = "", text = paste0('These statistics use a system called the British National Formulary (BNF) to group medicines togther based on their primary theraputic indication. The BNF has multiple levels, starting with the largest grouping called chapters, follwed by sections, paragraphs, sub-paragraphs, chemical substances, products, and individual presentations.<br>The NHS Business Services Authority (NHSBSA) uses the BNF classification system implemented prior to the release of edition 70, which includes 6 additional chapters (18 to 23) created by NHS Prescription Services. These chapters are used to classify products that fall outside the chapters 1 to 15, and mainly include dressing, appliances and medical devices.<br>However, presentations in chapters 20 to 23 do not have assigned BNF paragraphs, sub-paragraphs, chemical substances, or products.'), width = "100%")` 
+`r infoBox_border(header = "", text = "These statistics use a system called the British National Formulary (BNF) to group medicines togther based on their primary theraputic indication. The BNF has multiple levels, starting with the largest grouping called chapters, follwed by sections, paragraphs, sub-paragraphs, chemical substances, products, and individual presentations.<br><br>The NHS Business Services Authority (NHSBSA) uses the BNF classification system implemented prior to the release of edition 70, which includes 6 additional chapters (18 to 23) created by NHS Prescription Services. These chapters are used to classify products that fall outside the chapters 1 to 15, and mainly include dressing, appliances and medical devices.<br><br>However, presentations in chapters 20 to 23 do not have assigned BNF paragraphs, sub-paragraphs, chemical substances, or products.", width = "100%")` 
 ::: 
 ::::
 
@@ -381,7 +381,7 @@ Regarding the cost of reimbursement, in 2021/22, generic prescribing accounted f
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
-`r infoBox_border(header = "A chemical substance is the registered name for the active ingredient in a medicine, such as Omeparzole. Different presentations of the same active ingredient are grouped together under the chemical substance name. For instance, Omeprazole 20mg and Omeprazole 40mg capsules both contain the same active ingredient. Products like dressing and appliances in BNF chapters 20 to 23 do not have a chemical substance assigned to them", text = "", width = "100%")` 
+`r infoBox_border(header = "", text = "A chemical substance is the registered name for the active ingredient in a medicine, such as Omeparzole. Different presentations of the same active ingredient are grouped together under the chemical substance name. For instance, Omeprazole 20mg and Omeprazole 40mg capsules both contain the same active ingredient. Products like dressing and appliances in BNF chapters 20 to 23 do not have a chemical substance assigned to them", width = "100%")` 
 ::: 
 ::::
 
@@ -468,9 +468,11 @@ The top ten chemical substances by cost included three drugs that are commonly u
 
 ### `r paste0("Figure ",8,": Dispensed items per capita by Sustainability and Transformation Partnership (STP) ",year_tidy)`
 
-Sustainability and transformation partnerships (STP) are health geographies that are formed by NHS organisations, local councils, and others to set out proposals to improve health and care for the local population. In these statistics the STP recorded here is that of the dispensing contractor as listed in NHSBSA administrative records and not the prescribing organisation of an item.
-
-Regional variation in prescribing and dispensing trends can be influenced by a variety of factors, such as population demographics, prevalence of chronic disease, and the presence of specialist dispensing contractors within the geography. For more information on STPs and how we've used them in these statistics please see the [Background Information and Methodology note](https://www.nhsbsa.nhs.uk/sites/default/files/2022-06/pca_2022_background_information_methodology_v001.odt) that accompanies this release.
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-12} 
+`r infoBox_border(header = "", text = "Sustainability and tranformation partnerships (STP) are collaborations between NHS organisations, local councils, and other groups aimed at improving health and care for the local population. These collaborations are based on geographic regions.<br><br>However, it's important to note that the STP listed in these statistics refers to the dispensing contractor as listed in the NHSBSA admistrative records, rather than the prescribing organisation of an item.<br><br>Prescribing and dispensing trends can vary regionally, and there are many factors that can influence these decisions. Some of the factors that can affect prescribing and dispensing trends include population demographics, prevalence of chronic disease, and the presence of specialist dispensing contractors within a given area.<br><br>If you're interested in learning more about STPs and how they were used in these statistics, please refer to the [Background Information and Methodology note](https://www.nhsbsa.nhs.uk/sites/default/files/2022-06/pca_2022_background_information_methodology_v001.odt) that accompanies this release.", width = "100%")` 
+::: 
+::::
 
 ```{r items_per_pop, out.width = "100%"}
   # df <- stp_data_fy %>%
@@ -518,10 +520,21 @@ Regional variation in prescribing and dispensing trends can be influenced by a v
   # map
     
 ```
+MAP WILL BE HERE BUT VERSION FROM OLD PIPELINE WILL NO LONGER RENDER
 
 Source: [Summary Tables - Prescription Cost Analysis - STP National](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_stp_summary_tables_2021_22_v001.xlsx) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/clinicalcommissioninggroupmidyearpopulationestimates)
 
-The mean number of items dispensed per capita in England was 20.1 in 2021/22. Lincolnshire STP had the highest dispensed items per capita with 28.1 while Surrey Heartlands Health and Care Partnership STP had the lowest with 13.0. 
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "The mean number of items dispensed per capita in England was 20 in 2021/22.", width = "100%")` 
+::: 
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "Lincolnshire STP had the highest dispensed items per capita with 28.", width = "100%")` 
+:::
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "Surrey Heartlands Health and Care Partnership STP had the lowest with 13.0.", width = "100%")` 
+:::
+::::
 
 ### `r paste0("Figure ",9,": Cost per capita (£) by Sustainability and Transformation Partnership (STP) ",year_tidy)`
 
@@ -575,11 +588,31 @@ The mean number of items dispensed per capita in England was 20.1 in 2021/22. Li
 
 Source: [Summary Tables - Prescription Cost Analysis - STP National](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_stp_summary_tables_2021_22_v001.xlsx) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/clinicalcommissioninggroupmidyearpopulationestimates)
 
-The mean cost per capita of prescription items dispensed in England was £171 in 2021/22. Cambridgeshire and Peterborough STP had the highest cost per capita of £355 while Our Healthier South East London STP had the lowest of £114. Cambridgeshire and Peterborough STP offer specialist stoma care, 33.6% of their total costs of £317 million in 2021/22 were in BNF chapter 23 (Stoma Appliances).
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "The mean cost of items dispensed per capita in England was £171 in 2021/22.", width = "100%")` 
+::: 
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "Cambridgeshire and Peterborough STP had the highest cost per capita of £355.", width = "100%")` 
+:::
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "Our Healthier South East London STP had the lowest of £114.", width = "100%")` 
+:::
+::::
+
+It is worth noting that Cambridgeshire and Peterborough STP offer specialist stoma care, 33.6% of their total costs of £317 million in 2021/22 were in BNF chapter 23 (Stoma Appliances).
 
 ### `r paste0("Figure 10: Top 10 presentations by percentage change in unit cost ",paste0(substr(max_data_fy_minus_1,1,5), substr(max_data_fy_minus_1, 8, 9)), " to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-12} 
+`r infoBox_border(header = "", text = "The chart in this section has been limited to presentations with a total cost in 2021/22 greater than £1 million.<br><br>A unit cost for a presentation is calculated by dividing the total cost of items dispensed in the period by the total quantity.", width = "100%")` 
+::: 
+::::
+
 The chart in this section has been limited to presentations with a total cost in 2021/22 greater than £1 million.
+
+A unit cost for a presentation is calculated by dividing the total cost of items dispensed in the period by the total quantity.
 
 ```{r unit_cost, out.width = "100%"}
 
@@ -600,11 +633,22 @@ add_anl_11 %>%
 
 Source: [Additional Tables - Prescription Cost Analysis - A11](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
 
-A unit cost for a presentation is calculated by dividing the total cost of items dispensed in the period by the total quantity. Figure 10 shows the top 10 presentations by percentage increase in unit cost between 2020/21 and 2021/22. Cetirizine 1mg/ml oral solution sugar free increased in unit cost the most in 2021/22 by 604% from 0.79p per unit to 5.53p. The largest increase in actual value of unit cost for the top 10 drugs by percentage change occurred for Donepezil 10mg orodispersible tablets sugar free, from 35p per unit to 231p. 
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-6} 
+`r infoBox_no_border(header = "", text = "Cetirizine 1mg/ml oral solution sugar free increased in unit cost the most in 2021/22 by 604%.", width = "100%")` 
+::: 
+:::{.col-md-6} 
+`r infoBox_no_border(header = "", text = "Donepezil 10mg orodispersible tablets sugar free had the largest increase in actual costs, from 35p per unit to 231p. ", width = "100%")` 
+:::
+::::
 
 ### `r paste0("Figure 11: Top 10 presentations by change in total cost ", paste0(substr(max_data_fy_minus_1,1,5), substr(max_data_fy_minus_1, 8, 9)), " to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
-The chart in this section has been limited to presentations with a total cost in 2021/22 greater than £1 million.
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-12} 
+`r infoBox_border(header = "", text = "The chart in this section has been limited to presentations with a total cost in 2021/22 greater than £1 million.", width = "100%")` 
+::: 
+::::
 
 ```{r abs_cost, out.width = "100%"}
 
@@ -626,19 +670,21 @@ add_anl_12 %>%
 
 Source: [Additional Tables - Prescription Cost Analysis - A12](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
 
-Between 2020/21 and 2021/22 the total costs of FreeStyle Libre 2 Sensor kits increased by £69.8 million, the highest absolute change of all presentations. The FreeStyle Libre 2 Sensor was added to part IX of the drug tariff in November 2020.
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-12} 
+`r infoBox_no_border(header = "", text = "Between 2020/21 and 2021/22 the total costs of FreeStyle Libre 2 Sensor kits increased by £69.8 million, the highest absolute change of all presentations. The FreeStyle Libre 2 Sensor was added to part IX of the drug tariff in November 2020.", width = "100%")` 
+::: 
+::::
 
 ---
 
 ## 3. UK comparisons
 
-Each devolved administration in the UK produces their own Prescription Cost Analysis statistics. There are numerous differences between each country's release including in the way that data measures are collected and classified, the different structures of the health social care systems in each country, and methodological differences. For these reasons, any comparisons made between PCA data produced by the UK nations should be made with caution and in the wider context of the health social care landscape in the UK.
-
-We have chosen some measures that allow high level comparisons to be made between the different devolved authorities. However, please refer to each country's individual publication for further details.
-
-We have used the latest available PCA data from each UK nation to make these comparisons along with the latest mid-year population estimates from the Office for National Statistics (ONS). Therefore these comparisons are based on the financial year 2020/21, and not 2021/22. We have used the 2020 mid-year population estimates - the latest figures available at the time of publication - to calculate any per capita measures. The data used in this section for Wales relates to prescriptions that have been issued by GPs in Wales and subsequently dispensed in Wales or other countries in the UK. No figures for prescriptions only dispsensed in Wales were available at the time of publication.
-
-For more information on the PCA publications of each UK nation and the differences between them, please read the [Background Information and Methodology note](https://www.nhsbsa.nhs.uk/sites/default/files/2022-06/pca_2022_background_information_methodology_v001.odt) released alongside this publication.
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-12} 
+`r infoBox_border(header = "", text = "Prescription Cost Analysis statistics are produced seperately by each UK nation, but there are differences in data collection, healthcare structures, and methodolgy. Therefore, it's important to be cautious when comparing PCA data between different UK nations and to consider the broader context of the UK's health and social care landscape.<br><br>We've selected come measures that enable broad comparisons between the different deveolved authorities, but for more detailed information, please refer to each country's individual publication.<br><br>We based our comparisons on the latest available PCA data and mid-year population estimates from the Office for National Statistics (ONS), for the financail year 2021/22, using 2020 mid-year population estimates to calculate per capita measures. For Wales, the data relates to prescriptions issued by Welsh GPs and dispensed in Wales or other UK countries, as we did not have figures for prescriptions dispensed solely in Wales at the time of publication.<br><br>For more information on the PCA publications of each UK nation and the differences between them, please read the [Background Information and Methodology note](https://www.nhsbsa.nhs.uk/sites/default/files/2022-06/pca_2022_background_information_methodology_v001.odt) released alongside this publication.", width = "100%")` 
+::: 
+::::
 
 ### `r paste0("Figure 12: Items per capita for the UK nations ", max_data_fy_minus_1)`
 
@@ -659,7 +705,17 @@ dev_nations_data %>%
 
 Source: [Additional Tables - Prescription Cost Analysis - A1](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx) | [Public Health Scotland - Dispenser payments and prescription cost analysis](https://beta.isdscotland.org/find-publications-and-data/health-services/pharmacy-and-prescribing/dispenser-payments-and-prescription-cost-analysis/) | [Welsh Government - Prescriptions in Wales](https://gov.wales/prescriptions-wales-april-2019-march-2020) | [HSC Business Services Organisation - General pharmaceutical services and prescribing statistics](http://www.hscbusiness.hscni.net/services/3176.htm) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatestimeseriesdataset)
 
-In 20/21, England dispensed 19.6 items per head of population. This was 0.9 items more than Scotland who had the fewest items dispensed per capita of 18.7, 3.6 fewer than Northern Ireland at 22.0 items, and 6.0 items fewer than Wales who had 25.6 items dispensed per capita.
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "20 items per head of population were dispensed in England in 2020/21.", width = "100%")` 
+::: 
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "This was 1 item more than Scotland who had the fewest items dispensed per capita of 19.", width = "100%")` 
+::: 
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "26 items per head of population were dispensed in Wales in 2020/21.", width = "100%")` 
+::: 
+::::
 
 ### `r paste0("Figure 13: Cost per capita for the UK nations ", max_data_fy_minus_1)`
 
@@ -681,7 +737,14 @@ dev_nations_data %>%
 
 Source: [Additional Tables - Prescription Cost Analysis - A1](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx) | [Public Health Scotland - Dispenser payments and prescription cost analysis](https://beta.isdscotland.org/find-publications-and-data/health-services/pharmacy-and-prescribing/dispenser-payments-and-prescription-cost-analysis/) | [Welsh Government - Prescriptions in Wales](https://gov.wales/prescriptions-wales-april-2019-march-2020) | [HSC Business Services Organisation - General pharmaceutical services and prescribing statistics](http://www.hscbusiness.hscni.net/services/3176.htm) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatestimeseriesdataset)
 
-England had the lowest prescription item cost per head of population in 2020/21 of £170. This was £70 less than Northern Ireland, £35 less than Scotland, and £27 less than Wales.
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-6} 
+`r infoBox_no_border(header = "", text = "England had the lowest prescription item cost per head of population in 2020/21 of £170.", width = "100%")` 
+::: 
+:::{.col-md-6} 
+`r infoBox_no_border(header = "", text = "This was £70 less than Northern Ireland at £240 per capita.", width = "100%")` 
+::: 
+::::
 
 ---
 
@@ -689,17 +752,18 @@ England had the lowest prescription item cost per head of population in 2020/21 
 
 ### 4.1. Monthly PCA data {.toc-ignore}
 
-NHSBSA Information Services also release a [monthly administrative management information dataset](https://www.nhsbsa.nhs.uk/prescription-data/dispensing-data/prescription-cost-analysis-pca-data) for PCA. The monthly data set is produced in line with the same methodology used in these statistics however, it is not an Official Statistic.
+The NHSBSA publishes a [monthly administrative management information dataset](https://www.nhsbsa.nhs.uk/prescription-data/dispensing-data/prescription-cost-analysis-pca-data) for PCA using the same methodology as these statistics however, it is not an Official Statistic.
 
-There is a small difference between the annual National Statistics and the monthly administrative. The geographical structure used in the annual publication is the structure at the 31 March of the given year. For the monthly data the geographical structure used is the one at the end of the given month. In the rare event that a dispensing contractor changes parent organisation during the year this will reflect in the monthly data, and may mean that STP level totals will not match between aggregated monthly data and the annual National Statistics. This will not impact national totals.
+There's a slight difference between the annual National Statistics and the monthly administrative data for PCA. The annual publication uses the geographical structure as of the 31st March for that year, while the monthly data uses the structure at the end of the month. If a dispensing contractor changes parent organisation during the year, this may affect the STP level total in the aggregated monthly data compared to the annual National Statistics, but it won't affect the national totals. However, such cases are rare.
+
 
 ### 4.2. Uses of these statistics {.toc-ignore}
 
-These statistics have a variety of uses including:
+These statistics serve several purposes, including:
 
-* obtaining a national view of costs and volumes for prescriptions dispensed in the community in England across the calendar year
+* providing a national overview of community prescription costs and volumes in England for the calendar year
 
-* analysis of cost and volume trends across various levels of the BNF hierarchy
+* analysing cost and volume trends across different levels of the BNF hierarchy
 
 * allowing public scrutiny of national prescribing habits
 
