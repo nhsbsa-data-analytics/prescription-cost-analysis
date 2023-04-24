@@ -15,7 +15,8 @@ req_pkgs <-
     "highcharter",
     "lubridate",
     "vroom",
-    "tidyverse"
+    "tidyverse",
+    "kableExtra"
   )
 
 # uncomment if package installs are needed

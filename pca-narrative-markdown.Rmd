@@ -68,20 +68,20 @@ Published 9 June 2022
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "Prescription items dispensed in the community in England cost almost £10 billion.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "Prescription items dispensed in the community in England cost £9.69 billion.", width = "100%")` 
 ::: 
 :::{.col-md-6} 
 `r infoBox_no_border(header = "", text = "1.14 billion items were dispensed in the community in England.", width = "100%")` 
 :::
 ::::
 
-The cost of prescription items dispensed in the community in England was £9.7 billion, a 0.9% increase from £9.6 billion in 2020/21.
+The cost of prescription items dispensed in the community in England was £9.69 billion, a 1% increase from £9.61 billion in 2020/21.
 
-The number of prescription items dispensed in the community in England was 1.14 billion, a 2.6% increase from 1.11 billion in 2020/21.
+The number of prescription items dispensed in the community in England was 1.14 billion, a 3% increase from 1.11 billion in 2020/21.
 
-The most dispensed drug in England in 2021/22 was Atorvastatin, with 53.4 million items, while Apixaban was the drug with the highest costs of £401 million.
+The most dispensed drug in England in 2021/22 was Atorvastatin, with 53 million items, while Apixaban was the drug with the highest costs of £400 million.
 
-FreeStyle Libre 2 Sensor kit had the largest increase in cost between 2020/21 and 2021/22 in England, with an absolute increase of £69.8 million.
+FreeStyle Libre 2 Sensor kit had the largest increase in cost between 2020/21 and 2021/22 in England, with an absolute increase of £70 million.
 
 ---
 
@@ -160,17 +160,17 @@ Source: [Summary Tables - Prescription Cost Analysis - National](https://nhsbsa-
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "Prescription items dispensed in the community in England cost almost £10 billion.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "Prescription items dispensed in the community in England cost £9.69 billion.", width = "100%")` 
 ::: 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "0.9% increase in costs from 2020/21 to 2021/22.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "1% increase in costs from 2020/21 to 2021/22.", width = "100%")` 
 :::
 :::{.col-md-4} 
 `r infoBox_no_border(header = "", text = "2021/22 is the third consecutive year that costs have increased.", width = "100%")` 
 :::
 ::::
 
-In England, the cost of prescription items in 2021/22 was £9.7 billion, which is 0.9% more than the previous year's cost of £9.6 billion. Compared to 2014/15, the cost has increased by 8.4% or £746 million. This marks the third year in a row where the cost of items dispensed has increased, after seeing a decrease in the previous three years from 2015/16 to 2018/19.
+In England, the cost of prescription items in 2021/22 was £9.69 billion, which is 1% more than the previous year's cost of £9.61 billion. Compared to 2014/15, the cost has increased by 8% or £750 million. This marks the third year in a row where the cost of items dispensed has increased, after seeing a decrease in the previous three years from 2015/16 to 2018/19.
 
 ### `r paste0("Figure 2: Number of prescription items dispensed in England 2014/15 to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
@@ -201,14 +201,14 @@ Source: [Summary Tables - Prescription Cost Analysis - National](https://nhsbsa-
 `r infoBox_no_border(header = "", text = "1.14 billion items were dispensed in the community in England.", width = "100%")` 
 ::: 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "2.6% increase in items from 2020/21 to 2021/22.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "3% increase in items from 2020/21 to 2021/22.", width = "100%")` 
 :::
 :::{.col-md-4} 
 `r infoBox_no_border(header = "", text = "Items dispensed continue to trend upwards.", width = "100%")` 
 :::
 ::::
 
-In England, there were 1.14 billion items dispensed in 2021/22, which is 2.6% more than the previous year's 1.11 billion items. Compared to 2014/15, the number of items has increased by 6.4%.
+In England, there were 1.14 billion items dispensed in 2021/22, which is 3% more than the previous year's 1.11 billion items. Compared to 2014/15, the number of items has increased by 6%.
 
 ### `r paste0("Figure 3: Distribution of items dispensed in England amongst BNF chapters ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
@@ -263,7 +263,7 @@ Source: [Summary Tables - Prescription Cost Analysis - Chapter](https://nhsbsa-o
 :::
 ::::
 
-In 2021/22, the chapter on the Cardiovascular System in the BNF had the highest number of prescription items dispensed in England, with a total of 334 million items, accounting for 29.3% of all items dispensed. The Central Nevous System chapter followed with 224 million items, representiing 19.6% of items. The Endocrine System chapter had 119 million items, accounting for 10.5% of items.
+In 2021/22, the chapter on the Cardiovascular System in the BNF had the highest number of prescription items dispensed in England, with a total of 330 million items, accounting for 29% of all items dispensed. The Central Nevous System chapter followed with 220 million items, representing 20% of items. The Endocrine System chapter had 120 million items, accounting for 11% of items.
 
 ### `r paste0("Figure 4: Distribution of cost of items dispensed in England amongst BNF chapters ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
@@ -319,9 +319,9 @@ Source: [Summary Tables - Prescription Cost Analysis - Chapter](https://nhsbsa-o
 :::
 ::::
 
-In 2021/22, the BNF chapter on the Cardiovascular System had the highest costs, totalling £1.62 billion, which was equal to 16.7% of all costs. The Endocrine System chapter followed with costs of £1.56 billion, representing 16.1% of costs. The Cental Nervous System chapter had costs of £1.55 billion, 16.0% of the total costs.
+In 2021/22, the BNF chapter on the Cardiovascular System had the highest costs, totaling £1.62 billion, which was equal to 17% of all costs. The Endocrine System chapter followed with costs of £1.56 billion, representing 16% of costs. The Central Nervous System chapter had costs of £1.55 billion, 16% of the total costs.
 
-The top three BNF chapters by both costs and items were the same in 2021/22. However, there was a smaller difference in costs between chapters. The top chapter had only 4.32% higher costs than the third placed chapter, despite have 64.4% more items.
+The top three BNF chapters by both costs and items were the same in 2021/22. However, there was a smaller difference in costs between chapters. The top chapter had only 4% higher costs than the third placed chapter, despite have 64% more items.
 
 ### `r paste0("Figure 5: Proportion of items prescribed generically and proportion of costs excluding appliances England ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
@@ -373,9 +373,9 @@ Source: [Additional Tables - Prescription Cost Analysis - table A5](https://nhsb
 :::
 ::::
 
-In 2021/22, 84.3% of prescription items were prescribed generically, which is slightly lower then the previous year and the highest rate which was recorded in 2014/15. However, the rate of generic prescribing has remained consistent over the period. There has been a 1.1 percentage point variation between 2014/15 and 2021/22. Note that these figures exclude preparation class 4 products - appliances.
+In 2021/22, 84% of prescription items were prescribed generically, which is slightly lower then the previous year and the highest rate which was recorded in 2014/15. However, the rate of generic prescribing has remained consistent over the period. There has been a 1 percentage point variation between 2014/15 and 2021/22. Note that these figures exclude preparation class 4 products - appliances.
 
-Regarding the cost of reimbursement, in 2021/22, generic prescribing accounted for 60.6% of the total cost. This is the lowest rate in the reporting period. This is a decrease of 2.50 percentage points from the previous year. The proportion of costs attributed to generic prescribing has shown greater variation, with a range of 7.40 percentage points over the period. The proportion of costs for generic prescrbing had increased for three consecutive years from 2018/19 to 2020/21.
+Regarding the cost of reimbursement, in 2021/22, generic prescribing accounted for 61% of the total cost. This is the lowest rate in the reporting period. This is a decrease of 3 percentage points from the previous year. The proportion of costs attributed to generic prescribing has shown greater variation, with a range of 7 percentage points over the period. The proportion of costs for generic prescribing had increased for three consecutive years from 2018/19 to 2020/21.
 
 ### `r paste0("Figure 6: The 10 most dispensed chemical substances by total items in ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
@@ -414,14 +414,14 @@ Source: [Additional Tables - Prescription Cost Analysis - A3](https://nhsbsa-ope
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "Atorvastatin was the most dispensed chemical susbtance with 53.4 million items.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "Atorvastatin was the most dispensed chemical susbtance with 53 million items.", width = "100%")` 
 ::: 
 :::{.col-md-6} 
 `r infoBox_no_border(header = "", text = "Four of the top ten chemical substances by items belong to BNF chapter 02 - Cardiovascular System.", width = "100%")` 
 :::
 ::::
 
-[Atorvastatin](https://www.nhs.uk/medicines/atorvastatin/) was the most dispensed chemical substance in 2021/22, with 53.4 million items. This medication is a type of statin that is commonly used to lower cholesterol and help prevent heart disease. Four of the top ten dispensed chemical substances belong to BNF chapter 02 - Cardiovascular System. These susstances are Atorvastatin, Amlodipine, Ramipril, and Bisoprolol fumarate.
+[Atorvastatin](https://www.nhs.uk/medicines/atorvastatin/) was the most dispensed chemical substance in 2021/22, with 53 million items. This medication is a type of statin that is commonly used to lower cholesterol and help prevent heart disease. Four of the top ten dispensed chemical substances belong to BNF chapter 02 - Cardiovascular System. These substances are Atorvastatin, Amlodipine, Ramipril, and Bisoprolol fumarate.
 
 ### `r paste0("Figure 7: The 10 most dispensed chemical substances by cost in ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
@@ -455,14 +455,14 @@ Source: [Additional Tables - Prescription Cost Analysis - A2](https://nhsbsa-ope
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "Apixiban had the highest costs of £401 million.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "Apixiban had the highest costs of £400 million.", width = "100%")` 
 ::: 
 :::{.col-md-6} 
 `r infoBox_no_border(header = "", text = "Three of the top ten chemical substances by costs are used to treat repiratory illnesses.", width = "100%")` 
 :::
 ::::
 
-Apixiban had the highest cost for items dispensed in the community in England, with a total cost of £401 million. [Apixaban](https://www.nhs.uk/medicines/apixaban/) is an anticoagulant that is primarily used to treat individuals who have had a health problem caused by a blood clot or to prevent future blood clots.
+Apixiban had the highest cost for items dispensed in the community in England, with a total cost of £400 million. [Apixaban](https://www.nhs.uk/medicines/apixaban/) is an anticoagulant that is primarily used to treat individuals who have had a health problem caused by a blood clot or to prevent future blood clots.
 
 The top ten chemical substances by cost included three drugs that are commonly used to treat respiratory illnesses. These are Beclometasone dipropionate, Fluticasone propionate (Inhalation), and Budesonide.
 
@@ -532,7 +532,7 @@ Source: [Summary Tables - Prescription Cost Analysis - STP National](https://nhs
 `r infoBox_no_border(header = "", text = "Lincolnshire STP had the highest dispensed items per capita with 28.", width = "100%")` 
 :::
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "Surrey Heartlands Health and Care Partnership STP had the lowest with 13.0.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "Surrey Heartlands Health and Care Partnership STP had the lowest with 13.", width = "100%")` 
 :::
 ::::
 
@@ -600,7 +600,7 @@ Source: [Summary Tables - Prescription Cost Analysis - STP National](https://nhs
 :::
 ::::
 
-It is worth noting that Cambridgeshire and Peterborough STP offer specialist stoma care, 33.6% of their total costs of £317 million in 2021/22 were in BNF chapter 23 (Stoma Appliances).
+It is worth noting that Cambridgeshire and Peterborough STP offer specialist stoma care, 34% of their total costs of £320 million in 2021/22 were in BNF chapter 23 (Stoma Appliances).
 
 ### `r paste0("Figure 10: Top 10 presentations by percentage change in unit cost ",paste0(substr(max_data_fy_minus_1,1,5), substr(max_data_fy_minus_1, 8, 9)), " to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
@@ -609,10 +609,6 @@ It is worth noting that Cambridgeshire and Peterborough STP offer specialist sto
 `r infoBox_border(header = "", text = "The chart in this section has been limited to presentations with a total cost in 2021/22 greater than £1 million.<br><br>A unit cost for a presentation is calculated by dividing the total cost of items dispensed in the period by the total quantity.", width = "100%")` 
 ::: 
 ::::
-
-The chart in this section has been limited to presentations with a total cost in 2021/22 greater than £1 million.
-
-A unit cost for a presentation is calculated by dividing the total cost of items dispensed in the period by the total quantity.
 
 ```{r unit_cost, out.width = "100%"}
 
@@ -672,7 +668,7 @@ Source: [Additional Tables - Prescription Cost Analysis - A12](https://nhsbsa-op
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
-`r infoBox_no_border(header = "", text = "Between 2020/21 and 2021/22 the total costs of FreeStyle Libre 2 Sensor kits increased by £69.8 million, the highest absolute change of all presentations. The FreeStyle Libre 2 Sensor was added to part IX of the drug tariff in November 2020.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "Between 2020/21 and 2021/22 the total costs of FreeStyle Libre 2 Sensor kits increased by £70 million, the highest absolute change of all presentations. The FreeStyle Libre 2 Sensor was added to part IX of the drug tariff in November 2020.", width = "100%")` 
 ::: 
 ::::
 
@@ -787,7 +783,22 @@ This publication has historically been released in the month of April. To accomm
 
 ## 5. Rounding
 
-The high-level figures in this statistical summary have been rounded where appropriate for clarity, in most cases to three significant figures. This is to make this narrative as accessible as possible to all readers. The summary tables released with this publication allow users to investigate this data at lower levels of granularity. Figures in the supplementary tables have not been rounded.
+The high-level figures in this statistical summary have been rounded as per the table below:
+
+```{r rounding_table, out.width = "100%"}
+rounding_table <- data.table(
+  "From" = c("0", "1,001", "10,001", "100,001", "1,000,001", "10,000,001", "100,000,001"),
+  "To" = c("1,000", "10,000", "100,000", "1,000,000", "10,000,000", "100,000,000", "100,000,000,000"),
+  "Round to nearest" = c("1", "100", "1,000", "10,000", "100,000", "1,000,000", "10,000,000")
+)
+
+knitr::kable(rounding_table, align = "rrr")%>%
+  kable_styling(bootstrap_options = c("striped"))
+```
+
+All changes and totals are calculated prior to rounding. Percentage changes are calculated prior to rounding and then are rounded to the nearest whole number. As all figures within this statistical summary have been rounded, they may not add up.
+
+The summary tables released with this publication allow users to investigate this data at lower levels of granularity. Figures in the supplementary tables have not been rounded.
 
 ---
 
