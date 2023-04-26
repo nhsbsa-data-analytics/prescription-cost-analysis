@@ -56,7 +56,7 @@ knitr::opts_chunk$set(echo = FALSE,
 
 # England 2021/22 {.toc-ignore}
 
-Published 9 June 2022
+`r paste("Published", config$publication_date)`
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 

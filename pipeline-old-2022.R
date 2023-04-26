@@ -16,7 +16,9 @@ req_pkgs <-
     "lubridate",
     "vroom",
     "tidyverse",
-    "kableExtra"
+    "kableExtra",
+    "devtools",
+    "yaml"
   )
 
 # uncomment if package installs are needed
@@ -30,7 +32,9 @@ req_pkgs <-
 
 invisible(lapply(c(req_pkgs, "pca", "nhsbsaR"), library, character.only = TRUE))
 
-# 2. set options ----------------------------------------------------------
+# 2. load config file ----------------------------------------------------------
+
+config <- yaml::yaml.load_file("config.yml")
 
 # prevent scientific notation
 options(scipen = 999)
