@@ -1,5 +1,5 @@
 ---
-title: "Prescription Cost Analysis"
+title: "`r config$publication_name`"
 pagetitle: PCA England
 always_allow_html: true
 output:
@@ -54,7 +54,7 @@ knitr::opts_chunk$set(echo = FALSE,
 
 <main>
 
-# England 2021/22 {.toc-ignore}
+# `r config$publication_sub_name` {.toc-ignore}
 
 `r paste("Published", config$publication_date)`
 
@@ -842,6 +842,6 @@ Newburn Riverside
 Newcastle upon Tyne  
 NE15 8NY
 
-**Responsible statistician:** Graham Platten
+**Responsible statistician:** `r config$responsible_statistician`
 
 </main>
