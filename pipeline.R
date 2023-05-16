@@ -152,6 +152,166 @@ ni_pca <- northern_irish_pca_extraction_new(link = config$ni_pca)
 wa_pca <- nhsbsaExternalData::wales_pca_extraction(file_path = config$wa_pca)
 log_print("Dev nation PCA data loaded", hide_notes = TRUE)
 
+# 5. pull data from warehouse if more recent data is available ------
+#check max DWH fy against max data fy and pull data if different
+#get max fy from latest data
+max_data_fy <- recent_file_nat_fy %>%
+  dplyr::select(YEAR_DESC) %>%
+  dplyr::filter(YEAR_DESC == max(YEAR_DESC, na.rm = TRUE)) %>%
+  distinct() %>%
+  pull()
+
+if (max_dw_fy <= max_data_fy) {
+  #read most recent data to use
+  print("No new data in DWH, using most recent saved data")
+  
+  #national data by fy
+  nat_data_fy <- rownames(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "nat_data_fy"
+    )
+  ))[which.max(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "nat_data_fy"
+    )
+  )$mtime)]
+  
+  #read recent data
+  nat_data_fy <- vroom::vroom(nat_data_fy,
+                              #read snomed code as character
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))
+  
+  #national data by cy
+  nat_data_cy <- rownames(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "nat_data_cy"
+    )
+  ))[which.max(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "nat_data_cy"
+    )
+  )$mtime)]
+  
+  #read recent data
+  nat_data_cy <- vroom::vroom(nat_data_cy,
+                              #read snomed code as character
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))
+  
+  #stp data by fy
+  stp_data_fy <- rownames(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "stp_data_fy"
+    )
+  ))[which.max(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "stp_data_fy"
+    )
+  )$mtime)]
+  
+  #read recent data
+  stp_data_fy <- vroom::vroom(stp_data_fy,
+                              #read snomed code as character
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))
+  
+  #stp data by cy
+  stp_data_cy <- rownames(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "stp_data_cy"
+    )
+  ))[which.max(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "stp_data_cy"
+    )
+  )$mtime)]
+  
+  #read recent data
+  stp_data_cy <- vroom::vroom(stp_data_cy,
+                              #read snomed code as character
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))
+  
+  log_print("Data pulled from most recent saved data", hide_notes = TRUE)
+} else {
+  # Pull data from DWH and save to Y drive
+  nat_data_fy <-
+    extract_nat_data(con, year_type = "financial", year = max_dw_fy)
+  nat_data_cy <-
+    extract_nat_data(con, year_type = "calendar", year = max_dw_cy)
+  
+  stp_data_fy <-
+    extract_stp_data(con, year_type = "financial", year = max_dw_fy)
+  stp_data_cy <-
+    extract_stp_data(con, year_type = "calendar", year = max_dw_cy)
+  
+  #save new extracts to Y drive
+  save_data(nat_data_cy,
+            dir = "Y:/Official Stats/PCA",
+            filename = "nat_data_cy",
+            quote = TRUE)
+  
+  save_data(nat_data_fy,
+            dir = "Y:/Official Stats/PCA",
+            filename = "nat_data_fy",
+            quote = TRUE)
+  
+  save_data(stp_data_cy,
+            dir = "Y:/Official Stats/PCA",
+            filename = "stp_data_cy",
+            quote = TRUE)
+  
+  save_data(stp_data_fy,
+            dir = "Y:/Official Stats/PCA",
+            filename = "stp_data_fy",
+            quote = TRUE)
+  
+  log_print("New data pulled from warehouse and saved to Y drive", hide_notes = TRUE)
+}
+
+# 6. build variable for max and prev fy to use in headers ------
+#get max fy from latest data
+max_data_fy <- nat_data_fy %>%
+  dplyr::filter(MONTH_TYPE %in% c("FY")) %>%
+  dplyr::select(YEAR_DESC) %>%
+  dplyr::filter(YEAR_DESC == max(YEAR_DESC, na.rm = TRUE)) %>%
+  distinct() %>%
+  pull()
+
+log_print(paste0("max_data_fy built as: ", max_data_fy), hide_notes = TRUE)
+
+#get max fy minus 1 from latest data
+max_data_fy_minus_1 <-
+  paste0(as.numeric(substr(max_data_fy, 1, 4)) - 1,
+         "/",
+         as.numeric(substr(max_data_fy, 6, 9)) - 1)
+
+log_print(paste0("max_data_fy_minus_1 built as: ", max_data_fy_minus_1), hide_notes = TRUE)
+
+
+#get max cy from latest data
+max_data_cy <- nat_data_cy %>%
+  dplyr::filter(MONTH_TYPE %in% c("CY")) %>%
+  dplyr::select(YEAR_DESC) %>%
+  dplyr::filter(YEAR_DESC == max(YEAR_DESC, na.rm = TRUE)) %>%
+  distinct() %>%
+  pull()
+
+log_print(paste0("max_data_cy built as: ", max_data_cy), hide_notes = TRUE)
+
 # xxx. disconnect from DWH  ---------
 DBI::dbDisconnect(con)
 log_print("Disconnected from DWH", hide_notes = TRUE)
