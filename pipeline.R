@@ -48,8 +48,11 @@ req_pkgs <-
     "DBI",
     "geojsonsf",
     "sf",
+    "magrittr",
+    "tcltk",
     "nhsbsa-data-analytics/nhsbsaR",
-    "nhsbsa-data-analytics/nhsbsaExternalData"
+    "nhsbsa-data-analytics/nhsbsaExternalData",
+    "nhsbsa-data-analytics/accessibleTables"
   )
 
 #library/install packages as required
@@ -311,6 +314,34 @@ max_data_cy <- nat_data_cy %>%
   pull()
 
 log_print(paste0("max_data_cy built as: ", max_data_cy), hide_notes = TRUE)
+
+# 7. create aggregate data for main tables ------
+
+#national data
+nat_data_fy_agg <- pca_aggregations(nat_data_fy, area = "national")
+log_print("national FY data aggregated", hide_notes = TRUE)
+nat_data_cy_agg <- pca_aggregations(nat_data_cy, area = "national")
+log_print("national CY data aggregated", hide_notes = TRUE)
+
+#ICB data
+stp_data_fy_agg <- pca_aggregations(stp_data_fy, area = "ICB")
+log_print("ICB FY data aggregated", hide_notes = TRUE)
+stp_data_cy_agg <- pca_aggregations(stp_data_cy, area = "ICB")
+log_print("ICB CY data aggregated", hide_notes = TRUE)
+
+
+# 8. create Excel outputs if required ------
+makeSheet <- menu(c("Yes", "No"),
+                  title = "Do you wish to generate the Excel outputs?")
+
+if(makeSheet == 1) {
+  print("Generating Excel outputs")
+  source("./functions/excelOutputs.R")
+  log_print("Excel outputs generated", hide_notes = TRUE)
+} else {
+  print("Excel outputs will not be generated")
+  log_print("Excel outputs not generated", hide_notes = TRUE)
+}
 
 # xxx. disconnect from DWH  ---------
 DBI::dbDisconnect(con)
