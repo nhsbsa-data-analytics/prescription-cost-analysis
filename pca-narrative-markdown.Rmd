@@ -25,21 +25,6 @@ output:
   });
 </script>
 
-<style type="text/css">
-
-body, td { font-size: 16px; font-family: sans-serif; } 
-
-.list-group-item.active { background-color: #005EB8!important; border-color: #005EB8!important; } 
-
-a { color: #005EB8!important; } 
-
-.tocify { border-radius: 0px!important; }
-
-* {
-   font-family: Arial;
-}
-
-</style>
 <html lang="en">
 
 ```{r setup, include=FALSE}

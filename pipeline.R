@@ -21,6 +21,10 @@ if(Sys.getenv("DB_DWCP_USERNAME") == "") {
   stop("You need to set your DB_DWCP_USERNAME = YOUR DWCP USERNAME and  DB_DWCP_PASSWORD = YOUR DWCP PASSWORD in the .Renviron file which pops up. Please restart your R Studio after this and re-run the pipeline.")
 }
 
+#check if Excel outputs are required
+makeSheet <- menu(c("Yes", "No"),
+                  title = "Do you wish to generate the Excel outputs?")
+
 #install nhsbsaUtils package first as need check_and_install_packages()
 devtools::install_github("nhsbsa-data-analytics/nhsbsaUtils",
                        auth_token = Sys.getenv("GITHUB_PAT"))
@@ -50,6 +54,7 @@ req_pkgs <-
     "sf",
     "magrittr",
     "tcltk",
+    "DT",
     "nhsbsa-data-analytics/nhsbsaR",
     "nhsbsa-data-analytics/nhsbsaExternalData",
     "nhsbsa-data-analytics/accessibleTables"
@@ -80,12 +85,12 @@ con <- nhsbsaR::con_nhsbsa(
 
 #get max fy from pca table
 max_dw_fy <- dplyr::tbl(con,
-                        from = dbplyr::in_schema("AML", "PCA_MY_FY_CY_FACT")) %>%
-  dplyr::filter(MONTH_TYPE %in% c("FY")) %>%
-  dplyr::select(YEAR_DESC) %>%
-  dplyr::filter(YEAR_DESC == max(YEAR_DESC, na.rm = TRUE)) %>%
-  distinct() %>%
-  collect %>%
+                        from = dbplyr::in_schema("AML", "PCA_MY_FY_CY_FACT")) |>
+  dplyr::filter(MONTH_TYPE %in% c("FY")) |>
+  dplyr::select(YEAR_DESC) |>
+  dplyr::filter(YEAR_DESC == max(YEAR_DESC, na.rm = TRUE)) |>
+  distinct() |>
+  collect() |>
   pull()
 
 log_print("Max DWH FY pulled", hide_notes = TRUE)
@@ -94,12 +99,12 @@ log_print(max_dw_fy, hide_notes = TRUE)
 
 #get max cy from pca table
 max_dw_cy <- dplyr::tbl(con,
-                        from = dbplyr::in_schema("AML", "PCA_MY_FY_CY_FACT")) %>%
-  dplyr::filter(MONTH_TYPE %in% c("CY")) %>%
-  dplyr::select(YEAR_DESC) %>%
-  dplyr::filter(YEAR_DESC == max(YEAR_DESC, na.rm = TRUE)) %>%
-  distinct() %>%
-  collect %>%
+                        from = dbplyr::in_schema("AML", "PCA_MY_FY_CY_FACT")) |>
+  dplyr::filter(MONTH_TYPE %in% c("CY")) |>
+  dplyr::select(YEAR_DESC) |>
+  dplyr::filter(YEAR_DESC == max(YEAR_DESC, na.rm = TRUE)) |>
+  distinct() |>
+  collect() |>
   pull()
 
 log_print("Max DWH CY pulled", hide_notes = TRUE)
@@ -158,10 +163,10 @@ log_print("Dev nation PCA data loaded", hide_notes = TRUE)
 # 5. pull data from warehouse if more recent data is available ------
 #check max DWH fy against max data fy and pull data if different
 #get max fy from latest data
-max_data_fy <- recent_file_nat_fy %>%
-  dplyr::select(YEAR_DESC) %>%
-  dplyr::filter(YEAR_DESC == max(YEAR_DESC, na.rm = TRUE)) %>%
-  distinct() %>%
+max_data_fy <- recent_file_nat_fy |>
+  dplyr::select(YEAR_DESC) |>
+  dplyr::filter(YEAR_DESC == max(YEAR_DESC, na.rm = TRUE)) |>
+  distinct() |>
   pull()
 
 if (max_dw_fy <= max_data_fy) {
@@ -287,11 +292,11 @@ if (max_dw_fy <= max_data_fy) {
 
 # 6. build variable for max and prev fy to use in headers ------
 #get max fy from latest data
-max_data_fy <- nat_data_fy %>%
-  dplyr::filter(MONTH_TYPE %in% c("FY")) %>%
-  dplyr::select(YEAR_DESC) %>%
-  dplyr::filter(YEAR_DESC == max(YEAR_DESC, na.rm = TRUE)) %>%
-  distinct() %>%
+max_data_fy <- nat_data_fy |>
+  dplyr::filter(MONTH_TYPE %in% c("FY")) |>
+  dplyr::select(YEAR_DESC) |>
+  dplyr::filter(YEAR_DESC == max(YEAR_DESC, na.rm = TRUE)) |>
+  distinct() |>
   pull()
 
 log_print(paste0("max_data_fy built as: ", max_data_fy), hide_notes = TRUE)
@@ -306,11 +311,11 @@ log_print(paste0("max_data_fy_minus_1 built as: ", max_data_fy_minus_1), hide_no
 
 
 #get max cy from latest data
-max_data_cy <- nat_data_cy %>%
-  dplyr::filter(MONTH_TYPE %in% c("CY")) %>%
-  dplyr::select(YEAR_DESC) %>%
-  dplyr::filter(YEAR_DESC == max(YEAR_DESC, na.rm = TRUE)) %>%
-  distinct() %>%
+max_data_cy <- nat_data_cy |>
+  dplyr::filter(MONTH_TYPE %in% c("CY")) |>
+  dplyr::select(YEAR_DESC) |>
+  dplyr::filter(YEAR_DESC == max(YEAR_DESC, na.rm = TRUE)) |>
+  distinct() |>
   pull()
 
 log_print(paste0("max_data_cy built as: ", max_data_cy), hide_notes = TRUE)
@@ -331,9 +336,6 @@ log_print("ICB CY data aggregated", hide_notes = TRUE)
 
 
 # 8. create Excel outputs if required ------
-makeSheet <- menu(c("Yes", "No"),
-                  title = "Do you wish to generate the Excel outputs?")
-
 if(makeSheet == 1) {
   print("Generating Excel outputs")
   source("./functions/excelOutputs.R")

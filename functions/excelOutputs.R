@@ -60,14 +60,14 @@ Class 2 - drugs prescribed generically but only available as a proprietary produ
 Class 3 - drugs prescribed and dispensed by proprietary brand name
 Class 4 - dressings, appliances, and medical devices
 Class 5 - drugs prescribed generically with a named supplier",
-    "The preparation class of the product listed on the prescription form. Used to determine if an item was prescribed generically.",
-    "Quantity Per Item is calculated by dividing the 'Total Quantity' by the number of 'Total Items'.",
-    "A SNOMED CT (Systemised Nomenclature of Medicine Clinical Terms) is a clinical vocabulary readable by computers. The SNOMED code contained within the data is a unique identifier for each Medicinal Product (both VMP and AMP level). The identifier will not be re-used and or allocated to another presentation.",
-    "The name of the manufacturer or wholesaler of a product. For example, TEVA or A A H Pharmaceuticals.",
-    "Total Cost is the amount that would be paid using the basic price of the prescribed drug or appliance and the quantity prescribed. Sometimes called the 'Net Ingredient Cost' (NIC). The basic price is given either in the Drug Tariff or is determined from prices published by manufacturers, wholesalers or suppliers. Basic price is set out in Parts 8 and 9 of the Drug Tariff. For any drugs or appliances not in Part 8, the price is usually taken from the manufacturer, wholesaler or supplier of the product. This is given in GBP.",
-    "The number of prescription items dispensed. 'Items' is the number of times a product appears on a prescription form. Prescription forms include both paper prescriptions and electronic messages.",
-    "The total quantity of a drug or appliance that was prescribed. This is calculated by multiplying Quantity by Items. For example, if 2 items of Paracetamol 500mg tablets with a quantity of 28 were prescribed, the total quantity will be 56.",
-    "The unit of measure given to the smallest available unit of a product. For example, tablet, capsule, unit dose, vial, gram, millilitre etc."
+"The preparation class of the product listed on the prescription form. Used to determine if an item was prescribed generically.",
+"Quantity Per Item is calculated by dividing the 'Total Quantity' by the number of 'Total Items'.",
+"A SNOMED CT (Systemised Nomenclature of Medicine Clinical Terms) is a clinical vocabulary readable by computers. The SNOMED code contained within the data is a unique identifier for each Medicinal Product (both VMP and AMP level). The identifier will not be re-used and or allocated to another presentation.",
+"The name of the manufacturer or wholesaler of a product. For example, TEVA or A A H Pharmaceuticals.",
+"Total Cost is the amount that would be paid using the basic price of the prescribed drug or appliance and the quantity prescribed. Sometimes called the 'Net Ingredient Cost' (NIC). The basic price is given either in the Drug Tariff or is determined from prices published by manufacturers, wholesalers or suppliers. Basic price is set out in Parts 8 and 9 of the Drug Tariff. For any drugs or appliances not in Part 8, the price is usually taken from the manufacturer, wholesaler or supplier of the product. This is given in GBP.",
+"The number of prescription items dispensed. 'Items' is the number of times a product appears on a prescription form. Prescription forms include both paper prescriptions and electronic messages.",
+"The total quantity of a drug or appliance that was prescribed. This is calculated by multiplying Quantity by Items. For example, if 2 items of Paracetamol 500mg tablets with a quantity of 28 were prescribed, the total quantity will be 56.",
+"The unit of measure given to the smallest available unit of a product. For example, tablet, capsule, unit dose, vial, gram, millilitre etc."
   )
 
 # create national excel for fy ------
@@ -98,236 +98,295 @@ accessibleTables::write_sheet(
 
 #left align column A
 accessibleTables::format_data(fy_nat_wb,
-            "National",
-            c("A"),
-            "left",
-            "")
+                              "National",
+                              c("A"),
+                              "left",
+                              "")
 
 #right align column B and format number
 accessibleTables::format_data(fy_nat_wb,
-            "National",
-            c("B"),
-            "right",
-            "#,##0")
+                              "National",
+                              c("B"),
+                              "right",
+                              "#,##0")
 
 #right align column C and D and format numbers
 accessibleTables::format_data(fy_nat_wb,
-            "National",
-            c("C", "D"),
-            "right",
-            "#,##0.00")
-#
-# #### BNF CHAPTER tab
-# # write data to sheet
-# pca::write_sheet(
-#   fy_nat_wb,
-#   "BNF_Chapters",
-#   paste0(
-#     "Prescription Cost Analysis - England ",
-#     max_data_fy,
-#     " totals by BNF chapter"
-#   ),
-#   c(
-#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
-#   ),
-#   nat_data_fy_agg$BNF_Chapters,
-#   13
-# )
-#
-# #left align column A
-# format_data(fy_nat_wb,
-#             "BNF_Chapters",
-#             c("A", "B", "C"),
-#             "left",
-#             "")
-#
-# #right align column B and format number
-# format_data(fy_nat_wb,
-#             "BNF_Chapters",
-#             c("D"),
-#             "right",
-#             "#,##0")
-#
-# #right align column C and D and format numbers
-# format_data(fy_nat_wb,
-#             "BNF_Chapters",
-#             c("E", "F"),
-#             "right",
-#             "#,##0.00")
-#
-# #### BNF SECTION tab
-# # write data to sheet
-# pca::write_sheet(
-#   fy_nat_wb,
-#   "BNF_Sections",
-#   paste0(
-#     "Prescription Cost Analysis - England ",
-#     max_data_fy,
-#     " totals by BNF section"
-#   ),
-#   c(
-#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
-#   ),
-#   nat_data_fy_agg$BNF_Sections,
-#   13
-# )
-#
-# #left align column A
-# format_data(fy_nat_wb,
-#             "BNF_Sections",
-#             c("A", "B", "C", "D", "E"),
-#             "left",
-#             "")
-#
-# #right align column B and format number
-# format_data(fy_nat_wb,
-#             "BNF_Sections",
-#             c("F"),
-#             "right",
-#             "#,##0")
-#
-# #right align column C and D and format numbers
-# format_data(fy_nat_wb,
-#             "BNF_Sections",
-#             c("G", "H"),
-#             "right",
-#             "#,##0.00")
-#
-# #### BNF PARAGRAPH tab
-# # write data to sheet
-# pca::write_sheet(
-#   fy_nat_wb,
-#   "BNF_Paragraphs",
-#   paste0(
-#     "Prescription Cost Analysis - England ",
-#     max_data_fy,
-#     " totals by BNF Paragraph"
-#   ),
-#   c(
-#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
-#   ),
-#   nat_data_fy_agg$BNF_Paragraphs,
-#   13
-# )
-#
-# #left align column A
-# format_data(fy_nat_wb,
-#             "BNF_Paragraphs",
-#             c("A", "B", "C", "D", "E", "F", "G"),
-#             "left",
-#             "")
-#
-# #right align column B and format number
-# format_data(fy_nat_wb,
-#             "BNF_Paragraphs",
-#             c("H"),
-#             "right",
-#             "#,##0")
-#
-# #right align column C and D and format numbers
-# format_data(fy_nat_wb,
-#             "BNF_Paragraphs",
-#             c("I", "J"),
-#             "right",
-#             "#,##0.00")
-#
-# #### CHEMICAL SUBSTANCE tab
-# # write data to sheet
-# pca::write_sheet(
-#   fy_nat_wb,
-#   "Chemical_Substances",
-#   paste0(
-#     "Prescription Cost Analysis - England ",
-#     max_data_fy,
-#     " totals by BNF Chemical Substance"
-#   ),
-#   c(
-#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
-#   ),
-#   nat_data_fy_agg$Chemical_Substances,
-#   13
-# )
-#
-# #left align column A
-# format_data(
-#   fy_nat_wb,
-#   "Chemical_Substances",
-#   c("A", "B", "C", "D", "E", "F", "G", "H", "I"),
-#   "left",
-#   ""
-# )
-#
-# #right align column B and format number
-# format_data(fy_nat_wb,
-#             "Chemical_Substances",
-#             c("J"),
-#             "right",
-#             "#,##0")
-#
-# #right align column C and D and format numbers
-# format_data(fy_nat_wb,
-#             "Chemical_Substances",
-#             c("K", "L"),
-#             "right",
-#             "#,##0.00")
-#
-# #### PRESENTATIONS tab
-# # write data to sheet
-# pca::write_sheet(
-#   fy_nat_wb,
-#   "Presentations",
-#   paste0(
-#     "Prescription Cost Analysis - England ",
-#     max_data_fy,
-#     " totals by BNF presentation"
-#   ),
-#   c(
-#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
-#   ),
-#   nat_data_fy_agg$Presentations,
-#   13
-# )
-#
-# #left align column A
-# format_data(
-#   fy_nat_wb,
-#   "Presentations",
-#   c(
-#     "A",
-#     "B",
-#     "C",
-#     "D",
-#     "E",
-#     "F",
-#     "G",
-#     "H",
-#     "I",
-#     "J",
-#     "K",
-#     "L",
-#     "M",
-#     "N",
-#     "O",
-#     "P"
-#   ),
-#   "left",
-#   ""
-# )
-#
-# #right align column B and format number
-# format_data(fy_nat_wb,
-#             "Presentations",
-#             c("Q", "R"),
-#             "right",
-#             "#,##0")
-#
-# #right align column C and D and format numbers
-# format_data(fy_nat_wb,
-#             "Presentations",
-#             c("S", "T", "U", "V"),
-#             "right",
-#             "#,##0.00")
-#
+                              "National",
+                              c("C", "D"),
+                              "right",
+                              "#,##0.00")
+
+#### BNF CHAPTER tab
+# write data to sheet
+accessibleTables::write_sheet(
+  fy_nat_wb,
+  "BNF_Chapters",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_fy,
+    " totals by BNF chapter"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  nat_data_fy_agg$BNF_Chapters,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(fy_nat_wb,
+                              "BNF_Chapters",
+                              c("A", "B", "C"),
+                              "left",
+                              "")
+
+#right align column B and format number
+accessibleTables::format_data(fy_nat_wb,
+                              "BNF_Chapters",
+                              c("D"),
+                              "right",
+                              "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(fy_nat_wb,
+                              "BNF_Chapters",
+                              c("E", "F"),
+                              "right",
+                              "#,##0.00")
+
+#### BNF SECTION tab
+# write data to sheet
+accessibleTables::write_sheet(
+  fy_nat_wb,
+  "BNF_Sections",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_fy,
+    " totals by BNF section"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  nat_data_fy_agg$BNF_Sections,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(fy_nat_wb,
+                              "BNF_Sections",
+                              c("A", "B", "C", "D", "E"),
+                              "left",
+                              "")
+
+#right align column B and format number
+accessibleTables::format_data(fy_nat_wb,
+                              "BNF_Sections",
+                              c("F"),
+                              "right",
+                              "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(fy_nat_wb,
+                              "BNF_Sections",
+                              c("G", "H"),
+                              "right",
+                              "#,##0.00")
+
+#### BNF PARAGRAPH tab
+# write data to sheet
+accessibleTables::write_sheet(
+  fy_nat_wb,
+  "BNF_Paragraphs",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_fy,
+    " totals by BNF Paragraph"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  nat_data_fy_agg$BNF_Paragraphs,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(fy_nat_wb,
+                              "BNF_Paragraphs",
+                              c("A", "B", "C", "D", "E", "F", "G"),
+                              "left",
+                              "")
+
+#right align column B and format number
+accessibleTables::format_data(fy_nat_wb,
+                              "BNF_Paragraphs",
+                              c("H"),
+                              "right",
+                              "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(fy_nat_wb,
+                              "BNF_Paragraphs",
+                              c("I", "J"),
+                              "right",
+                              "#,##0.00")
+
+#### CHEMICAL SUBSTANCE tab
+# write data to sheet
+accessibleTables::write_sheet(
+  fy_nat_wb,
+  "Chemical_Substances",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_fy,
+    " totals by BNF Chemical Substance"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  nat_data_fy_agg$Chemical_Substances,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(
+  fy_nat_wb,
+  "Chemical_Substances",
+  c("A", "B", "C", "D", "E", "F", "G", "H", "I"),
+  "left",
+  ""
+)
+
+#right align column B and format number
+accessibleTables::format_data(fy_nat_wb,
+                              "Chemical_Substances",
+                              c("J"),
+                              "right",
+                              "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(fy_nat_wb,
+                              "Chemical_Substances",
+                              c("K", "L"),
+                              "right",
+                              "#,##0.00")
+
+#### PRESENTATIONS tab
+# write data to sheet
+accessibleTables::write_sheet(
+  fy_nat_wb,
+  "Presentations",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_fy,
+    " totals by BNF presentation"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  nat_data_fy_agg$Presentations,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(
+  fy_nat_wb,
+  "Presentations",
+  c(
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P"
+  ),
+  "left",
+  ""
+)
+
+#right align column B and format number
+accessibleTables::format_data(fy_nat_wb,
+                              "Presentations",
+                              c("Q", "R"),
+                              "right",
+                              "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(fy_nat_wb,
+                              "Presentations",
+                              c("S", "T", "U", "V"),
+                              "right",
+                              "#,##0.00")
+
+#### SNOMED tab
+# write data to sheet
+accessibleTables::write_sheet(
+  fy_nat_wb,
+  "SNOMED_Codes",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_fy,
+    " totals by SNOMED code"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  nat_data_fy_agg$SNOMED_Code,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(
+  fy_nat_wb,
+  "SNOMED_Codes",
+  c(
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R"
+  ),
+  "left",
+  ""
+)
+
+#right align column B and format number
+accessibleTables::format_data(fy_nat_wb,
+                              "SNOMED_Codes",
+                              c("S", "T"),
+                              "right",
+                              "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(fy_nat_wb,
+                              "SNOMED_Codes",
+                              c("U", "V", "W", "X"),
+                              "right",
+                              "#,##0.00")
+
 
 #save file into outputs folder
 openxlsx::saveWorkbook(
@@ -343,830 +402,887 @@ openxlsx::saveWorkbook(
   overwrite = TRUE
 )
 
-#
-# # 10. create national excel for cy ------
-#
-# #create workbook and meta data
-# cy_nat_wb <- create_wb(sheetNames_main)
-#
-# create_metadata(cy_nat_wb,
-#                 meta_fields,
-#                 meta_descs)
-#
-# #### National tab
-# # write data to sheet
-# pca::write_sheet(
-#   cy_nat_wb,
-#   "National",
-#   paste0(
-#     "Prescription Cost Analysis - England ",
-#     max_data_cy,
-#     " overall totals"
-#   ),
-#   c(
-#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
-#   ),
-#   nat_data_cy_agg$National,
-#   13
-# )
-#
-# #left align column A
-# format_data(cy_nat_wb,
-#             "National",
-#             c("A"),
-#             "left",
-#             "")
-#
-# #right align column B and format number
-# format_data(cy_nat_wb,
-#             "National",
-#             c("B"),
-#             "right",
-#             "#,##0")
-#
-# #right align column C and D and format numbers
-# format_data(cy_nat_wb,
-#             "National",
-#             c("C", "D"),
-#             "right",
-#             "#,##0.00")
-#
-# #### BNF CHAPTER tab
-# # write data to sheet
-# pca::write_sheet(
-#   cy_nat_wb,
-#   "BNF_Chapters",
-#   paste0(
-#     "Prescription Cost Analysis - England ",
-#     max_data_cy,
-#     " totals by BNF chapter"
-#   ),
-#   c(
-#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
-#   ),
-#   nat_data_cy_agg$BNF_Chapters,
-#   13
-# )
-#
-# #left align column A
-# format_data(cy_nat_wb,
-#             "BNF_Chapters",
-#             c("A", "B", "C"),
-#             "left",
-#             "")
-#
-# #right align column B and format number
-# format_data(cy_nat_wb,
-#             "BNF_Chapters",
-#             c("D"),
-#             "right",
-#             "#,##0")
-#
-# #right align column C and D and format numbers
-# format_data(cy_nat_wb,
-#             "BNF_Chapters",
-#             c("E", "F"),
-#             "right",
-#             "#,##0.00")
-#
-# #### BNF SECTION tab
-# # write data to sheet
-# pca::write_sheet(
-#   cy_nat_wb,
-#   "BNF_Sections",
-#   paste0(
-#     "Prescription Cost Analysis - England ",
-#     max_data_cy,
-#     " totals by BNF section"
-#   ),
-#   c(
-#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
-#   ),
-#   nat_data_cy_agg$BNF_Sections,
-#   13
-# )
-#
-# #left align column A
-# format_data(cy_nat_wb,
-#             "BNF_Sections",
-#             c("A", "B", "C", "D", "E"),
-#             "left",
-#             "")
-#
-# #right align column B and format number
-# format_data(cy_nat_wb,
-#             "BNF_Sections",
-#             c("F"),
-#             "right",
-#             "#,##0")
-#
-# #right align column C and D and format numbers
-# format_data(cy_nat_wb,
-#             "BNF_Sections",
-#             c("G", "H"),
-#             "right",
-#             "#,##0.00")
-#
-# #### BNF PARAGRAPH tab
-# # write data to sheet
-# pca::write_sheet(
-#   cy_nat_wb,
-#   "BNF_Paragraphs",
-#   paste0(
-#     "Prescription Cost Analysis - England ",
-#     max_data_cy,
-#     " totals by BNF Paragraph"
-#   ),
-#   c(
-#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
-#   ),
-#   nat_data_cy_agg$BNF_Paragraphs,
-#   13
-# )
-#
-# #left align column A
-# format_data(cy_nat_wb,
-#             "BNF_Paragraphs",
-#             c("A", "B", "C", "D", "E", "F", "G"),
-#             "left",
-#             "")
-#
-# #right align column B and format number
-# format_data(cy_nat_wb,
-#             "BNF_Paragraphs",
-#             c("H"),
-#             "right",
-#             "#,##0")
-#
-# #right align column C and D and format numbers
-# format_data(cy_nat_wb,
-#             "BNF_Paragraphs",
-#             c("I", "J"),
-#             "right",
-#             "#,##0.00")
-#
-# #### CHEMICAL SUBSTANCE tab
-# # write data to sheet
-# pca::write_sheet(
-#   cy_nat_wb,
-#   "Chemical_Substances",
-#   paste0(
-#     "Prescription Cost Analysis - England ",
-#     max_data_cy,
-#     " totals by BNF Chemical Substance"
-#   ),
-#   c(
-#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
-#   ),
-#   nat_data_cy_agg$Chemical_Substances,
-#   13
-# )
-#
-# #left align column A
-# format_data(
-#   cy_nat_wb,
-#   "Chemical_Substances",
-#   c("A", "B", "C", "D", "E", "F", "G", "H", "I"),
-#   "left",
-#   ""
-# )
-#
-# #right align column B and format number
-# format_data(cy_nat_wb,
-#             "Chemical_Substances",
-#             c("J"),
-#             "right",
-#             "#,##0")
-#
-# #right align column C and D and format numbers
-# format_data(cy_nat_wb,
-#             "Chemical_Substances",
-#             c("K", "L"),
-#             "right",
-#             "#,##0.00")
-#
-# #### PRESENTATIONS tab
-# # write data to sheet
-# pca::write_sheet(
-#   cy_nat_wb,
-#   "Presentations",
-#   paste0(
-#     "Prescription Cost Analysis - England ",
-#     max_data_cy,
-#     " totals by BNF presentation"
-#   ),
-#   c(
-#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
-#   ),
-#   nat_data_cy_agg$Presentations,
-#   13
-# )
-#
-# #left align column A
-# format_data(
-#   cy_nat_wb,
-#   "Presentations",
-#   c(
-#     "A",
-#     "B",
-#     "C",
-#     "D",
-#     "E",
-#     "F",
-#     "G",
-#     "H",
-#     "I",
-#     "J",
-#     "K",
-#     "L",
-#     "M",
-#     "N",
-#     "O",
-#     "P"
-#   ),
-#   "left",
-#   ""
-# )
-#
-# #right align column B and format number
-# format_data(cy_nat_wb,
-#             "Presentations",
-#             c("Q", "R"),
-#             "right",
-#             "#,##0")
-#
-# #right align column C and D and format numbers
-# format_data(cy_nat_wb,
-#             "Presentations",
-#             c("S", "T", "U", "V"),
-#             "right",
-#             "#,##0.00")
-#
-# #save file into outputs folder
-# openxlsx::saveWorkbook(
-#   cy_nat_wb,
-#   #automate names
-#   paste0("outputs/pca_summary_tables_",
-#          max_data_cy,
-#          "_v001.xlsx"),
-#   overwrite = TRUE
-# )
-#
-# # 11. create stp excel for fy ------
-#
-# #create workbook and meta data
-# fy_stp_wb <- create_wb(sheetNames_main)
-#
-# create_metadata(fy_stp_wb,
-#                 meta_fields,
-#                 meta_descs)
-#
-# #### National tab
-# # write data to sheet
-# pca::write_sheet(
-#   fy_stp_wb,
-#   "National",
-#   paste0(
-#     "Prescription Cost Analysis - England ",
-#     max_data_fy,
-#     " overall totals"
-#   ),
-#   c(
-#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
-#   ),
-#   stp_data_fy_agg$National,
-#   13
-# )
-#
-# #left align column A to E
-# format_data(fy_stp_wb,
-#             "National",
-#             c("A", "B", "C", "D", "E"),
-#             "left",
-#             "")
-#
-# #right align column B and format number
-# format_data(fy_stp_wb,
-#             "National",
-#             c("F"),
-#             "right",
-#             "#,##0")
-#
-# #right align column C and D and format numbers
-# format_data(fy_stp_wb,
-#             "National",
-#             c("G", "H"),
-#             "right",
-#             "#,##0.00")
-#
-#
-# #### BNF CHAPTER tab
-# # write data to sheet
-# pca::write_sheet(
-#   fy_stp_wb,
-#   "BNF_Chapters",
-#   paste0(
-#     "Prescription Cost Analysis - England ",
-#     max_data_fy,
-#     " totals by BNF chapter"
-#   ),
-#   c(
-#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
-#   ),
-#   stp_data_fy_agg$BNF_Chapters,
-#   13
-# )
-#
-# #left align column A
-# format_data(fy_stp_wb,
-#             "BNF_Chapters",
-#             c("A", "B", "C", "D", "E", "F", "G"),
-#             "left",
-#             "")
-#
-# #right align column B and format number
-# format_data(fy_stp_wb,
-#             "BNF_Chapters",
-#             c("H"),
-#             "right",
-#             "#,##0")
-#
-# #right align column C and D and format numbers
-# format_data(fy_stp_wb,
-#             "BNF_Chapters",
-#             c("I", "J"),
-#             "right",
-#             "#,##0.00")
-#
-# #### BNF SECTION tab
-# # write data to sheet
-# pca::write_sheet(
-#   fy_stp_wb,
-#   "BNF_Sections",
-#   paste0(
-#     "Prescription Cost Analysis - England ",
-#     max_data_fy,
-#     " totals by BNF section"
-#   ),
-#   c(
-#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
-#   ),
-#   stp_data_fy_agg$BNF_Sections,
-#   13
-# )
-#
-# #left align column A
-# format_data(fy_stp_wb,
-#             "BNF_Sections",
-#             c("A", "B", "C", "D", "E", "F", "G", "H", "I"),
-#             "left",
-#             "")
-#
-# #right align column B and format number
-# format_data(fy_stp_wb,
-#             "BNF_Sections",
-#             c("J"),
-#             "right",
-#             "#,##0")
-#
-# #right align column C and D and format numbers
-# format_data(fy_stp_wb,
-#             "BNF_Sections",
-#             c("K", "L"),
-#             "right",
-#             "#,##0.00")
-#
-# #### BNF PARAGRAPH tab
-# # write data to sheet
-# pca::write_sheet(
-#   fy_stp_wb,
-#   "BNF_Paragraphs",
-#   paste0(
-#     "Prescription Cost Analysis - England ",
-#     max_data_fy,
-#     " totals by BNF Paragraph"
-#   ),
-#   c(
-#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
-#   ),
-#   stp_data_fy_agg$BNF_Paragraphs,
-#   13
-# )
-#
-# #left align column A
-# format_data(
-#   fy_stp_wb,
-#   "BNF_Paragraphs",
-#   c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"),
-#   "left",
-#   ""
-# )
-#
-# #right align column B and format number
-# format_data(fy_stp_wb,
-#             "BNF_Paragraphs",
-#             c("L"),
-#             "right",
-#             "#,##0")
-#
-# #right align column C and D and format numbers
-# format_data(fy_stp_wb,
-#             "BNF_Paragraphs",
-#             c("M", "N"),
-#             "right",
-#             "#,##0.00")
-#
-# #### CHEMICAL SUBSTANCE tab
-# # write data to sheet
-# pca::write_sheet(
-#   fy_stp_wb,
-#   "Chemical_Substances",
-#   paste0(
-#     "Prescription Cost Analysis - England ",
-#     max_data_fy,
-#     " totals by BNF Chemical Substance"
-#   ),
-#   c(
-#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
-#   ),
-#   stp_data_fy_agg$Chemical_Substances,
-#   13
-# )
-#
-# #left align column A
-# format_data(
-#   fy_stp_wb,
-#   "Chemical_Substances",
-#   c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"),
-#   "left",
-#   ""
-# )
-#
-# #right align column B and format number
-# format_data(fy_stp_wb,
-#             "Chemical_Substances",
-#             c("N"),
-#             "right",
-#             "#,##0")
-#
-# #right align column C and D and format numbers
-# format_data(fy_stp_wb,
-#             "Chemical_Substances",
-#             c("O", "P"),
-#             "right",
-#             "#,##0.00")
-#
-#
-# #### PRESENTATIONS tab
-# # write data to sheet
-# pca::write_sheet(
-#   fy_stp_wb,
-#   "Presentations",
-#   paste0(
-#     "Prescription Cost Analysis - England ",
-#     max_data_fy,
-#     " totals by BNF presentation"
-#   ),
-#   c(
-#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
-#   ),
-#   stp_data_fy_agg$Presentations,
-#   13
-# )
-#
-# #left align column A
-# format_data(
-#   fy_stp_wb,
-#   "Presentations",
-#   c(
-#     "A",
-#     "B",
-#     "C",
-#     "D",
-#     "E",
-#     "F",
-#     "G",
-#     "H",
-#     "I",
-#     "J",
-#     "K",
-#     "L",
-#     "M",
-#     "N",
-#     "O",
-#     "P",
-#     "Q",
-#     "R",
-#     "S",
-#     "T"
-#   ),
-#   "left",
-#   ""
-# )
-#
-# #right align column B and format number
-# format_data(fy_stp_wb,
-#             "Presentations",
-#             c("U", "V"),
-#             "right",
-#             "#,##0")
-#
-# #right align column C and D and format numbers
-# format_data(fy_stp_wb,
-#             "Presentations",
-#             c("W", "X", "Y", "Z"),
-#             "right",
-#             "#,##0.00")
-#
-# #save file into outputs folder
-# openxlsx::saveWorkbook(
-#   fy_stp_wb,
-#   #automate names
-#   paste0(
-#     "outputs/pca_stp_summary_tables_",
-#     substr(max_data_fy, 1, 4),
-#     "_",
-#     substr(max_data_fy, 8, 9),
-#     "_v001.xlsx"
-#   ),
-#   overwrite = TRUE
-# )
-#
-# # 12 create stp excel for cy ------
-#
-# #create workbook and meta data
-# cy_stp_wb <- create_wb(sheetNames_main)
-#
-# create_metadata(cy_stp_wb,
-#                 meta_fields,
-#                 meta_descs)
-#
-# #### National tab
-# # write data to sheet
-# pca::write_sheet(
-#   cy_stp_wb,
-#   "National",
-#   paste0(
-#     "Prescription Cost Analysis - England ",
-#     max_data_cy,
-#     " overall totals"
-#   ),
-#   c(
-#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
-#   ),
-#   stp_data_cy_agg$National,
-#   13
-# )
-#
-# #left align column A to E
-# format_data(cy_stp_wb,
-#             "National",
-#             c("A", "B", "C", "D", "E"),
-#             "left",
-#             "")
-#
-# #right align column B and format number
-# format_data(cy_stp_wb,
-#             "National",
-#             c("F"),
-#             "right",
-#             "#,##0")
-#
-# #right align column C and D and format numbers
-# format_data(cy_stp_wb,
-#             "National",
-#             c("G", "H"),
-#             "right",
-#             "#,##0.00")
-#
-#
-# #### BNF CHAPTER tab
-# # write data to sheet
-# pca::write_sheet(
-#   cy_stp_wb,
-#   "BNF_Chapters",
-#   paste0(
-#     "Prescription Cost Analysis - England ",
-#     max_data_cy,
-#     " totals by BNF chapter"
-#   ),
-#   c(
-#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
-#   ),
-#   stp_data_cy_agg$BNF_Chapters,
-#   13
-# )
-#
-# #left align column A
-# format_data(cy_stp_wb,
-#             "BNF_Chapters",
-#             c("A", "B", "C", "D", "E", "F", "G"),
-#             "left",
-#             "")
-#
-# #right align column B and format number
-# format_data(cy_stp_wb,
-#             "BNF_Chapters",
-#             c("H"),
-#             "right",
-#             "#,##0")
-#
-# #right align column C and D and format numbers
-# format_data(cy_stp_wb,
-#             "BNF_Chapters",
-#             c("I", "J"),
-#             "right",
-#             "#,##0.00")
-#
-# #### BNF SECTION tab
-# # write data to sheet
-# pca::write_sheet(
-#   cy_stp_wb,
-#   "BNF_Sections",
-#   paste0(
-#     "Prescription Cost Analysis - England ",
-#     max_data_cy,
-#     " totals by BNF section"
-#   ),
-#   c(
-#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
-#   ),
-#   stp_data_cy_agg$BNF_Sections,
-#   13
-# )
-#
-# #left align column A
-# format_data(cy_stp_wb,
-#             "BNF_Sections",
-#             c("A", "B", "C", "D", "E", "F", "G", "H", "I"),
-#             "left",
-#             "")
-#
-# #right align column B and format number
-# format_data(cy_stp_wb,
-#             "BNF_Sections",
-#             c("J"),
-#             "right",
-#             "#,##0")
-#
-# #right align column C and D and format numbers
-# format_data(cy_stp_wb,
-#             "BNF_Sections",
-#             c("K", "L"),
-#             "right",
-#             "#,##0.00")
-#
-# #### BNF PARAGRAPH tab
-# # write data to sheet
-# pca::write_sheet(
-#   cy_stp_wb,
-#   "BNF_Paragraphs",
-#   paste0(
-#     "Prescription Cost Analysis - England ",
-#     max_data_cy,
-#     " totals by BNF Paragraph"
-#   ),
-#   c(
-#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
-#   ),
-#   stp_data_cy_agg$BNF_Paragraphs,
-#   13
-# )
-#
-# #left align column A
-# format_data(
-#   cy_stp_wb,
-#   "BNF_Paragraphs",
-#   c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"),
-#   "left",
-#   ""
-# )
-#
-# #right align column B and format number
-# format_data(cy_stp_wb,
-#             "BNF_Paragraphs",
-#             c("L"),
-#             "right",
-#             "#,##0")
-#
-# #right align column C and D and format numbers
-# format_data(cy_stp_wb,
-#             "BNF_Paragraphs",
-#             c("M", "N"),
-#             "right",
-#             "#,##0.00")
-#
-# #### CHEMICAL SUBSTANCE tab
-# # write data to sheet
-# pca::write_sheet(
-#   cy_stp_wb,
-#   "Chemical_Substances",
-#   paste0(
-#     "Prescription Cost Analysis - England ",
-#     max_data_cy,
-#     " totals by BNF Chemical Substance"
-#   ),
-#   c(
-#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
-#   ),
-#   stp_data_cy_agg$Chemical_Substances,
-#   13
-# )
-#
-# #left align column A
-# format_data(
-#   cy_stp_wb,
-#   "Chemical_Substances",
-#   c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"),
-#   "left",
-#   ""
-# )
-#
-# #right align column B and format number
-# format_data(cy_stp_wb,
-#             "Chemical_Substances",
-#             c("N"),
-#             "right",
-#             "#,##0")
-#
-# #right align column C and D and format numbers
-# format_data(cy_stp_wb,
-#             "Chemical_Substances",
-#             c("O", "P"),
-#             "right",
-#             "#,##0.00")
-#
-# #### PRESENTATIONS tab
-# # write data to sheet
-# pca::write_sheet(
-#   cy_stp_wb,
-#   "Presentations",
-#   paste0(
-#     "Prescription Cost Analysis - England ",
-#     max_data_cy,
-#     " totals by BNF presentation"
-#   ),
-#   c(
-#     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
-#   ),
-#   stp_data_cy_agg$Presentations,
-#   13
-# )
-#
-# #left align column A
-# format_data(
-#   cy_stp_wb,
-#   "Presentations",
-#   c(
-#     "A",
-#     "B",
-#     "C",
-#     "D",
-#     "E",
-#     "F",
-#     "G",
-#     "H",
-#     "I",
-#     "J",
-#     "K",
-#     "L",
-#     "M",
-#     "N",
-#     "O",
-#     "P",
-#     "Q",
-#     "R",
-#     "S",
-#     "T"
-#   ),
-#   "left",
-#   ""
-# )
-#
-# #right align column B and format number
-# format_data(cy_stp_wb,
-#             "Presentations",
-#             c("U", "V"),
-#             "right",
-#             "#,##0")
-#
-# #right align column C and D and format numbers
-# format_data(cy_stp_wb,
-#             "Presentations",
-#             c("W", "X", "Y", "Z"),
-#             "right",
-#             "#,##0.00")
-#
-# #save file into outputs folder
-# openxlsx::saveWorkbook(
-#   cy_stp_wb,
-#   #automate names
-#   paste0("outputs/pca_stp_summary_tables_",
-#          max_data_cy,
-#          "_v001.xlsx"),
-#   overwrite = TRUE
-# )
-#
+
+# 10. create national excel for cy ------
+#create workbook and meta data
+cy_nat_wb <- create_wb(sheetNames_main)
+
+create_metadata(cy_nat_wb,
+                meta_fields,
+                meta_descs)
+
+#### National tab
+# write data to sheet
+accessibleTables::write_sheet(
+  cy_nat_wb,
+  "National",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_cy,
+    " overall totals"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  nat_data_cy_agg$National,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(cy_nat_wb,
+                              "National",
+                              c("A"),
+                              "left",
+                              "")
+
+#right align column B and format number
+accessibleTables::format_data(cy_nat_wb,
+                              "National",
+                              c("B"),
+                              "right",
+                              "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(cy_nat_wb,
+                              "National",
+                              c("C", "D"),
+                              "right",
+                              "#,##0.00")
+
+#### BNF CHAPTER tab
+# write data to sheet
+accessibleTables::write_sheet(
+  cy_nat_wb,
+  "BNF_Chapters",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_cy,
+    " totals by BNF chapter"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  nat_data_cy_agg$BNF_Chapters,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(cy_nat_wb,
+                              "BNF_Chapters",
+                              c("A", "B", "C"),
+                              "left",
+                              "")
+
+#right align column B and format number
+accessibleTables::format_data(cy_nat_wb,
+                              "BNF_Chapters",
+                              c("D"),
+                              "right",
+                              "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(cy_nat_wb,
+                              "BNF_Chapters",
+                              c("E", "F"),
+                              "right",
+                              "#,##0.00")
+
+#### BNF SECTION tab
+# write data to sheet
+accessibleTables::write_sheet(
+  cy_nat_wb,
+  "BNF_Sections",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_cy,
+    " totals by BNF section"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  nat_data_cy_agg$BNF_Sections,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(cy_nat_wb,
+                              "BNF_Sections",
+                              c("A", "B", "C", "D", "E"),
+                              "left",
+                              "")
+
+#right align column B and format number
+accessibleTables::format_data(cy_nat_wb,
+                              "BNF_Sections",
+                              c("F"),
+                              "right",
+                              "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(cy_nat_wb,
+                              "BNF_Sections",
+                              c("G", "H"),
+                              "right",
+                              "#,##0.00")
+
+#### BNF PARAGRAPH tab
+# write data to sheet
+accessibleTables::write_sheet(
+  cy_nat_wb,
+  "BNF_Paragraphs",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_cy,
+    " totals by BNF Paragraph"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  nat_data_cy_agg$BNF_Paragraphs,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(cy_nat_wb,
+                              "BNF_Paragraphs",
+                              c("A", "B", "C", "D", "E", "F", "G"),
+                              "left",
+                              "")
+
+#right align column B and format number
+accessibleTables::format_data(cy_nat_wb,
+                              "BNF_Paragraphs",
+                              c("H"),
+                              "right",
+                              "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(cy_nat_wb,
+                              "BNF_Paragraphs",
+                              c("I", "J"),
+                              "right",
+                              "#,##0.00")
+
+#### CHEMICAL SUBSTANCE tab
+# write data to sheet
+accessibleTables::write_sheet(
+  cy_nat_wb,
+  "Chemical_Substances",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_cy,
+    " totals by BNF Chemical Substance"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  nat_data_cy_agg$Chemical_Substances,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(
+  cy_nat_wb,
+  "Chemical_Substances",
+  c("A", "B", "C", "D", "E", "F", "G", "H", "I"),
+  "left",
+  ""
+)
+
+#right align column B and format number
+accessibleTables::format_data(cy_nat_wb,
+                              "Chemical_Substances",
+                              c("J"),
+                              "right",
+                              "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(cy_nat_wb,
+                              "Chemical_Substances",
+                              c("K", "L"),
+                              "right",
+                              "#,##0.00")
+
+#### PRESENTATIONS tab
+# write data to sheet
+accessibleTables::write_sheet(
+  cy_nat_wb,
+  "Presentations",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_cy,
+    " totals by BNF presentation"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  nat_data_cy_agg$Presentations,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(
+  cy_nat_wb,
+  "Presentations",
+  c(
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P"
+  ),
+  "left",
+  ""
+)
+
+#right align column B and format number
+accessibleTables::format_data(cy_nat_wb,
+                              "Presentations",
+                              c("Q", "R"),
+                              "right",
+                              "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(cy_nat_wb,
+                              "Presentations",
+                              c("S", "T", "U", "V"),
+                              "right",
+                              "#,##0.00")
+
+#### SNOMED tab
+# write data to sheet
+accessibleTables::write_sheet(
+  cy_nat_wb,
+  "SNOMED_Codes",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_cy,
+    " totals by BNF presentation"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  nat_data_cy_agg$SNOMED_Code,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(
+  cy_nat_wb,
+  "SNOMED_Codes",
+  c(
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R"
+  ),
+  "left",
+  ""
+)
+
+#right align column B and format number
+accessibleTables::format_data(cy_nat_wb,
+                              "SNOMED_Codes",
+                              c("S", "T"),
+                              "right",
+                              "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(cy_nat_wb,
+                              "SNOMED_Codes",
+                              c("U", "V", "W", "X"),
+                              "right",
+                              "#,##0.00")
+
+#save file into outputs folder
+openxlsx::saveWorkbook(
+  cy_nat_wb,
+  #automate names
+  paste0("outputs/pca_summary_tables_",
+         max_data_cy,
+         "_v001.xlsx"),
+  overwrite = TRUE
+)
+
+# 11. create stp excel for fy ------
+
+#create workbook and meta data
+fy_stp_wb <- create_wb(sheetNames_main)
+
+create_metadata(fy_stp_wb,
+                meta_fields,
+                meta_descs)
+
+#### National tab
+# write data to sheet
+accessibleTables::write_sheet(
+  fy_stp_wb,
+  "National",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_fy,
+    " overall totals"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  stp_data_fy_agg$National,
+  13
+)
+
+#left align column A to E
+accessibleTables::format_data(fy_stp_wb,
+                              "National",
+                              c("A", "B", "C", "D", "E"),
+                              "left",
+                              "")
+
+#right align column B and format number
+accessibleTables::format_data(fy_stp_wb,
+                              "National",
+                              c("F"),
+                              "right",
+                              "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(fy_stp_wb,
+                              "National",
+                              c("G", "H"),
+                              "right",
+                              "#,##0.00")
+
+
+#### BNF CHAPTER tab
+# write data to sheet
+accessibleTables::write_sheet(
+  fy_stp_wb,
+  "BNF_Chapters",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_fy,
+    " totals by BNF chapter"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  stp_data_fy_agg$BNF_Chapters,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(fy_stp_wb,
+                              "BNF_Chapters",
+                              c("A", "B", "C", "D", "E", "F", "G"),
+                              "left",
+                              "")
+
+#right align column B and format number
+accessibleTables::format_data(fy_stp_wb,
+                              "BNF_Chapters",
+                              c("H"),
+                              "right",
+                              "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(fy_stp_wb,
+                              "BNF_Chapters",
+                              c("I", "J"),
+                              "right",
+                              "#,##0.00")
+
+#### BNF SECTION tab
+# write data to sheet
+accessibleTables::write_sheet(
+  fy_stp_wb,
+  "BNF_Sections",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_fy,
+    " totals by BNF section"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  stp_data_fy_agg$BNF_Sections,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(fy_stp_wb,
+                              "BNF_Sections",
+                              c("A", "B", "C", "D", "E", "F", "G", "H", "I"),
+                              "left",
+                              "")
+
+#right align column B and format number
+accessibleTables::format_data(fy_stp_wb,
+                              "BNF_Sections",
+                              c("J"),
+                              "right",
+                              "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(fy_stp_wb,
+                              "BNF_Sections",
+                              c("K", "L"),
+                              "right",
+                              "#,##0.00")
+
+#### BNF PARAGRAPH tab
+# write data to sheet
+accessibleTables::write_sheet(
+  fy_stp_wb,
+  "BNF_Paragraphs",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_fy,
+    " totals by BNF Paragraph"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  stp_data_fy_agg$BNF_Paragraphs,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(
+  fy_stp_wb,
+  "BNF_Paragraphs",
+  c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"),
+  "left",
+  ""
+)
+
+#right align column B and format number
+accessibleTables::format_data(fy_stp_wb,
+                              "BNF_Paragraphs",
+                              c("L"),
+                              "right",
+                              "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(fy_stp_wb,
+                              "BNF_Paragraphs",
+                              c("M", "N"),
+                              "right",
+                              "#,##0.00")
+
+#### CHEMICAL SUBSTANCE tab
+# write data to sheet
+accessibleTables::write_sheet(
+  fy_stp_wb,
+  "Chemical_Substances",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_fy,
+    " totals by BNF Chemical Substance"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  stp_data_fy_agg$Chemical_Substances,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(
+  fy_stp_wb,
+  "Chemical_Substances",
+  c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"),
+  "left",
+  ""
+)
+
+#right align column B and format number
+accessibleTables::format_data(fy_stp_wb,
+                              "Chemical_Substances",
+                              c("N"),
+                              "right",
+                              "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(fy_stp_wb,
+                              "Chemical_Substances",
+                              c("O", "P"),
+                              "right",
+                              "#,##0.00")
+
+
+#### PRESENTATIONS tab
+# write data to sheet
+accessibleTables::write_sheet(
+  fy_stp_wb,
+  "Presentations",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_fy,
+    " totals by BNF presentation"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  stp_data_fy_agg$Presentations,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(
+  fy_stp_wb,
+  "Presentations",
+  c(
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T"
+  ),
+  "left",
+  ""
+)
+
+#right align column B and format number
+accessibleTables::format_data(fy_stp_wb,
+                              "Presentations",
+                              c("U", "V"),
+                              "right",
+                              "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(fy_stp_wb,
+                              "Presentations",
+                              c("W", "X", "Y", "Z"),
+                              "right",
+                              "#,##0.00")
+
+#save file into outputs folder
+openxlsx::saveWorkbook(
+  fy_stp_wb,
+  #automate names
+  paste0(
+    "outputs/pca_stp_summary_tables_",
+    substr(max_data_fy, 1, 4),
+    "_",
+    substr(max_data_fy, 8, 9),
+    "_v001.xlsx"
+  ),
+  overwrite = TRUE
+)
+
+# 12 create stp excel for cy ------
+
+#create workbook and meta data
+cy_stp_wb <- create_wb(sheetNames_main)
+
+create_metadata(cy_stp_wb,
+                meta_fields,
+                meta_descs)
+
+#### National tab
+accessibleTables::write_sheet(
+  cy_stp_wb,
+  "National",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_cy,
+    " overall totals"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  stp_data_cy_agg$National,
+  13
+)
+
+#left align column A to E
+accessibleTables::format_data(cy_stp_wb,
+                      "National",
+                      c("A", "B", "C", "D", "E"),
+                      "left",
+                      "")
+
+#right align column B and format number
+accessibleTables::format_data(cy_stp_wb,
+                      "National",
+                      c("F"),
+                      "right",
+                      "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(cy_stp_wb,
+                      "National",
+                      c("G", "H"),
+                      "right",
+                      "#,##0.00")
+
+
+#### BNF CHAPTER tab
+# write data to sheet
+accessibleTables::write_sheet(
+  cy_stp_wb,
+  "BNF_Chapters",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_cy,
+    " totals by BNF chapter"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  stp_data_cy_agg$BNF_Chapters,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(cy_stp_wb,
+                      "BNF_Chapters",
+                      c("A", "B", "C", "D", "E", "F", "G"),
+                      "left",
+                      "")
+
+#right align column B and format number
+accessibleTables::format_data(cy_stp_wb,
+                      "BNF_Chapters",
+                      c("H"),
+                      "right",
+                      "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(cy_stp_wb,
+                      "BNF_Chapters",
+                      c("I", "J"),
+                      "right",
+                      "#,##0.00")
+
+#### BNF SECTION tab
+# write data to sheet
+accessibleTables::write_sheet(
+  cy_stp_wb,
+  "BNF_Sections",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_cy,
+    " totals by BNF section"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  stp_data_cy_agg$BNF_Sections,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(cy_stp_wb,
+                      "BNF_Sections",
+                      c("A", "B", "C", "D", "E", "F", "G", "H", "I"),
+                      "left",
+                      "")
+
+#right align column B and format number
+accessibleTables::format_data(cy_stp_wb,
+                      "BNF_Sections",
+                      c("J"),
+                      "right",
+                      "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(cy_stp_wb,
+                      "BNF_Sections",
+                      c("K", "L"),
+                      "right",
+                      "#,##0.00")
+
+#### BNF PARAGRAPH tab
+# write data to sheet
+accessibleTables::write_sheet(
+  cy_stp_wb,
+  "BNF_Paragraphs",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_cy,
+    " totals by BNF Paragraph"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  stp_data_cy_agg$BNF_Paragraphs,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(
+  cy_stp_wb,
+  "BNF_Paragraphs",
+  c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"),
+  "left",
+  ""
+)
+
+#right align column B and format number
+accessibleTables::format_data(cy_stp_wb,
+                      "BNF_Paragraphs",
+                      c("L"),
+                      "right",
+                      "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(cy_stp_wb,
+                      "BNF_Paragraphs",
+                      c("M", "N"),
+                      "right",
+                      "#,##0.00")
+
+#### CHEMICAL SUBSTANCE tab
+# write data to sheet
+accessibleTables::write_sheet(
+  cy_stp_wb,
+  "Chemical_Substances",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_cy,
+    " totals by BNF Chemical Substance"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  stp_data_cy_agg$Chemical_Substances,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(
+  cy_stp_wb,
+  "Chemical_Substances",
+  c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"),
+  "left",
+  ""
+)
+
+#right align column B and format number
+accessibleTables::format_data(cy_stp_wb,
+                      "Chemical_Substances",
+                      c("N"),
+                      "right",
+                      "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(cy_stp_wb,
+                      "Chemical_Substances",
+                      c("O", "P"),
+                      "right",
+                      "#,##0.00")
+
+#### PRESENTATIONS tab
+# write data to sheet
+accessibleTables::write_sheet(
+  cy_stp_wb,
+  "Presentations",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_cy,
+    " totals by BNF presentation"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+  ),
+  stp_data_cy_agg$Presentations,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(
+  cy_stp_wb,
+  "Presentations",
+  c(
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T"
+  ),
+  "left",
+  ""
+)
+
+#right align column B and format number
+accessibleTables::format_data(cy_stp_wb,
+                      "Presentations",
+                      c("U", "V"),
+                      "right",
+                      "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(cy_stp_wb,
+                      "Presentations",
+                      c("W", "X", "Y", "Z"),
+                      "right",
+                      "#,##0.00")
+
+#save file into outputs folder
+openxlsx::saveWorkbook(
+  cy_stp_wb,
+  #automate names
+  paste0("outputs/pca_stp_summary_tables_",
+         max_data_cy,
+         "_v001.xlsx"),
+  overwrite = TRUE
+)
+
 # # 13. create additional analysis excel ------
 #
 # #create workbook and meta data
