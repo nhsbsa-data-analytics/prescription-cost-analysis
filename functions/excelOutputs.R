@@ -1290,7 +1290,8 @@ sheetNames_add_anl <- c(
   "Table_A1",
   "Table_A2",
   "Table_A3",
-  "Table_A4",
+  "Table_A4i",
+  "Table_A4ii",
   "Table_A5",
   "Table_A6",
   "Table_A7",
@@ -1604,9 +1605,9 @@ accessibleTables::format_data(add_anl_wb,
                               "right",
                               "#,##0.00")
 
-#additional analysis - table a4
-add_anl_4 <- nhsbsaDataExtract::pca_top_items_status(con = con)
-names(add_anl_4) <- c(
+#additional analysis - table a4i
+add_anl_4i <- nhsbsaDataExtract::pca_top_items_status(con = con)
+names(add_anl_4i) <- c(
   "Financial Year",
   "Total Exempt Items",
   "Total Charged Items",
@@ -1619,37 +1620,85 @@ names(add_anl_4) <- c(
 # write data to sheet
 accessibleTables::write_sheet(
   add_anl_wb,
-  "Table_A4",
+  "Table_A4i",
   paste0(
-    "Table A4: Total items and cost by charge status, 2014/2015 to ",
+    "Table A4i: Total items and cost by charge status, 2014/2015 to ",
     max_data_fy
   ),
   c(
     "A charged item is one where the patient has paid the set fee that has been collected by the dispensing contractor.",
     "An exempt item is one where the patient has not paid the set fee for their prescription as they hold a valid exemption. More information on exemption categories can be found at https://www.nhsbsa.nhs.uk/help-nhs-prescription-costs/free-nhs-prescriptions."
   ),
-  add_anl_4,
+  add_anl_4i,
   14
 )
 
 #left align column A
 accessibleTables::format_data(add_anl_wb,
-                              "Table_A4",
+                              "Table_A4i",
                               c("A"),
                               "left",
                               "")
 
 #format columns B:C
 accessibleTables::format_data(add_anl_wb,
-                              "Table_A4",
+                              "Table_A4i",
                               c("B", "C"),
                               "right",
                               "#,##0")
 
 #format columns D:G
 accessibleTables::format_data(add_anl_wb,
-                              "Table_A4",
+                              "Table_A4i",
                               c("D", "E", "F", "G"),
+                              "right",
+                              "#,##0.00")
+
+#additional analysis - table a4ii
+add_anl_4ii <- pca_exemtion_categories(con = con)
+names(add_anl_4ii) <- c(
+  "Financial Year",
+  "Exemption category code",
+  "Exemption category",
+  "Total items",
+  "Total cost (GBP)"
+)
+
+# write data to sheet
+accessibleTables::write_sheet(
+  add_anl_wb,
+  "Table_A4ii",
+  paste0(
+    "Table A4ii: Total items and cost by exemption, 2014/2015 to ",
+    max_data_fy
+  ),
+  c(
+    "A charged item is one where the patient has paid the set fee that has been collected by the dispensing contractor.",
+    "An exempt item is one where the patient has not paid the set fee for their prescription as they hold a valid exemption. More information on exemption categories can be found at https://www.nhsbsa.nhs.uk/help-nhs-prescription-costs/free-nhs-prescriptions.",
+    "Items assigned an exemption category code of '-' have an unknown exemption category, or an exemption category that was not capture during processing."
+  ),
+  add_anl_4ii,
+  14
+)
+
+#left align column A
+accessibleTables::format_data(add_anl_wb,
+                              "Table_A4ii",
+                              c("A", "B", "C"),
+                              "left",
+                              "")
+
+#format columns B:C
+accessibleTables::format_data(add_anl_wb,
+                              "Table_A4ii",
+                              c("D"),
+                              "right",
+                              "#,##0")
+
+#format columns D:G
+accessibleTables::format_data(add_anl_wb,
+                              "Table_A4ii",
+                              c("E"),
                               "right",
                               "#,##0.00")
 
