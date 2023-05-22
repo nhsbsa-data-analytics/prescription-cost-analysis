@@ -122,24 +122,10 @@ The designation of this publication as a National Statistic was confirmed in May
 
 ```{r total_nic, out.width = "100%"}
 
-chart <- add_anl_1 %>%  
-  rename(YEAR_DESC = 1,
-         TOTAL_NIC = 3) %>%
-  basic_chart_hc(
-    x = YEAR_DESC,
-    y = TOTAL_NIC,
-    type = "line",
-    xLab = "Financial year",
-    yLab = "Total cost (GBP)",
-    title = "",
-    currency = TRUE
-  )
-
-chart$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
-
-chart
+figure_1
 
 ```
+`r get_download_button(title = "Download chart data", data = figure_1_data, filename = "figure_1")`
 
 Source: [Summary Tables - Prescription Cost Analysis - National](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_summary_tables_2021_22_v001.xlsx)
 
@@ -161,21 +147,21 @@ In England, the cost of prescription items in 2021/22 was £9.69 billion, which 
 
 ```{r total_items, out.width = "100%"}
 
-chart <- add_anl_1 %>% 
-  rename(YEAR_DESC = 1,
-         TOTAL_NIC = 2) %>%
-  basic_chart_hc(
-    x = YEAR_DESC,
-    y = TOTAL_NIC,
-    type = "line",
-    xLab = "Financial year",
-    yLab = "Number of items dispensed",
-    title = ""
-  )
-
-chart$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
-
-chart
+# chart <- add_anl_1 %>% 
+#   rename(YEAR_DESC = 1,
+#          TOTAL_NIC = 2) %>%
+#   basic_chart_hc(
+#     x = YEAR_DESC,
+#     y = TOTAL_NIC,
+#     type = "line",
+#     xLab = "Financial year",
+#     yLab = "Number of items dispensed",
+#     title = ""
+#   )
+# 
+# chart$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
+# 
+# chart
 
 ```
 
@@ -206,31 +192,31 @@ In England, there were 1.14 billion items dispensed in 2021/22, which is 3% more
 
 ```{r bnf_chapters_items, out.width = "100%"}
 
-chart <- nat_data_fy %>%
-  group_by(BNF_CHAPTER) %>% 
-  summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS)) %>% 
-  ungroup() %>% 
-  basic_chart_hc(
-    x = BNF_CHAPTER,
-    y = TOTAL_ITEMS,
-    type = "column",
-    xLab = "BNF chapter",
-    yLab = "Number of items dispensed",
-    title = ""
-  )
-
-chart$x$hc_opts$series[[1]]$dataLabels$formatter <- JS("function(){
-                                                       var ynum = this.point.TOTAL_ITEMS ;
-                                                       if(ynum >= 1000000) {
-                                                       result = ynum/1000000
-                                                       result = result.toPrecision(3) + 'M'
-                                                       } else {
-                                                       result = ynum.toLocaleString('en-GB', {maximumSignificantDigits: 3});
-                                                       }
-                                                       return result
-}")
-
-chart
+# chart <- nat_data_fy %>%
+#   group_by(BNF_CHAPTER) %>% 
+#   summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS)) %>% 
+#   ungroup() %>% 
+#   basic_chart_hc(
+#     x = BNF_CHAPTER,
+#     y = TOTAL_ITEMS,
+#     type = "column",
+#     xLab = "BNF chapter",
+#     yLab = "Number of items dispensed",
+#     title = ""
+#   )
+# 
+# chart$x$hc_opts$series[[1]]$dataLabels$formatter <- JS("function(){
+#                                                        var ynum = this.point.TOTAL_ITEMS ;
+#                                                        if(ynum >= 1000000) {
+#                                                        result = ynum/1000000
+#                                                        result = result.toPrecision(3) + 'M'
+#                                                        } else {
+#                                                        result = ynum.toLocaleString('en-GB', {maximumSignificantDigits: 3});
+#                                                        }
+#                                                        return result
+# }")
+# 
+# chart
 
 ```
 
@@ -254,38 +240,38 @@ In 2021/22, the chapter on the Cardiovascular System in the BNF had the highest 
 
 ```{r bnf_chapters_costs, out.width = "100%"}
 
-chart <- nat_data_fy %>% 
-  group_by(BNF_CHAPTER) %>% 
-  summarise(TOTAL_NIC = sum(TOTAL_NIC)) %>% 
-  ungroup() %>% 
-  basic_chart_hc(
-    x = BNF_CHAPTER,
-    y = TOTAL_NIC,
-    type = "column",
-    xLab = "BNF chapter",
-    yLab = "Cost of items dispensed (GBP)",
-    title = ""
-  )
-
-chart$x$hc_opts$series[[1]]$dataLabels$formatter <- JS("function(){
-                                                       var ynum = this.point.TOTAL_NIC ;
-                                                      
-                                                       if(ynum >= 1000000){
-                                                       result = ynum/1000000
-                                                       result = result.toLocaleString('en-GB', {maximumSignificantDigits: 3, style: 'currency', currency: 'GBP'}) + 'M';
-                                                       } else {
-                                                       result = ynum/1000000
-                                                       result = '£' + result.toFixed(2) + 'M';
-                                                       } /*else {
-                                                       result = ynum/1000000
-                                                       result = result.toLocaleString('en-GB', {maximumSignificantDigits: 3, style: 'currency', currency: 'GBP'}) + 'M';
-                                                       }*/
-                                                       return result
-}")
-
-chart$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
-
-chart
+# chart <- nat_data_fy %>% 
+#   group_by(BNF_CHAPTER) %>% 
+#   summarise(TOTAL_NIC = sum(TOTAL_NIC)) %>% 
+#   ungroup() %>% 
+#   basic_chart_hc(
+#     x = BNF_CHAPTER,
+#     y = TOTAL_NIC,
+#     type = "column",
+#     xLab = "BNF chapter",
+#     yLab = "Cost of items dispensed (GBP)",
+#     title = ""
+#   )
+# 
+# chart$x$hc_opts$series[[1]]$dataLabels$formatter <- JS("function(){
+#                                                        var ynum = this.point.TOTAL_NIC ;
+#                                                       
+#                                                        if(ynum >= 1000000){
+#                                                        result = ynum/1000000
+#                                                        result = result.toLocaleString('en-GB', {maximumSignificantDigits: 3, style: 'currency', currency: 'GBP'}) + 'M';
+#                                                        } else {
+#                                                        result = ynum/1000000
+#                                                        result = '£' + result.toFixed(2) + 'M';
+#                                                        } /*else {
+#                                                        result = ynum/1000000
+#                                                        result = result.toLocaleString('en-GB', {maximumSignificantDigits: 3, style: 'currency', currency: 'GBP'}) + 'M';
+#                                                        }*/
+#                                                        return result
+# }")
+# 
+# chart$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
+# 
+# chart
 
 
 ```
@@ -312,34 +298,34 @@ The top three BNF chapters by both costs and items were the same in 2021/22. How
 
 ```{r generic_presc, out.width = "100%"}
 
-add_anl_5 %>%
-  rename(
-    PRESC_GEN_ITEMS = 2,
-    TOTAL_ITEMS = 7,
-    APPLIANCE_ITEMS = 6,
-    PRESC_GEN_NIC = 13,
-    TOTAL_NIC = 18,
-    APPLIANCE_NIC = 17,
-    YEAR_DESC = 1
-  ) %>%
-  mutate(GEN_ITEMS = PRESC_GEN_ITEMS,
-         TOTAL_ITEMS = TOTAL_ITEMS - APPLIANCE_ITEMS,
-         GEN_NIC = PRESC_GEN_NIC,
-         TOTAL_NIC = TOTAL_NIC - APPLIANCE_NIC) %>%
-  mutate(Items = GEN_ITEMS/TOTAL_ITEMS*100,
-         `Net ingredient cost` = GEN_NIC/TOTAL_NIC*100) %>% 
-  select(-(GEN_ITEMS:TOTAL_NIC)) %>% 
-  pivot_longer(cols = c(Items,`Net ingredient cost`),
-               names_to = "measure") %>% 
-  group_chart_hc(
-    x = YEAR_DESC,
-    y = value,
-    group = measure,
-    type = "line",
-    xLab = "Financial year",
-    yLab = "Proportion (%)",
-    title = ""
-  )
+# add_anl_5 %>%
+#   rename(
+#     PRESC_GEN_ITEMS = 2,
+#     TOTAL_ITEMS = 7,
+#     APPLIANCE_ITEMS = 6,
+#     PRESC_GEN_NIC = 13,
+#     TOTAL_NIC = 18,
+#     APPLIANCE_NIC = 17,
+#     YEAR_DESC = 1
+#   ) %>%
+#   mutate(GEN_ITEMS = PRESC_GEN_ITEMS,
+#          TOTAL_ITEMS = TOTAL_ITEMS - APPLIANCE_ITEMS,
+#          GEN_NIC = PRESC_GEN_NIC,
+#          TOTAL_NIC = TOTAL_NIC - APPLIANCE_NIC) %>%
+#   mutate(Items = GEN_ITEMS/TOTAL_ITEMS*100,
+#          `Net ingredient cost` = GEN_NIC/TOTAL_NIC*100) %>% 
+#   select(-(GEN_ITEMS:TOTAL_NIC)) %>% 
+#   pivot_longer(cols = c(Items,`Net ingredient cost`),
+#                names_to = "measure") %>% 
+#   group_chart_hc(
+#     x = YEAR_DESC,
+#     y = value,
+#     group = measure,
+#     type = "line",
+#     xLab = "Financial year",
+#     yLab = "Proportion (%)",
+#     title = ""
+#   )
 
 
 ```
@@ -372,26 +358,26 @@ Regarding the cost of reimbursement, in 2021/22, generic prescribing accounted f
 
 ```{r top_10_items, out.width = "100%"}
 
-add_anl_3 %>% 
-  rename(
-    CHEMICAL_SUBSTANCE_BNF_DESCR = 1,
-    BNF_CHEMICAL_SUBSTANCE = 2
-  ) %>%
-  group_by(CHEMICAL_SUBSTANCE_BNF_DESCR,BNF_CHEMICAL_SUBSTANCE) %>% 
-  rename(TOTAL_ITEMS = 5) %>%
-  summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS)) %>% 
-  ungroup() %>% 
-  mutate(RANK = row_number(desc(TOTAL_ITEMS))) %>% 
-  filter(RANK <= 10) %>% 
-  arrange(RANK) %>% 
-  basic_chart_hc(
-    x = CHEMICAL_SUBSTANCE_BNF_DESCR,
-    y = TOTAL_ITEMS,
-    type = "bar",
-    xLab = "Chemical substance",
-    yLab = "Number of items dispensed",
-    title = ""
-  )
+# add_anl_3 %>% 
+#   rename(
+#     CHEMICAL_SUBSTANCE_BNF_DESCR = 1,
+#     BNF_CHEMICAL_SUBSTANCE = 2
+#   ) %>%
+#   group_by(CHEMICAL_SUBSTANCE_BNF_DESCR,BNF_CHEMICAL_SUBSTANCE) %>% 
+#   rename(TOTAL_ITEMS = 5) %>%
+#   summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS)) %>% 
+#   ungroup() %>% 
+#   mutate(RANK = row_number(desc(TOTAL_ITEMS))) %>% 
+#   filter(RANK <= 10) %>% 
+#   arrange(RANK) %>% 
+#   basic_chart_hc(
+#     x = CHEMICAL_SUBSTANCE_BNF_DESCR,
+#     y = TOTAL_ITEMS,
+#     type = "bar",
+#     xLab = "Chemical substance",
+#     yLab = "Number of items dispensed",
+#     title = ""
+#   )
 
 ```
 
@@ -412,27 +398,27 @@ Source: [Additional Tables - Prescription Cost Analysis - A3](https://nhsbsa-ope
 
 ```{r top_10_costs, out.width = "100%"}
 
-add_anl_2 %>% 
-  rename(
-    CHEMICAL_SUBSTANCE_BNF_DESCR = 1, 
-    BNF_CHEMICAL_SUBSTANCE = 2
-  ) %>%
-  group_by(CHEMICAL_SUBSTANCE_BNF_DESCR,BNF_CHEMICAL_SUBSTANCE) %>% 
-  rename(TOTAL_NIC = 5) %>%
-  summarise(TOTAL_NIC = sum(TOTAL_NIC)) %>% 
-  ungroup() %>% 
-  mutate(RANK = row_number(desc(TOTAL_NIC))) %>% 
-  filter(RANK <= 10) %>% 
-  arrange(RANK) %>% 
-  basic_chart_hc(
-    x = CHEMICAL_SUBSTANCE_BNF_DESCR,
-    y = TOTAL_NIC,
-    type = "bar",
-    xLab = "Chemical substance",
-    yLab = "Cost of items dispensed (GBP)",
-    title = "",
-    currency = TRUE
-  )
+# add_anl_2 %>% 
+#   rename(
+#     CHEMICAL_SUBSTANCE_BNF_DESCR = 1, 
+#     BNF_CHEMICAL_SUBSTANCE = 2
+#   ) %>%
+#   group_by(CHEMICAL_SUBSTANCE_BNF_DESCR,BNF_CHEMICAL_SUBSTANCE) %>% 
+#   rename(TOTAL_NIC = 5) %>%
+#   summarise(TOTAL_NIC = sum(TOTAL_NIC)) %>% 
+#   ungroup() %>% 
+#   mutate(RANK = row_number(desc(TOTAL_NIC))) %>% 
+#   filter(RANK <= 10) %>% 
+#   arrange(RANK) %>% 
+#   basic_chart_hc(
+#     x = CHEMICAL_SUBSTANCE_BNF_DESCR,
+#     y = TOTAL_NIC,
+#     type = "bar",
+#     xLab = "Chemical substance",
+#     yLab = "Cost of items dispensed (GBP)",
+#     title = "",
+#     currency = TRUE
+#   )
 
 ```
 
@@ -597,18 +583,18 @@ It is worth noting that Cambridgeshire and Peterborough STP offer specialist sto
 
 ```{r unit_cost, out.width = "100%"}
 
-add_anl_11 %>% 
-  rename(UNIT_COST_CHANGE = 24,
-         DISP_PRESEN_BNF_DESCR = 2) %>%
-  slice_max(UNIT_COST_CHANGE, n = 10) %>% 
-  basic_chart_hc(
-    x = DISP_PRESEN_BNF_DESCR,
-    y = UNIT_COST_CHANGE,
-    type = "bar",
-    xLab = "BNF presentation",
-    yLab = "Unit cost percentage change (%)",
-    title = ""
-  )
+# add_anl_11 %>% 
+#   rename(UNIT_COST_CHANGE = 24,
+#          DISP_PRESEN_BNF_DESCR = 2) %>%
+#   slice_max(UNIT_COST_CHANGE, n = 10) %>% 
+#   basic_chart_hc(
+#     x = DISP_PRESEN_BNF_DESCR,
+#     y = UNIT_COST_CHANGE,
+#     type = "bar",
+#     xLab = "BNF presentation",
+#     yLab = "Unit cost percentage change (%)",
+#     title = ""
+#   )
 
 ```
 
@@ -633,19 +619,19 @@ Source: [Additional Tables - Prescription Cost Analysis - A11](https://nhsbsa-op
 
 ```{r abs_cost, out.width = "100%"}
 
-add_anl_12 %>% 
-  rename(NIC_CHANGE = 18,
-         DISP_PRESEN_BNF_DESCR = 2) %>%
-  slice_max(NIC_CHANGE, n = 10) %>% 
-  basic_chart_hc(
-    x = DISP_PRESEN_BNF_DESCR,
-    y = NIC_CHANGE,
-    type = "bar",
-    xLab = "BNF presentation",
-    yLab = "Total cost absolute change (GBP)",
-    title = "",
-    currency = TRUE
-  )
+# add_anl_12 %>% 
+#   rename(NIC_CHANGE = 18,
+#          DISP_PRESEN_BNF_DESCR = 2) %>%
+#   slice_max(NIC_CHANGE, n = 10) %>% 
+#   basic_chart_hc(
+#     x = DISP_PRESEN_BNF_DESCR,
+#     y = NIC_CHANGE,
+#     type = "bar",
+#     xLab = "BNF presentation",
+#     yLab = "Total cost absolute change (GBP)",
+#     title = "",
+#     currency = TRUE
+#   )
 
 ```
 
@@ -671,16 +657,16 @@ Source: [Additional Tables - Prescription Cost Analysis - A12](https://nhsbsa-op
 
 ```{r uk_comparisons_items, out.width = "100%"}
 
-dev_nations_data %>%
-  arrange(desc(ITEMS_PER_CAPITA)) %>%
-  basic_chart_hc(
-    x = Country,
-    y = ITEMS_PER_CAPITA,
-    type = "column",
-    xLab = "Country",
-    yLab = "Items per capita",
-    title = ""
-  )
+# dev_nations_data %>%
+#   arrange(desc(ITEMS_PER_CAPITA)) %>%
+#   basic_chart_hc(
+#     x = Country,
+#     y = ITEMS_PER_CAPITA,
+#     type = "column",
+#     xLab = "Country",
+#     yLab = "Items per capita",
+#     title = ""
+#   )
 
 ```
 
@@ -702,16 +688,16 @@ Source: [Additional Tables - Prescription Cost Analysis - A1](https://nhsbsa-ope
 
 ```{r uk_comparisons_costs, out.width = "100%"}
 
-dev_nations_data %>%
-  arrange(desc(COSTS_PER_CAPITA)) %>%
-  basic_chart_hc(
-    x = Country,
-    y = COSTS_PER_CAPITA,
-    type = "column",
-    xLab = "Country",
-    yLab = "Cost per capita (GBP)",
-    title = ""
-  )
+# dev_nations_data %>%
+#   arrange(desc(COSTS_PER_CAPITA)) %>%
+#   basic_chart_hc(
+#     x = Country,
+#     y = COSTS_PER_CAPITA,
+#     type = "column",
+#     xLab = "Country",
+#     yLab = "Cost per capita (GBP)",
+#     title = ""
+#   )
 
 
 ```

@@ -625,7 +625,7 @@ get_download_button <- function(data = data, title = "Download chart data", file
                     ),
                     initComplete = JS(
                       "function(settings, json) {",
-                      "$(this.api().table().node()).css('visibility', 'hidden');",
+                      "$(this.api().table().node()).css('visibility', 'collapse');",
                       "}"
                     )
                   )

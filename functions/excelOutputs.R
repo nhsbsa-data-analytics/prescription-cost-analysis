@@ -1436,22 +1436,6 @@ accessibleTables::create_metadata(add_anl_wb,
                                   meta_fields_add_anl,
                                   meta_descs_add_anl)
 
-#additional analysis - table a1
-add_anl_1 <-
-  nhsbsaDataExtract::pca_item_cost_per_capita(con = con) |>
-  dplyr::left_join(
-    select(en_ons_national_pop, YEAR, ENPOP),
-    by = c("JOIN_YEAR" = "YEAR"),
-    copy = TRUE
-  ) |>
-  dplyr::arrange(YEAR_DESC) |>
-  dplyr::mutate(
-    COST_PER_ITEM = TOTAL_NIC / TOTAL_ITEMS,
-    ITEMS_PER_CAPITA = TOTAL_ITEMS / ENPOP,
-    NIC_PER_CAPITA = TOTAL_NIC / ENPOP
-  ) |>
-  dplyr::select(-JOIN_YEAR)
-
 names(add_anl_1) <- c(
   "Financial Year",
   "Total Items",
@@ -1499,7 +1483,6 @@ accessibleTables::format_data(add_anl_wb,
                               "#,##0.00")
 
 #additional analysis - table a2
-add_anl_2 <- nhsbsaDataExtract::pca_top_drug_cost(con = con)
 names(add_anl_2) <- c(
   "BNF Chemical Substance Name",
   "BNF Chemical Substance Code",
@@ -1555,8 +1538,6 @@ accessibleTables::format_data(add_anl_wb,
                               "#,##0.00")
 
 #additional analysis - table a3
-add_anl_3 <- nhsbsaDataExtract::pca_top_item_cost(con = con)
-
 names(add_anl_3) <- c(
   "BNF Chemical Substance Name",
   "BNF Chemical Substance Code",
@@ -1606,7 +1587,6 @@ accessibleTables::format_data(add_anl_wb,
                               "#,##0.00")
 
 #additional analysis - table a4i
-add_anl_4i <- nhsbsaDataExtract::pca_top_items_status(con = con)
 names(add_anl_4i) <- c(
   "Financial Year",
   "Total Exempt Items",
@@ -1655,7 +1635,6 @@ accessibleTables::format_data(add_anl_wb,
                               "#,##0.00")
 
 #additional analysis - table a4ii
-add_anl_4ii <- pca_exemtion_categories(con = con)
 names(add_anl_4ii) <- c(
   "Financial Year",
   "Exemption category code",
@@ -1703,7 +1682,6 @@ accessibleTables::format_data(add_anl_wb,
                               "#,##0.00")
 
 #additional analysis - table a5
-add_anl_5 <- nhsbsaDataExtract::pca_item_cost_class(con = con)
 names(add_anl_5) <- c(
   "Financial Year",
   "Items prescribed
@@ -1881,7 +1859,6 @@ accessibleTables::format_data(
 )
 
 #additional analysis - table a6
-add_anl_6 <- nhsbsaDataExtract::pca_item_generic_bnf(con = con)
 names(add_anl_6) <- c(
   "Financial Year",
   "BNF Chapter Code",
@@ -1928,7 +1905,6 @@ accessibleTables::format_data(add_anl_wb,
                               "#,##0.00")
 
 #additional analysis - table a7
-add_anl_7 <- nhsbsaDataExtract::pca_item_cost_BNF(con = con)
 names(add_anl_7) <- c(
   "BNF Chapter Code",
   "BNF Chapter Name",
@@ -2061,7 +2037,6 @@ accessibleTables::format_data(
 )
 
 #additional analysis - table a8
-add_anl_8 <- nhsbsaDataExtract::pca_item_cost_BNF_sect(con = con)
 names(add_anl_8) <- c(
   "BNF Section Code",
   "BNF Section Name",
@@ -2199,9 +2174,6 @@ accessibleTables::format_data(
 )
 
 #additional analysis - table a9
-add_anl_9 <-
-  nhsbsaDataExtract::pca_item_cost_BNF_sect_increase(con = con)
-
 names(add_anl_9) <- c(
   "BNF Section Code",
   "BNF Section Name",
@@ -2334,9 +2306,6 @@ accessibleTables::format_data(
 )
 
 #additional analysis - table a10
-add_anl_10 <-
-  nhsbsaDataExtract::pca_item_cost_BNF_sect_decrease(con = con)
-
 names(add_anl_10) <- c(
   "BNF Section Code",
   "BNF Section Name",
@@ -2469,9 +2438,6 @@ accessibleTables::format_data(
 )
 
 #additional analysis - table a11
-add_anl_11 <-
-  nhsbsaDataExtract::pca_top_percentage_change(con = con)
-
 names(add_anl_11) <- c(
   "BNF Presentation Code",
   "BNF Presentation Name",
@@ -2607,9 +2573,6 @@ accessibleTables::format_data(
 )
 
 #additional analysis - table a12
-add_anl_12 <-
-  nhsbsaDataExtract::pca_bottom_percentage_change(con = con)
-
 names(add_anl_12) <- c(
   "BNF Presentation Code",
   "BNF Presentation Name",
@@ -2745,9 +2708,6 @@ accessibleTables::format_data(
 )
 
 #additional analysis - table a13
-add_anl_13 <-
-  nhsbsaDataExtract::pca_top_total_cost_change(con = con)
-
 names(add_anl_13) <- c(
   "BNF Presentation Code",
   "BNF Presentation Name",
@@ -2883,9 +2843,6 @@ format_data(
 )
 
 #additional analysis - table a14
-add_anl_14 <-
-  nhsbsaDataExtract::pca_bottom_total_cost_change(con = con)
-
 names(add_anl_14) <- c(
   "BNF Presentation Code",
   "BNF Presentation Name",

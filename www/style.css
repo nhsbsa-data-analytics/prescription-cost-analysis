@@ -89,3 +89,6 @@ box-shadow: 0 4px 0 #212b32!important;
 outline: 4px solid rgba(0,0,0,0)!important;
 }
 
+div.dt-buttons {
+float: right!important;
+}

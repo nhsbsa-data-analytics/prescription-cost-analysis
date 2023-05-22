@@ -58,7 +58,8 @@ req_pkgs <-
     "nhsbsa-data-analytics/nhsbsaR",
     "nhsbsa-data-analytics/nhsbsaExternalData",
     "nhsbsa-data-analytics/accessibleTables",
-    "nhsbsa-data-analytics/nhsbsaDataExtract"
+    "nhsbsa-data-analytics/nhsbsaDataExtract",
+    "nhsbsa-data-analytics/nhsbsaVis"
   )
 
 #library/install packages as required
@@ -414,9 +415,70 @@ stp_data_fy_agg <- pca_aggregations(stp_data_fy, area = "ICB")
 log_print("ICB FY data aggregated", hide_notes = TRUE)
 stp_data_cy_agg <- pca_aggregations(stp_data_cy, area = "ICB")
 log_print("ICB CY data aggregated", hide_notes = TRUE)
+ 
+# 8. Pull data for additional analysis ------------
+add_anl_1 <-
+  nhsbsaDataExtract::pca_item_cost_per_capita(con = con) |>
+  dplyr::left_join(
+    select(en_ons_national_pop, YEAR, ENPOP),
+    by = c("JOIN_YEAR" = "YEAR"),
+    copy = TRUE
+  ) |>
+  dplyr::arrange(YEAR_DESC) |>
+  dplyr::mutate(
+    COST_PER_ITEM = TOTAL_NIC / TOTAL_ITEMS,
+    ITEMS_PER_CAPITA = TOTAL_ITEMS / ENPOP,
+    NIC_PER_CAPITA = TOTAL_NIC / ENPOP
+  ) |>
+  dplyr::select(-JOIN_YEAR)
+
+add_anl_2 <- nhsbsaDataExtract::pca_top_drug_cost(con = con)
+add_anl_3 <- nhsbsaDataExtract::pca_top_item_cost(con = con)
+add_anl_4i <- nhsbsaDataExtract::pca_top_items_status(con = con)
+add_anl_4ii <- pca_exemtion_categories(con = con)
+add_anl_5 <- nhsbsaDataExtract::pca_item_cost_class(con = con)
+add_anl_6 <- nhsbsaDataExtract::pca_item_generic_bnf(con = con)
+add_anl_7 <- nhsbsaDataExtract::pca_item_cost_BNF(con = con)
+add_anl_8 <- nhsbsaDataExtract::pca_item_cost_BNF_sect(con = con)
+add_anl_9 <-
+  nhsbsaDataExtract::pca_item_cost_BNF_sect_increase(con = con)
+add_anl_10 <-
+  nhsbsaDataExtract::pca_item_cost_BNF_sect_decrease(con = con)
+add_anl_11 <-
+  nhsbsaDataExtract::pca_top_percentage_change(con = con)
+add_anl_12 <-
+  nhsbsaDataExtract::pca_bottom_percentage_change(con = con)
+add_anl_13 <-
+  nhsbsaDataExtract::pca_top_total_cost_change(con = con)
+add_anl_14 <-
+  nhsbsaDataExtract::pca_bottom_total_cost_change(con = con)
+
+log_print("Data pulled for additional analysis", hide_notes = TRUE)
 
 
-# 8. create Excel outputs if required ------
+# 9. create chart and data for them ----------
+
+#figure 1
+figure_1_data <- add_anl_1 |>
+  select(YEAR_DESC, TOTAL_NIC)
+
+figure_1 <- basic_chart_hc(
+  figure_1_data,
+  x = YEAR_DESC,
+  y = TOTAL_NIC,
+  type = "line",
+  xLab = "Financial year",
+  yLab = "Total cost (GBP)",
+  title = "",
+  currency = TRUE
+)
+
+figure_1$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
+
+log_print("Chart and chart data created", hide_notes = TRUE)
+
+
+# 10. create Excel outputs if required ------
 if(makeSheet == 1) {
   print("Generating Excel outputs")
   source("./functions/excelOutputs.R")
@@ -426,7 +488,29 @@ if(makeSheet == 1) {
   log_print("Excel outputs not generated", hide_notes = TRUE)
 }
 
-# xxx. disconnect from DWH  ---------
+# 11. Automate tidy dates -------
+#tidy max year to automate title
+year <- stp_data_fy %>%
+  select(YEAR_DESC) %>%
+  unique() %>%
+  pull()
+
+year_tidy <- paste0(substr(year, 1, 5), substr(year, 8, 9))
+
+# 12. create markdowns -------
+
+rmarkdown::render("pca-narrative-markdown.Rmd",
+                  output_format = "html_document",
+                  output_file = "outputs/pca_summary_narrative_2022_23_v001.html")
+
+rmarkdown::render("pca-narrative-markdown.Rmd",
+                  output_format = "word_document",
+                  output_file = "outputs/pca_summary_narrative_2022_23_v001.docx")
+
+log_print("Narrative markdown generated", hide_notes = TRUE)
+
+
+# 13. disconnect from DWH  ---------
 DBI::dbDisconnect(con)
 log_print("Disconnected from DWH", hide_notes = TRUE)
 
