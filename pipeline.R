@@ -57,7 +57,8 @@ req_pkgs <-
     "DT",
     "nhsbsa-data-analytics/nhsbsaR",
     "nhsbsa-data-analytics/nhsbsaExternalData",
-    "nhsbsa-data-analytics/accessibleTables"
+    "nhsbsa-data-analytics/accessibleTables",
+    "nhsbsa-data-analytics/nhsbsaDataExtract"
   )
 
 #library/install packages as required
@@ -156,7 +157,7 @@ log_print("Population data loaded", hide_notes = TRUE)
 
 #pca data
 sc_pca <- nhsbsaExternalData::scottish_pca_extraction(link = config$scotland_pca)
-ni_pca <- northern_irish_pca_extraction_new(link = config$ni_pca)
+ni_pca <- nhsbsaExternalData::northern_irish_pca_extraction_new(link = config$ni_pca)
 wa_pca <- nhsbsaExternalData::wales_pca_extraction(file_path = config$wa_pca)
 log_print("Dev nation PCA data loaded", hide_notes = TRUE)
 
@@ -286,6 +287,86 @@ if (max_dw_fy <= max_data_fy) {
             dir = "Y:/Official Stats/PCA",
             filename = "stp_data_fy",
             quote = TRUE)
+  
+  #national data by fy
+  nat_data_fy <- rownames(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "nat_data_fy"
+    )
+  ))[which.max(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "nat_data_fy"
+    )
+  )$mtime)]
+  
+  #read recent data
+  nat_data_fy <- vroom::vroom(nat_data_fy,
+                              #read snomed code as character
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))
+  
+  #national data by cy
+  nat_data_cy <- rownames(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "nat_data_cy"
+    )
+  ))[which.max(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "nat_data_cy"
+    )
+  )$mtime)]
+  
+  #read recent data
+  nat_data_cy <- vroom::vroom(nat_data_cy,
+                              #read snomed code as character
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))
+  
+  #stp data by fy
+  stp_data_fy <- rownames(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "stp_data_fy"
+    )
+  ))[which.max(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "stp_data_fy"
+    )
+  )$mtime)]
+  
+  #read recent data
+  stp_data_fy <- vroom::vroom(stp_data_fy,
+                              #read snomed code as character
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))
+  
+  #stp data by cy
+  stp_data_cy <- rownames(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "stp_data_cy"
+    )
+  ))[which.max(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "stp_data_cy"
+    )
+  )$mtime)]
+  
+  #read recent data
+  stp_data_cy <- vroom::vroom(stp_data_cy,
+                              #read snomed code as character
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))
   
   log_print("New data pulled from warehouse and saved to Y drive", hide_notes = TRUE)
 }
