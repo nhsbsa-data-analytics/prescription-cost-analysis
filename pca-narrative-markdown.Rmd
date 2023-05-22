@@ -147,23 +147,10 @@ In England, the cost of prescription items in 2021/22 was £9.69 billion, which 
 
 ```{r total_items, out.width = "100%"}
 
-# chart <- add_anl_1 %>% 
-#   rename(YEAR_DESC = 1,
-#          TOTAL_NIC = 2) %>%
-#   basic_chart_hc(
-#     x = YEAR_DESC,
-#     y = TOTAL_NIC,
-#     type = "line",
-#     xLab = "Financial year",
-#     yLab = "Number of items dispensed",
-#     title = ""
-#   )
-# 
-# chart$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
-# 
-# chart
+figure_2
 
 ```
+`r get_download_button(title = "Download chart data", data = figure_2_data, filename = "figure_2")`
 
 Source: [Summary Tables - Prescription Cost Analysis - National](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_summary_tables_2021_22_v001.xlsx)
 
@@ -192,33 +179,10 @@ In England, there were 1.14 billion items dispensed in 2021/22, which is 3% more
 
 ```{r bnf_chapters_items, out.width = "100%"}
 
-# chart <- nat_data_fy %>%
-#   group_by(BNF_CHAPTER) %>% 
-#   summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS)) %>% 
-#   ungroup() %>% 
-#   basic_chart_hc(
-#     x = BNF_CHAPTER,
-#     y = TOTAL_ITEMS,
-#     type = "column",
-#     xLab = "BNF chapter",
-#     yLab = "Number of items dispensed",
-#     title = ""
-#   )
-# 
-# chart$x$hc_opts$series[[1]]$dataLabels$formatter <- JS("function(){
-#                                                        var ynum = this.point.TOTAL_ITEMS ;
-#                                                        if(ynum >= 1000000) {
-#                                                        result = ynum/1000000
-#                                                        result = result.toPrecision(3) + 'M'
-#                                                        } else {
-#                                                        result = ynum.toLocaleString('en-GB', {maximumSignificantDigits: 3});
-#                                                        }
-#                                                        return result
-# }")
-# 
-# chart
+figure_3
 
 ```
+`r get_download_button(title = "Download chart data", data = figure_3_data, filename = "figure_3")`
 
 Source: [Summary Tables - Prescription Cost Analysis - Chapter](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_summary_tables_2021_22_v001.xlsx)
 

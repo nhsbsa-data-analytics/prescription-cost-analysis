@@ -9,16 +9,20 @@ source("./functions/functions.R")
 # 1. Setup --------------------------------------------
 # load GITHUB_KEY if available in environment or enter if not
 
-if(Sys.getenv("GITHUB_PAT") == "") {
+if (Sys.getenv("GITHUB_PAT") == "") {
   usethis::edit_r_environ()
-  stop("You need to set your GITHUB_PAT = YOUR PAT KEY in the .Renviron file which pops up. Please restart your R Studio after this and re-run the pipeline.")
+  stop(
+    "You need to set your GITHUB_PAT = YOUR PAT KEY in the .Renviron file which pops up. Please restart your R Studio after this and re-run the pipeline."
+  )
 }
 
 # load GITHUB_KEY if available in environment or enter if not
 
-if(Sys.getenv("DB_DWCP_USERNAME") == "") {
+if (Sys.getenv("DB_DWCP_USERNAME") == "") {
   usethis::edit_r_environ()
-  stop("You need to set your DB_DWCP_USERNAME = YOUR DWCP USERNAME and  DB_DWCP_PASSWORD = YOUR DWCP PASSWORD in the .Renviron file which pops up. Please restart your R Studio after this and re-run the pipeline.")
+  stop(
+    "You need to set your DB_DWCP_USERNAME = YOUR DWCP USERNAME and  DB_DWCP_PASSWORD = YOUR DWCP PASSWORD in the .Renviron file which pops up. Please restart your R Studio after this and re-run the pipeline."
+  )
 }
 
 #check if Excel outputs are required
@@ -27,7 +31,7 @@ makeSheet <- menu(c("Yes", "No"),
 
 #install nhsbsaUtils package first as need check_and_install_packages()
 devtools::install_github("nhsbsa-data-analytics/nhsbsaUtils",
-                       auth_token = Sys.getenv("GITHUB_PAT"))
+                         auth_token = Sys.getenv("GITHUB_PAT"))
 
 library(nhsbsaUtils)
 
@@ -66,7 +70,12 @@ req_pkgs <-
 nhsbsaUtils::check_and_install_packages(req_pkgs)
 
 # set up logging
-lf <- logr::log_open(paste0("Y:/Official Stats/PCA/log/pca_log", format(Sys.time(), "%d%m%y%H%M%S"), ".log"))
+lf <-
+  logr::log_open(paste0(
+    "Y:/Official Stats/PCA/log/pca_log",
+    format(Sys.time(), "%d%m%y%H%M%S"),
+    ".log"
+  ))
 
 # load config
 config <- yaml::yaml.load_file("config.yml")
@@ -79,11 +88,9 @@ log_print("Options loaded", hide_notes = TRUE)
 
 # 2. connect to DWH and pull max CY/FY  ---------
 #build connection to warehouse
-con <- nhsbsaR::con_nhsbsa(
-  dsn = "FBS_8192k",
-  driver = "Oracle in OraClient19Home1",
-  "DWCP"
-)
+con <- nhsbsaR::con_nhsbsa(dsn = "FBS_8192k",
+                           driver = "Oracle in OraClient19Home1",
+                           "DWCP")
 
 #get max fy from pca table
 max_dw_fy <- dplyr::tbl(con,
@@ -149,17 +156,25 @@ log_print("Lookup data loaded", hide_notes = TRUE)
 
 #population data
 imd_population <- nhsbsaExternalData::imd_population()
-lsoa_population_overall <- nhsbsaExternalData::lsoa_population(group = "Overall")
-en_ons_national_pop <- nhsbsaExternalData::ons_national_pop(year = c(2014:as.numeric(max_dw_cy)), area = "ENPOP")
-sc_ons_national_pop <- nhsbsaExternalData::ons_national_pop(year = (2014:as.numeric(max_dw_cy)), area = "SCPOP")
-ni_ons_national_pop <- nhsbsaExternalData::ons_national_pop(year = (2014:as.numeric(max_dw_cy)), area = "NIPOP")
-wa_ons_national_pop <- nhsbsaExternalData::ons_national_pop(year = (2014:as.numeric(max_dw_cy)), area = "WAPOP")
+lsoa_population_overall <-
+  nhsbsaExternalData::lsoa_population(group = "Overall")
+en_ons_national_pop <-
+  nhsbsaExternalData::ons_national_pop(year = c(2014:as.numeric(max_dw_cy)), area = "ENPOP")
+sc_ons_national_pop <-
+  nhsbsaExternalData::ons_national_pop(year = (2014:as.numeric(max_dw_cy)), area = "SCPOP")
+ni_ons_national_pop <-
+  nhsbsaExternalData::ons_national_pop(year = (2014:as.numeric(max_dw_cy)), area = "NIPOP")
+wa_ons_national_pop <-
+  nhsbsaExternalData::ons_national_pop(year = (2014:as.numeric(max_dw_cy)), area = "WAPOP")
 log_print("Population data loaded", hide_notes = TRUE)
 
 #pca data
-sc_pca <- nhsbsaExternalData::scottish_pca_extraction(link = config$scotland_pca)
-ni_pca <- nhsbsaExternalData::northern_irish_pca_extraction_new(link = config$ni_pca)
-wa_pca <- nhsbsaExternalData::wales_pca_extraction(file_path = config$wa_pca)
+sc_pca <-
+  nhsbsaExternalData::scottish_pca_extraction(link = config$scotland_pca)
+ni_pca <-
+  nhsbsaExternalData::northern_irish_pca_extraction_new(link = config$ni_pca)
+wa_pca <-
+  nhsbsaExternalData::wales_pca_extraction(file_path = config$wa_pca)
 log_print("Dev nation PCA data loaded", hide_notes = TRUE)
 
 # 5. pull data from warehouse if more recent data is available ------
@@ -389,7 +404,8 @@ max_data_fy_minus_1 <-
          "/",
          as.numeric(substr(max_data_fy, 6, 9)) - 1)
 
-log_print(paste0("max_data_fy_minus_1 built as: ", max_data_fy_minus_1), hide_notes = TRUE)
+log_print(paste0("max_data_fy_minus_1 built as: ", max_data_fy_minus_1),
+          hide_notes = TRUE)
 
 
 #get max cy from latest data
@@ -415,7 +431,7 @@ stp_data_fy_agg <- pca_aggregations(stp_data_fy, area = "ICB")
 log_print("ICB FY data aggregated", hide_notes = TRUE)
 stp_data_cy_agg <- pca_aggregations(stp_data_cy, area = "ICB")
 log_print("ICB CY data aggregated", hide_notes = TRUE)
- 
+
 # 8. Pull data for additional analysis ------------
 add_anl_1 <-
   nhsbsaDataExtract::pca_item_cost_per_capita(con = con) |>
@@ -475,11 +491,56 @@ figure_1 <- basic_chart_hc(
 
 figure_1$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 
-log_print("Chart and chart data created", hide_notes = TRUE)
+# figure 2
+figure_2_data <- add_anl_1 |>
+  select(YEAR_DESC, TOTAL_ITEMS)
 
+figure_2 <- basic_chart_hc(
+  figure_2_data,
+  x = YEAR_DESC,
+  y = TOTAL_ITEMS,
+  type = "line",
+  xLab = "Financial year",
+  yLab = "Number of items dispensed",
+  title = ""
+)
+
+figure_2$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
+
+# figure 3
+figure_3_data <- nat_data_fy |>
+  group_by(BNF_CHAPTER,CHAPTER_DESCR) |>
+  summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS)) |>
+  ungroup()
+
+
+figure_3 <-  basic_chart_hc(
+  figure_3_data,
+  x = BNF_CHAPTER,
+  y = TOTAL_ITEMS,
+  type = "column",
+  xLab = "BNF chapter",
+  yLab = "Number of items dispensed",
+  title = ""
+)
+
+figure_3$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+  "function(){
+                                                       var ynum = this.point.TOTAL_ITEMS ;
+                                                       if(ynum >= 1000000) {
+                                                       result = ynum/1000000
+                                                       result = result.toPrecision(3) + 'M'
+                                                       } else {
+                                                       result = ynum.toLocaleString('en-GB', {maximumSignificantDigits: 3});
+                                                       }
+                                                       return result
+}"
+)
+
+log_print("Charts and chart data created", hide_notes = TRUE)
 
 # 10. create Excel outputs if required ------
-if(makeSheet == 1) {
+if (makeSheet == 1) {
   print("Generating Excel outputs")
   source("./functions/excelOutputs.R")
   log_print("Excel outputs generated", hide_notes = TRUE)
