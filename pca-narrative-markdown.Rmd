@@ -53,14 +53,14 @@ knitr::opts_chunk$set(echo = FALSE,
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "Prescription items dispensed in the community in England cost £9.69 billion.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "Prescription items dispensed in the community in England cost £10.4 billion.", width = "100%")` 
 ::: 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "1.14 billion items were dispensed in the community in England.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "1.18 billion items were dispensed in the community in England.", width = "100%")` 
 :::
 ::::
 
-The cost of prescription items dispensed in the community in England was £9.69 billion, a 1% increase from £9.61 billion in 2020/21.
+The cost of prescription items dispensed in the community in England was £10.4 billion, a 1% increase from £9.61 billion in 2020/21.
 
 The number of prescription items dispensed in the community in England was 1.14 billion, a 3% increase from 1.11 billion in 2020/21.
 
@@ -204,41 +204,10 @@ In 2021/22, the chapter on the Cardiovascular System in the BNF had the highest 
 
 ```{r bnf_chapters_costs, out.width = "100%"}
 
-# chart <- nat_data_fy %>% 
-#   group_by(BNF_CHAPTER) %>% 
-#   summarise(TOTAL_NIC = sum(TOTAL_NIC)) %>% 
-#   ungroup() %>% 
-#   basic_chart_hc(
-#     x = BNF_CHAPTER,
-#     y = TOTAL_NIC,
-#     type = "column",
-#     xLab = "BNF chapter",
-#     yLab = "Cost of items dispensed (GBP)",
-#     title = ""
-#   )
-# 
-# chart$x$hc_opts$series[[1]]$dataLabels$formatter <- JS("function(){
-#                                                        var ynum = this.point.TOTAL_NIC ;
-#                                                       
-#                                                        if(ynum >= 1000000){
-#                                                        result = ynum/1000000
-#                                                        result = result.toLocaleString('en-GB', {maximumSignificantDigits: 3, style: 'currency', currency: 'GBP'}) + 'M';
-#                                                        } else {
-#                                                        result = ynum/1000000
-#                                                        result = '£' + result.toFixed(2) + 'M';
-#                                                        } /*else {
-#                                                        result = ynum/1000000
-#                                                        result = result.toLocaleString('en-GB', {maximumSignificantDigits: 3, style: 'currency', currency: 'GBP'}) + 'M';
-#                                                        }*/
-#                                                        return result
-# }")
-# 
-# chart$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
-# 
-# chart
-
+figure_4
 
 ```
+`r get_download_button(title = "Download chart data", data = figure_4_data, filename = "figure_4")`
 
 Source: [Summary Tables - Prescription Cost Analysis - Chapter](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_summary_tables_2021_22_v001.xlsx)
 
@@ -262,37 +231,10 @@ The top three BNF chapters by both costs and items were the same in 2021/22. How
 
 ```{r generic_presc, out.width = "100%"}
 
-# add_anl_5 %>%
-#   rename(
-#     PRESC_GEN_ITEMS = 2,
-#     TOTAL_ITEMS = 7,
-#     APPLIANCE_ITEMS = 6,
-#     PRESC_GEN_NIC = 13,
-#     TOTAL_NIC = 18,
-#     APPLIANCE_NIC = 17,
-#     YEAR_DESC = 1
-#   ) %>%
-#   mutate(GEN_ITEMS = PRESC_GEN_ITEMS,
-#          TOTAL_ITEMS = TOTAL_ITEMS - APPLIANCE_ITEMS,
-#          GEN_NIC = PRESC_GEN_NIC,
-#          TOTAL_NIC = TOTAL_NIC - APPLIANCE_NIC) %>%
-#   mutate(Items = GEN_ITEMS/TOTAL_ITEMS*100,
-#          `Net ingredient cost` = GEN_NIC/TOTAL_NIC*100) %>% 
-#   select(-(GEN_ITEMS:TOTAL_NIC)) %>% 
-#   pivot_longer(cols = c(Items,`Net ingredient cost`),
-#                names_to = "measure") %>% 
-#   group_chart_hc(
-#     x = YEAR_DESC,
-#     y = value,
-#     group = measure,
-#     type = "line",
-#     xLab = "Financial year",
-#     yLab = "Proportion (%)",
-#     title = ""
-#   )
-
+figure_5
 
 ```
+`r get_download_button(title = "Download chart data", data = figure_5_data, filename = "figure_5")`
 
 Source: [Additional Tables - Prescription Cost Analysis - table A5](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
 
@@ -322,28 +264,10 @@ Regarding the cost of reimbursement, in 2021/22, generic prescribing accounted f
 
 ```{r top_10_items, out.width = "100%"}
 
-# add_anl_3 %>% 
-#   rename(
-#     CHEMICAL_SUBSTANCE_BNF_DESCR = 1,
-#     BNF_CHEMICAL_SUBSTANCE = 2
-#   ) %>%
-#   group_by(CHEMICAL_SUBSTANCE_BNF_DESCR,BNF_CHEMICAL_SUBSTANCE) %>% 
-#   rename(TOTAL_ITEMS = 5) %>%
-#   summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS)) %>% 
-#   ungroup() %>% 
-#   mutate(RANK = row_number(desc(TOTAL_ITEMS))) %>% 
-#   filter(RANK <= 10) %>% 
-#   arrange(RANK) %>% 
-#   basic_chart_hc(
-#     x = CHEMICAL_SUBSTANCE_BNF_DESCR,
-#     y = TOTAL_ITEMS,
-#     type = "bar",
-#     xLab = "Chemical substance",
-#     yLab = "Number of items dispensed",
-#     title = ""
-#   )
+figure_6
 
 ```
+`r get_download_button(title = "Download chart data", data = figure_6_data, filename = "figure_6")`
 
 Source: [Additional Tables - Prescription Cost Analysis - A3](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
 
@@ -362,29 +286,10 @@ Source: [Additional Tables - Prescription Cost Analysis - A3](https://nhsbsa-ope
 
 ```{r top_10_costs, out.width = "100%"}
 
-# add_anl_2 %>% 
-#   rename(
-#     CHEMICAL_SUBSTANCE_BNF_DESCR = 1, 
-#     BNF_CHEMICAL_SUBSTANCE = 2
-#   ) %>%
-#   group_by(CHEMICAL_SUBSTANCE_BNF_DESCR,BNF_CHEMICAL_SUBSTANCE) %>% 
-#   rename(TOTAL_NIC = 5) %>%
-#   summarise(TOTAL_NIC = sum(TOTAL_NIC)) %>% 
-#   ungroup() %>% 
-#   mutate(RANK = row_number(desc(TOTAL_NIC))) %>% 
-#   filter(RANK <= 10) %>% 
-#   arrange(RANK) %>% 
-#   basic_chart_hc(
-#     x = CHEMICAL_SUBSTANCE_BNF_DESCR,
-#     y = TOTAL_NIC,
-#     type = "bar",
-#     xLab = "Chemical substance",
-#     yLab = "Cost of items dispensed (GBP)",
-#     title = "",
-#     currency = TRUE
-#   )
+figure_7
 
 ```
+`r get_download_button(title = "Download chart data", data = figure_7_data, filename = "figure_7")`
 
 Source: [Additional Tables - Prescription Cost Analysis - A2](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
 
@@ -410,52 +315,11 @@ The top ten chemical substances by cost included three drugs that are commonly u
 ::::
 
 ```{r items_per_pop, out.width = "100%"}
-  # df <- stp_data_fy %>%
-  #   dplyr::group_by(STP_NAME, STP_CODE) %>%
-  #   dplyr::summarise("TOTAL_ITEMS" = sum(TOTAL_ITEMS)) %>%
-  #   dplyr::ungroup() %>%
-  #   dplyr::left_join(stp_pop, by = c("STP_CODE" = "STP21CDH")) %>%
-  #   dplyr::mutate("TOTAL_ITEMS_PER_POP" = TOTAL_ITEMS / POP)
-  # 
-  # mean <- round(sum(df$TOTAL_ITEMS) / sum(ref_data$stp_pop$POP), 1)
-  # 
-  # map <- highcharter::highchart() %>%
-  #   highcharter::hc_title(
-  #     text = ""
-  #   ) %>%
-  #   highcharter::hc_subtitle(text = paste0("National mean: ", mean)) %>%
-  #   highcharter::hc_add_series_map(
-  #     map = map_df,
-  #     df = df,
-  #     name = "",
-  #     value = "TOTAL_ITEMS_PER_POP",
-  #     joinBy = c("SUB_GEOGRAPHY_CODE", "STP21_CD"),
-  #     tooltip = list(
-  #       headerFormat = "",
-  #       pointFormat = paste0(
-  #         "<b>{point.properties.SUB_GEOGRAPHY_NAME}:<br><b>{point.value}"
-  #       )
-  #     )
-  #   ) %>%
-  #   hc_colorAxis(
-  #     minColor = "#fff",
-  #     maxColor = "#005EB8",
-  #     min = round_any(min(df$TOTAL_ITEMS_PER_POP), 10, floor),
-  #     max = round_any(max(df$TOTAL_ITEMS_PER_POP), 10, ceiling)
-  #   ) %>%
-  #   highcharter::hc_legend(verticalAlign = "bottom",
-  #                          title = list(text = "Items")) %>%
-  #   highcharter::hc_tooltip(valueDecimals = 1) %>%
-  #   highcharter::hc_mapNavigation(
-  #     enabled = TRUE,
-  #     enableMouseWheelZoom = TRUE,
-  #     enableDoubleClickZoom = TRUE
-  #   )
-  # 
-  # map
+
+figure_8
     
 ```
-MAP WILL BE HERE BUT VERSION FROM OLD PIPELINE WILL NO LONGER RENDER
+`r get_download_button(title = "Download chart data", data = figure_8_data, filename = "figure_8")`
 
 Source: [Summary Tables - Prescription Cost Analysis - STP National](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_stp_summary_tables_2021_22_v001.xlsx) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/clinicalcommissioninggroupmidyearpopulationestimates)
 
@@ -475,51 +339,10 @@ Source: [Summary Tables - Prescription Cost Analysis - STP National](https://nhs
 
 ```{r nic_per_pop, out.width = "100%"}
 
-# df <- stp_data_fy %>%
-#     dplyr::group_by(STP_NAME, STP_CODE) %>%
-#     dplyr::summarise("TOTAL_NIC" = sum(TOTAL_NIC)) %>%
-#     dplyr::ungroup() %>%
-#     dplyr::left_join(stp_pop, by = c("STP_CODE" = "STP21CDH")) %>%
-#     dplyr::mutate("TOTAL_NIC_PER_POP" = TOTAL_NIC / POP)
-#   
-#   mean <- round(sum(df$TOTAL_NIC) / sum(ref_data$stp_pop$POP), 2)
-#   
-#   map <- highcharter::highchart() %>%
-#     highcharter::hc_title(
-#       text = ""
-#     ) %>%
-#     highcharter::hc_subtitle(text = paste0("National mean: £", mean)) %>%
-#     highcharter::hc_add_series_map(
-#       map = map_df,
-#       df = df,
-#       name = "",
-#       value = "TOTAL_NIC_PER_POP",
-#       joinBy = c("SUB_GEOGRAPHY_CODE", "STP21_CD"),
-#       tooltip = list(
-#         headerFormat = "",
-#         pointFormat = paste0(
-#           "<b>{point.properties.SUB_GEOGRAPHY_NAME}:<br><b>{point.value}"
-#         )
-#       )
-#     ) %>%
-#     hc_colorAxis(
-#       minColor = "#fff",
-#       maxColor = "#005EB8",
-#       min = round_any(min(df$TOTAL_NIC_PER_POP), 10, floor),
-#       max = round_any(max(df$TOTAL_NIC_PER_POP), 10, ceiling)
-#     ) %>%
-#     highcharter::hc_legend(verticalAlign = "bottom",
-#                            title = list(text = "NIC (£)")) %>%
-#     highcharter::hc_tooltip(valueDecimals = 2, valuePrefix = "£") %>%
-#     highcharter::hc_mapNavigation(
-#       enabled = TRUE,
-#       enableMouseWheelZoom = TRUE,
-#       enableDoubleClickZoom = TRUE
-#     )
-#   
-#   map
+figure_9
 
 ```
+`r get_download_button(title = "Download chart data", data = figure_9_data, filename = "figure_9")`
 
 Source: [Summary Tables - Prescription Cost Analysis - STP National](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_stp_summary_tables_2021_22_v001.xlsx) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/clinicalcommissioninggroupmidyearpopulationestimates)
 
@@ -537,7 +360,7 @@ Source: [Summary Tables - Prescription Cost Analysis - STP National](https://nhs
 
 It is worth noting that Cambridgeshire and Peterborough STP offer specialist stoma care, 34% of their total costs of £320 million in 2021/22 were in BNF chapter 23 (Stoma Appliances).
 
-### `r paste0("Figure 10: Top 10 presentations by percentage change in unit cost ",paste0(substr(max_data_fy_minus_1,1,5), substr(max_data_fy_minus_1, 8, 9)), " to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+### `r paste0("Figure 10: Top 10 presentations by percentage increase in unit cost ",paste0(substr(max_data_fy_minus_1,1,5), substr(max_data_fy_minus_1, 8, 9)), " to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
@@ -545,24 +368,15 @@ It is worth noting that Cambridgeshire and Peterborough STP offer specialist sto
 ::: 
 ::::
 
-```{r unit_cost, out.width = "100%"}
+```{r unit_cost_increase, out.width = "100%"}
 
-# add_anl_11 %>% 
-#   rename(UNIT_COST_CHANGE = 24,
-#          DISP_PRESEN_BNF_DESCR = 2) %>%
-#   slice_max(UNIT_COST_CHANGE, n = 10) %>% 
-#   basic_chart_hc(
-#     x = DISP_PRESEN_BNF_DESCR,
-#     y = UNIT_COST_CHANGE,
-#     type = "bar",
-#     xLab = "BNF presentation",
-#     yLab = "Unit cost percentage change (%)",
-#     title = ""
-#   )
+figure_10
 
 ```
+`r get_download_button(title = "Download chart data", data = figure_10_data, filename = "figure_10")`
 
-Source: [Additional Tables - Prescription Cost Analysis - A11](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
+
+Source: [Additional Tables - Prescription Cost Analysis - A12](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-6} 
@@ -573,7 +387,35 @@ Source: [Additional Tables - Prescription Cost Analysis - A11](https://nhsbsa-op
 :::
 ::::
 
-### `r paste0("Figure 11: Top 10 presentations by change in total cost ", paste0(substr(max_data_fy_minus_1,1,5), substr(max_data_fy_minus_1, 8, 9)), " to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+### `r paste0("Figure 11: Top 10 presentations by percentage decrease in unit cost ",paste0(substr(max_data_fy_minus_1,1,5), substr(max_data_fy_minus_1, 8, 9)), " to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-12} 
+`r infoBox_border(header = "", text = "The chart in this section has been limited to presentations with a total cost in 2021/22 greater than £1 million.<br><br>A unit cost for a presentation is calculated by dividing the total cost of items dispensed in the period by the total quantity.", width = "100%")` 
+::: 
+::::
+
+```{r unit_cost_decrease, out.width = "100%"}
+
+figure_11
+
+```
+`r get_download_button(title = "Download chart data", data = figure_11_data, filename = "figure_11")`
+
+
+Source: [Additional Tables - Prescription Cost Analysis - A12](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
+
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-6} 
+`r infoBox_no_border(header = "", text = "Cetirizine 1mg/ml oral solution sugar free increased in unit cost the most in 2021/22 by 604%.", width = "100%")` 
+::: 
+:::{.col-md-6} 
+`r infoBox_no_border(header = "", text = "Donepezil 10mg orodispersible tablets sugar free had the largest increase in actual costs, from 35p per unit to 231p. ", width = "100%")` 
+:::
+::::
+
+
+### `r paste0("Figure 12: Top 10 presentations by increase in total cost ", paste0(substr(max_data_fy_minus_1,1,5), substr(max_data_fy_minus_1, 8, 9)), " to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
@@ -581,25 +423,37 @@ Source: [Additional Tables - Prescription Cost Analysis - A11](https://nhsbsa-op
 ::: 
 ::::
 
-```{r abs_cost, out.width = "100%"}
+```{r abs_cost_increase, out.width = "100%"}
 
-# add_anl_12 %>% 
-#   rename(NIC_CHANGE = 18,
-#          DISP_PRESEN_BNF_DESCR = 2) %>%
-#   slice_max(NIC_CHANGE, n = 10) %>% 
-#   basic_chart_hc(
-#     x = DISP_PRESEN_BNF_DESCR,
-#     y = NIC_CHANGE,
-#     type = "bar",
-#     xLab = "BNF presentation",
-#     yLab = "Total cost absolute change (GBP)",
-#     title = "",
-#     currency = TRUE
-#   )
+figure_12
 
 ```
+`r get_download_button(title = "Download chart data", data = figure_12_data, filename = "figure_12")`
 
-Source: [Additional Tables - Prescription Cost Analysis - A12](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
+Source: [Additional Tables - Prescription Cost Analysis - A13](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
+
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-12} 
+`r infoBox_no_border(header = "", text = "Between 2020/21 and 2021/22 the total costs of FreeStyle Libre 2 Sensor kits increased by £70 million, the highest absolute change of all presentations. The FreeStyle Libre 2 Sensor was added to part IX of the drug tariff in November 2020.", width = "100%")` 
+::: 
+::::
+
+### `r paste0("Figure 13: Top 10 presentations by decrease in total cost ", paste0(substr(max_data_fy_minus_1,1,5), substr(max_data_fy_minus_1, 8, 9)), " to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-12} 
+`r infoBox_border(header = "", text = "The chart in this section has been limited to presentations with a total cost in 2021/22 greater than £1 million.", width = "100%")` 
+::: 
+::::
+
+```{r abs_cost_decrease, out.width = "100%"}
+
+figure_13
+
+```
+`r get_download_button(title = "Download chart data", data = figure_13_data, filename = "figure_13")`
+
+Source: [Additional Tables - Prescription Cost Analysis - A13](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
@@ -617,22 +471,14 @@ Source: [Additional Tables - Prescription Cost Analysis - A12](https://nhsbsa-op
 ::: 
 ::::
 
-### `r paste0("Figure 12: Items per capita for the UK nations ", max_data_fy_minus_1)`
+### `r paste0("Figure 14: Items per capita for the UK nations ", max_data_fy_minus_1)`
 
 ```{r uk_comparisons_items, out.width = "100%"}
 
-# dev_nations_data %>%
-#   arrange(desc(ITEMS_PER_CAPITA)) %>%
-#   basic_chart_hc(
-#     x = Country,
-#     y = ITEMS_PER_CAPITA,
-#     type = "column",
-#     xLab = "Country",
-#     yLab = "Items per capita",
-#     title = ""
-#   )
+figure_14
 
 ```
+`r get_download_button(title = "Download chart data", data = figure_14_data, filename = "figure_14")`
 
 Source: [Additional Tables - Prescription Cost Analysis - A1](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx) | [Public Health Scotland - Dispenser payments and prescription cost analysis](https://beta.isdscotland.org/find-publications-and-data/health-services/pharmacy-and-prescribing/dispenser-payments-and-prescription-cost-analysis/) | [Welsh Government - Prescriptions in Wales](https://gov.wales/prescriptions-wales-april-2019-march-2020) | [HSC Business Services Organisation - General pharmaceutical services and prescribing statistics](http://www.hscbusiness.hscni.net/services/3176.htm) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatestimeseriesdataset)
 
@@ -648,23 +494,15 @@ Source: [Additional Tables - Prescription Cost Analysis - A1](https://nhsbsa-ope
 ::: 
 ::::
 
-### `r paste0("Figure 13: Cost per capita for the UK nations ", max_data_fy_minus_1)`
+### `r paste0("Figure 15: Cost per capita for the UK nations ", max_data_fy_minus_1)`
 
 ```{r uk_comparisons_costs, out.width = "100%"}
 
-# dev_nations_data %>%
-#   arrange(desc(COSTS_PER_CAPITA)) %>%
-#   basic_chart_hc(
-#     x = Country,
-#     y = COSTS_PER_CAPITA,
-#     type = "column",
-#     xLab = "Country",
-#     yLab = "Cost per capita (GBP)",
-#     title = ""
-#   )
+figure_15
 
 
 ```
+`r get_download_button(title = "Download chart data", data = figure_15_data, filename = "figure_15")`
 
 Source: [Additional Tables - Prescription Cost Analysis - A1](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx) | [Public Health Scotland - Dispenser payments and prescription cost analysis](https://beta.isdscotland.org/find-publications-and-data/health-services/pharmacy-and-prescribing/dispenser-payments-and-prescription-cost-analysis/) | [Welsh Government - Prescriptions in Wales](https://gov.wales/prescriptions-wales-april-2019-march-2020) | [HSC Business Services Organisation - General pharmaceutical services and prescribing statistics](http://www.hscbusiness.hscni.net/services/3176.htm) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatestimeseriesdataset)
 

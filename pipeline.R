@@ -166,6 +166,15 @@ ni_ons_national_pop <-
   nhsbsaExternalData::ons_national_pop(year = (2014:as.numeric(max_dw_cy)), area = "NIPOP")
 wa_ons_national_pop <-
   nhsbsaExternalData::ons_national_pop(year = (2014:as.numeric(max_dw_cy)), area = "WAPOP")
+
+# build ibc population lookup
+icb_pop <- icb_lsoa_lookup |>
+  dplyr::left_join(lsoa_population_overall,
+                   by = c("LSOA_CODE" = "LSOA_CODE")) |>
+  dplyr::group_by(ICB_CODE, ICB_NAME, ICB_LONG_CODE) |>
+  dplyr::summarise(POP = sum(POP, na.rm = TRUE),
+                   .groups = "drop")
+
 log_print("Population data loaded", hide_notes = TRUE)
 
 #pca data
@@ -176,6 +185,66 @@ ni_pca <-
 wa_pca <-
   nhsbsaExternalData::wales_pca_extraction(file_path = config$wa_pca)
 log_print("Dev nation PCA data loaded", hide_notes = TRUE)
+
+#dev_nations_data
+dev_nations_data <- data.frame(
+  "Country" = c("England",
+                "Wales",
+                "Scotland",
+                "Northern Ireland"),
+  "TOTAL_ITEMS" = c(
+    add_anl_1 %>%
+      filter(YEAR_DESC == max_data_fy_minus_1) %>%
+      select(TOTAL_ITEMS) %>%
+      pull(),
+    wa_pca %>%
+      select(TOTAL_ITEMS) %>%
+      pull(),
+    sc_pca %>%
+      select(TOTAL_ITEMS) %>%
+      pull(),
+    ni_pca %>%
+      select(TOTAL_ITEMS) %>%
+      pull()
+  ),
+  "TOTAL_COSTS" = c(
+    add_anl_1 %>%
+      filter(YEAR_DESC == max_data_fy_minus_1) %>%
+      select(TOTAL_NIC) %>%
+      pull(),
+    wa_pca %>%
+      select(TOTAL_COST) %>%
+      pull(),
+    sc_pca %>%
+      select(TOTAL_COST) %>%
+      pull(),
+    ni_pca %>%
+      select(TOTAL_COST) %>%
+      pull()
+  ),
+  "POP" = c(
+    en_ons_national_pop %>%
+      filter(YEAR == max(YEAR)) %>%
+      select(ENPOP) %>%
+      pull(),
+    wa_ons_national_pop %>%
+      filter(YEAR == max(YEAR)) %>%
+      select(WAPOP) %>%
+      pull(),
+    sc_ons_national_pop %>%
+      filter(YEAR == max(YEAR)) %>%
+      select(SCPOP) %>%
+      pull(),
+    ni_ons_national_pop %>%
+      filter(YEAR == max(YEAR)) %>%
+      select(NIPOP) %>%
+      pull()
+  )
+) %>%
+  mutate(
+    ITEMS_PER_CAPITA = round(TOTAL_ITEMS / POP, 1),
+    COSTS_PER_CAPITA = round(TOTAL_COSTS / POP, 2)
+  )
 
 # 5. pull data from warehouse if more recent data is available ------
 #check max DWH fy against max data fy and pull data if different
@@ -478,7 +547,7 @@ log_print("Data pulled for additional analysis", hide_notes = TRUE)
 figure_1_data <- add_anl_1 |>
   select(YEAR_DESC, TOTAL_NIC)
 
-figure_1 <- basic_chart_hc(
+figure_1 <- nhsbsaVis::basic_chart_hc(
   figure_1_data,
   x = YEAR_DESC,
   y = TOTAL_NIC,
@@ -495,7 +564,7 @@ figure_1$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 figure_2_data <- add_anl_1 |>
   select(YEAR_DESC, TOTAL_ITEMS)
 
-figure_2 <- basic_chart_hc(
+figure_2 <- nhsbsaVis::basic_chart_hc(
   figure_2_data,
   x = YEAR_DESC,
   y = TOTAL_ITEMS,
@@ -509,12 +578,12 @@ figure_2$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 
 # figure 3
 figure_3_data <- nat_data_fy |>
-  group_by(BNF_CHAPTER,CHAPTER_DESCR) |>
+  group_by(BNF_CHAPTER, CHAPTER_DESCR) |>
   summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS)) |>
   ungroup()
 
 
-figure_3 <-  basic_chart_hc(
+figure_3 <-  nhsbsaVis::basic_chart_hc(
   figure_3_data,
   x = BNF_CHAPTER,
   y = TOTAL_ITEMS,
@@ -537,6 +606,286 @@ figure_3$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
 }"
 )
 
+# figure 4
+figure_4_data <- nat_data_fy |>
+  group_by(BNF_CHAPTER, CHAPTER_DESCR) |>
+  summarise(TOTAL_NIC = sum(TOTAL_NIC)) |>
+  ungroup()
+
+figure_4 <- nhsbsaVis::basic_chart_hc(
+  figure_4_data,
+  x = BNF_CHAPTER,
+  y = TOTAL_NIC,
+  type = "column",
+  xLab = "BNF chapter",
+  yLab = "Cost of items dispensed (GBP)",
+  title = ""
+)
+
+figure_4$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+  "function(){
+                                                       var ynum = this.point.TOTAL_NIC ;
+
+                                                       if(ynum >= 1000000){
+                                                       result = ynum/1000000
+                                                       result = result.toLocaleString('en-GB', {maximumSignificantDigits: 3, style: 'currency', currency: 'GBP'}) + 'M';
+                                                       } else {
+                                                       result = ynum/1000000
+                                                       result = '£' + result.toFixed(2) + 'M';
+                                                       } /*else {
+                                                       result = ynum/1000000
+                                                       result = result.toLocaleString('en-GB', {maximumSignificantDigits: 3, style: 'currency', currency: 'GBP'}) + 'M';
+                                                       }*/
+                                                       return result
+}"
+)
+
+figure_4$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
+
+# figure 5
+figure_5_data <- add_anl_5 |>
+  mutate(
+    GEN_ITEMS = PRESC_GEN_ITEMS,
+    TOTAL_ITEMS = TOTAL_ITEMS - APPLIANCE_ITEMS,
+    GEN_NIC = PRESC_GEN_NIC,
+    TOTAL_NIC = TOTAL_NIC - APPLIANCE_NIC
+  ) |>
+  mutate(Items = GEN_ITEMS / TOTAL_ITEMS * 100,
+         `Net ingredient cost` = GEN_NIC / TOTAL_NIC * 100) |>
+  select(-(GEN_ITEMS:TOTAL_NIC)) |>
+  pivot_longer(
+    cols = c(Items, `Net ingredient cost`),
+    names_to = "MEASURE",
+    values_to = "VALUE"
+  ) |>
+  select(YEAR_DESC, MEASURE, VALUE)
+
+
+figure_5 <- nhsbsaVis::group_chart_hc(
+  figure_5_data,
+  x = YEAR_DESC,
+  y = VALUE,
+  group = MEASURE,
+  type = "line",
+  xLab = "Financial year",
+  yLab = "Proportion (%)",
+  title = ""
+)
+
+# figure 6
+figure_6_data <- add_anl_3 |>
+  group_by(CHEMICAL_SUBSTANCE_BNF_DESCR, BNF_CHEMICAL_SUBSTANCE) |>
+  rename(TOTAL_ITEMS = 5) |>
+  summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS)) |>
+  ungroup() |>
+  mutate(RANK = row_number(desc(TOTAL_ITEMS))) |>
+  filter(RANK <= 10) |>
+  arrange(RANK)
+
+figure_6 <- nhsbsaVis::basic_chart_hc(
+  figure_6_data,
+  x = CHEMICAL_SUBSTANCE_BNF_DESCR,
+  y = TOTAL_ITEMS,
+  type = "bar",
+  xLab = "Chemical substance",
+  yLab = "Number of items dispensed",
+  title = ""
+)
+
+# figure 7
+figure_7_data <- add_anl_2 |>
+  group_by(CHEMICAL_SUBSTANCE_BNF_DESCR, BNF_CHEMICAL_SUBSTANCE) |>
+  rename(TOTAL_NIC = 5) |>
+  summarise(TOTAL_NIC = sum(TOTAL_NIC)) |>
+  ungroup() |>
+  mutate(RANK = row_number(desc(TOTAL_NIC))) |>
+  filter(RANK <= 10) |>
+  arrange(RANK)
+
+figure_7 <- nhsbsaVis::basic_chart_hc(
+  figure_7_data,
+  x = CHEMICAL_SUBSTANCE_BNF_DESCR,
+  y = TOTAL_NIC,
+  type = "bar",
+  xLab = "Chemical substance",
+  yLab = "Cost of items dispensed (GBP)",
+  title = "",
+  currency = TRUE
+)
+
+# figure 8
+figure_8_data <-  stp_data_cy_agg$National |>
+  dplyr::select(`ICB Code`,
+                `Total Items`) |>
+  dplyr::rename(ICB_CODE = 1,
+                TOTAL_ITEMS = 2) |>
+  dplyr::group_by(ICB_CODE) |>
+  dplyr::summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS, na.rm = T),
+                   .groups = "drop") |>
+  dplyr::left_join(icb_pop,
+                   by = c("ICB_CODE" = "ICB_CODE")) |>
+  dplyr::mutate("TOTAL_ITEMS_PER_POP" = TOTAL_ITEMS / POP)
+
+figure_8 <- nhsbsaVis::icb_map(
+  data = stp_data_cy_agg$National,
+  icb_code_column = "ICB Code",
+  value_column = "Total Items",
+  geo_data = icb_geo_data,
+  icb_lsoa_lookup = icb_lsoa_lookup,
+  lsoa_population = lsoa_population_overall,
+  currency = FALSE,
+  scale_rounding = 10
+)
+
+# figure 9
+figure_9_data <-  stp_data_cy_agg$National |>
+  dplyr::select(`ICB Code`,
+                `Total Cost (GBP)`) |>
+  dplyr::rename(ICB_CODE = 1,
+                TOTAL_NIC = 2) |>
+  dplyr::group_by(ICB_CODE) |>
+  dplyr::summarise(TOTAL_NIC = sum(TOTAL_NIC, na.rm = T),
+                   .groups = "drop") |>
+  dplyr::left_join(icb_pop,
+                   by = c("ICB_CODE" = "ICB_CODE")) |>
+  dplyr::mutate("TOTAL_NIC_PER_POP" = TOTAL_NIC / POP)
+
+figure_9 <- nhsbsaVis::icb_map(
+  data = stp_data_cy_agg$National,
+  icb_code_column = "ICB Code",
+  value_column = "Total Cost (GBP)",
+  geo_data = icb_geo_data,
+  icb_lsoa_lookup = icb_lsoa_lookup,
+  lsoa_population = lsoa_population_overall,
+  currency = TRUE,
+  scale_rounding = 100
+)
+
+# figure 10
+figure_10_data <- add_anl_11 |>
+  rename(UNIT_COST_CHANGE = 24,
+         DISP_PRESEN_BNF_DESCR = 2) |>
+  slice_max(UNIT_COST_CHANGE, n = 10) |>
+  select(DISP_PRESEN_BNF,
+         DISP_PRESEN_BNF_DESCR,
+         VMPP_UOM,
+         UNIT_COST_CHANGE)
+
+figure_10 <- nhsbsaVis::basic_chart_hc(
+  figure_10_data,
+  x = DISP_PRESEN_BNF_DESCR,
+  y = UNIT_COST_CHANGE,
+  type = "bar",
+  xLab = "BNF presentation",
+  yLab = "Unit cost percentage increase (%)",
+  title = ""
+)
+
+# figure 11
+figure_11_data <- add_anl_12 |>
+  rename(UNIT_COST_CHANGE = 24,
+         DISP_PRESEN_BNF_DESCR = 2) |>
+  slice_min(UNIT_COST_CHANGE, n = 10) |>
+  select(DISP_PRESEN_BNF,
+         DISP_PRESEN_BNF_DESCR,
+         VMPP_UOM,
+         UNIT_COST_CHANGE)
+
+figure_11 <- figure_11_data |>
+  mutate(UNIT_COST_CHANGE = UNIT_COST_CHANGE * -1) |>
+  nhsbsaVis::basic_chart_hc(
+    x = DISP_PRESEN_BNF_DESCR,
+    y = UNIT_COST_CHANGE,
+    type = "bar",
+    xLab = "BNF presentation",
+    yLab = "Unit cost percentage decrease (%)",
+    title = ""
+  )
+
+# figure 12
+figure_12_data <- add_anl_13 |>
+  rename(NIC_CHANGE = 18,
+         DISP_PRESEN_BNF_DESCR = 2) |>
+  slice_max(NIC_CHANGE, n = 10) |>
+  select(DISP_PRESEN_BNF,
+         DISP_PRESEN_BNF_DESCR,
+         VMPP_UOM,
+         NIC_CHANGE)
+
+figure_12 <- nhsbsaVis::basic_chart_hc(
+  figure_12_data,
+  x = DISP_PRESEN_BNF_DESCR,
+  y = NIC_CHANGE,
+  type = "bar",
+  xLab = "BNF presentation",
+  yLab = "Total cost absolute increase (GBP)",
+  title = "",
+  currency = TRUE
+)
+
+# figure 12
+figure_13_data <- add_anl_14 |>
+  rename(NIC_CHANGE = 18,
+         DISP_PRESEN_BNF_DESCR = 2) |>
+  slice_min(NIC_CHANGE, n = 10) |>
+  select(DISP_PRESEN_BNF,
+         DISP_PRESEN_BNF_DESCR,
+         VMPP_UOM,
+         NIC_CHANGE)
+
+figure_13 <- figure_13_data |>
+  mutate(NIC_CHANGE = NIC_CHANGE * -1) |>
+  nhsbsaVis::basic_chart_hc(
+    x = DISP_PRESEN_BNF_DESCR,
+    y = NIC_CHANGE,
+    type = "bar",
+    xLab = "BNF presentation",
+    yLab = "Total cost absolute decrease (GBP)",
+    title = "",
+    currency = TRUE
+  )
+
+# figure 14
+figure_14_data <- dev_nations_data |>
+  arrange(desc(ITEMS_PER_CAPITA)) |>
+  select(Country,
+         POP,
+         TOTAL_ITEMS,
+         ITEMS_PER_CAPITA
+         )
+
+figure_14 <-
+  basic_chart_hc(
+    figure_14_data,
+    x = Country,
+    y = ITEMS_PER_CAPITA,
+    type = "column",
+    xLab = "Country",
+    yLab = "Items per capita",
+    title = ""
+  )
+
+# figure 15
+figure_15_data <- dev_nations_data |>
+  arrange(desc(COSTS_PER_CAPITA)) |>
+  select(Country,
+         POP,
+         TOTAL_COSTS,
+         COSTS_PER_CAPITA
+  )
+
+figure_15 <-
+  basic_chart_hc(
+    figure_15_data,
+    x = Country,
+    y = COSTS_PER_CAPITA,
+    type = "column",
+    xLab = "Country",
+    yLab = "Cost per capita (GBP)",
+    title = ""
+  )
+
+
 log_print("Charts and chart data created", hide_notes = TRUE)
 
 # 10. create Excel outputs if required ------
@@ -551,9 +900,9 @@ if (makeSheet == 1) {
 
 # 11. Automate tidy dates -------
 #tidy max year to automate title
-year <- stp_data_fy %>%
-  select(YEAR_DESC) %>%
-  unique() %>%
+year <- stp_data_fy |>
+  select(YEAR_DESC) |>
+  unique() |>
   pull()
 
 year_tidy <- paste0(substr(year, 1, 5), substr(year, 8, 9))
