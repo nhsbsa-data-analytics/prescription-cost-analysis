@@ -225,7 +225,7 @@ Source: [Summary Tables - Prescription Cost Analysis - Chapter](https://nhsbsa-o
 
 In 2022/23, the BNF chapter on the Endocrine System had the highest costs, totaling £1.78 billion, which was equal to 17% of all costs. The Cardiovascular System chapter followed with costs of £1.67 billion, representing 16% of costs. The Central Nervous System chapter had costs of £1.59 billion, 15% of the total costs.
 
-The Endocrine System had 6% higher costs than the Cardiovascular System in 2022/23, despite having 63% fewer items dispensed.
+Despite having 63% fewer items, the Endocrine System had costs that were 6% higher than the Cardiovascular System during 2022/23.
 
 ### `r paste0("Figure 5: Proportion of items prescribed generically and proportion of costs excluding appliances England ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
@@ -240,19 +240,19 @@ Source: [Additional Tables - Prescription Cost Analysis - table A5](https://nhsb
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "84% of prescription items prescibed generically in 2021/22.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "85% of prescription items prescibed generically in 2022/23.", width = "100%")` 
 ::: 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "Rate of generic prescrbing has remained consistent between 2014/15 and 2021/22.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "Rate of generic prescrbing has remained consistent between 2014/15 and 2022/23.", width = "100%")` 
 :::
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "Generic prescribing accounted for 61% of costs in 2021/22.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "Generic prescribing accounted for 62% of costs in 2022/23.", width = "100%")` 
 :::
 ::::
 
-In 2021/22, 84% of prescription items were prescribed generically, which is slightly lower then the previous year and the highest rate which was recorded in 2014/15. However, the rate of generic prescribing has remained consistent over the period. There has been a 1 percentage point variation between 2014/15 and 2021/22. Note that these figures exclude preparation class 4 products - appliances.
+In 2022/23, 85% of prescription items were prescribed generically, which is slightly higher then the previous year. However, the rate of generic prescribing has remained consistent over the period. There has been a 1 percentage point variation between 2014/15 and 2022/23. Note that these figures exclude preparation class 4 products - appliances.
 
-Regarding the cost of reimbursement, in 2021/22, generic prescribing accounted for 61% of the total cost. This is the lowest rate in the reporting period. This is a decrease of 3 percentage points from the previous year. The proportion of costs attributed to generic prescribing has shown greater variation, with a range of 7 percentage points over the period. The proportion of costs for generic prescribing had increased for three consecutive years from 2018/19 to 2020/21.
+Regarding the cost of reimbursement, in 2022/23, generic prescribing accounted for 62% of the total cost. This is a increase of 1 percentage point from the previous year. The proportion of costs attributed to generic prescribing has shown greater variation, with a range of 7 percentage points over the period. 
 
 ### `r paste0("Figure 6: The 10 most dispensed chemical substances by total items in ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
@@ -273,14 +273,14 @@ Source: [Additional Tables - Prescription Cost Analysis - A3](https://nhsbsa-ope
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "Atorvastatin was the most dispensed chemical susbtance with 53 million items.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "Atorvastatin was the most dispensed chemical susbtance with 59 million items.", width = "100%")` 
 ::: 
 :::{.col-md-6} 
 `r infoBox_no_border(header = "", text = "Four of the top ten chemical substances by items belong to BNF chapter 02 - Cardiovascular System.", width = "100%")` 
 :::
 ::::
 
-[Atorvastatin](https://www.nhs.uk/medicines/atorvastatin/) was the most dispensed chemical substance in 2021/22, with 53 million items. This medication is a type of statin that is commonly used to lower cholesterol and help prevent heart disease. Four of the top ten dispensed chemical substances belong to BNF chapter 02 - Cardiovascular System. These substances are Atorvastatin, Amlodipine, Ramipril, and Bisoprolol fumarate.
+[Atorvastatin](https://www.nhs.uk/medicines/atorvastatin/) was the most dispensed chemical substance in 2022/23, with 59 million items. This medication is a type of statin that is commonly used to lower cholesterol and help prevent heart disease. Four of the top ten dispensed chemical substances belong to BNF chapter 02 - Cardiovascular System. These substances are Atorvastatin, Amlodipine, Ramipril, and Bisoprolol fumarate.
 
 ### `r paste0("Figure 7: The 10 most dispensed chemical substances by cost in ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
@@ -294,19 +294,24 @@ figure_7
 Source: [Additional Tables - Prescription Cost Analysis - A2](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
-:::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "Apixiban had the highest costs of £400 million.", width = "100%")` 
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "Apixiban had the highest costs of £430 million.", width = "100%")` 
 ::: 
-:::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "Three of the top ten chemical substances by costs are used to treat repiratory illnesses.", width = "100%")` 
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "Three of the top ten chemical substances by costs are anticoagulants that arte used to help prevent blood clots.", width = "100%")` 
+:::
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "Two of the top ten chemical substances by costs are used to treat repiratory illnesses.", width = "100%")` 
 :::
 ::::
 
 Apixiban had the highest cost for items dispensed in the community in England, with a total cost of £400 million. [Apixaban](https://www.nhs.uk/medicines/apixaban/) is an anticoagulant that is primarily used to treat individuals who have had a health problem caused by a blood clot or to prevent future blood clots.
 
-The top ten chemical substances by cost included three drugs that are commonly used to treat respiratory illnesses. These are Beclometasone dipropionate, Fluticasone propionate (Inhalation), and Budesonide.
+The top ten chemical substances by cost included three drugs that are commonly used to help prevent blood clots. These are Apixaban, Rivaroxaban, and Edoxaban.
 
-### `r paste0("Figure ",8,": Dispensed items per capita by Sustainability and Transformation Partnership (STP) ",year_tidy)`
+The top ten chemical substances by cost included two drugs that are commonly used to treat respiratory illnesses. These are Beclometasone dipropionate and Budesonide.
+
+### `r paste0("Figure ",8,": Dispensed items per capita by Sustainability and Transformation Partnership (ICB) ",year_tidy)`
 
 ```{r items_per_pop, out.width = "100%"}
 
@@ -315,27 +320,27 @@ figure_8
 ```
 `r get_download_button(title = "Download chart data", data = figure_8_data, filename = "figure_8")`
 
-Source: [Summary Tables - Prescription Cost Analysis - STP National](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_stp_summary_tables_2021_22_v001.xlsx) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/clinicalcommissioninggroupmidyearpopulationestimates)
+Source: [Summary Tables - Prescription Cost Analysis - ICB National](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_stp_summary_tables_2021_22_v001.xlsx) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/clinicalcommissioninggroupmidyearpopulationestimates)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
-`r infoBox_border(header = "", text = "Sustainability and tranformation partnerships (STP) are collaborations between NHS organisations, local councils, and other groups aimed at improving health and care for the local population. These collaborations are based on geographic regions.<br><br>However, it's important to note that the STP listed in these statistics refers to the dispensing contractor as listed in the NHSBSA admistrative records, rather than the prescribing organisation of an item.<br><br>Prescribing and dispensing trends can vary regionally, and there are many factors that can influence these decisions. Some of the factors that can affect prescribing and dispensing trends include population demographics, prevalence of chronic disease, and the presence of specialist dispensing contractors within a given area.<br><br>If you're interested in learning more about STPs and how they were used in these statistics, please refer to the [Background Information and Methodology note](https://www.nhsbsa.nhs.uk/sites/default/files/2022-06/pca_2022_background_information_methodology_v001.odt) that accompanies this release.", width = "100%")` 
+`r infoBox_border(header = "", text = "Integrated care boards (ICB) are statutory NHS organisations which are responsible for developing a plan for meeting the health needs of the population, managing the NHS budget and arranging for the provision of health services in a geographical area. <br><br>However, it's important to note that the ICB listed in these statistics refers to the dispensing contractor as listed in the NHSBSA admistrative records, rather than the prescribing organisation of an item.<br><br>Prescribing and dispensing trends can vary regionally, and there are many factors that can influence these decisions. Some of the factors that can affect prescribing and dispensing trends include population demographics, prevalence of chronic disease, and the presence of specialist dispensing contractors within a given area.<br><br>If you're interested in learning more about ICBs and how they were used in these statistics, please refer to the [Background Information and Methodology note](https://www.nhsbsa.nhs.uk/sites/default/files/2022-06/pca_2022_background_information_methodology_v001.odt) that accompanies this release.", width = "100%")` 
 ::: 
 ::::
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "The mean number of items dispensed per capita in England was 20 in 2021/22.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "The mean number of items dispensed per capita in England was 21 in 2021/22.", width = "100%")` 
 ::: 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "Lincolnshire STP had the highest dispensed items per capita with 28.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "NHS Lincolnshire Integrated Care Board had the highest dispensed items per capita with 28.", width = "100%")` 
 :::
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "Surrey Heartlands Health and Care Partnership STP had the lowest with 13.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "NHS North Central London Integrated Care Board had the lowest with 13.", width = "100%")` 
 :::
 ::::
 
-### `r paste0("Figure ",9,": Cost per capita (£) by Sustainability and Transformation Partnership (STP) ",year_tidy)`
+### `r paste0("Figure ",9,": Cost per capita (£) by Sustainability and Transformation Partnership (ICB) ",year_tidy)`
 
 ```{r nic_per_pop, out.width = "100%"}
 
@@ -344,21 +349,21 @@ figure_9
 ```
 `r get_download_button(title = "Download chart data", data = figure_9_data, filename = "figure_9")`
 
-Source: [Summary Tables - Prescription Cost Analysis - STP National](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_stp_summary_tables_2021_22_v001.xlsx) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/clinicalcommissioninggroupmidyearpopulationestimates)
+Source: [Summary Tables - Prescription Cost Analysis - ICB National](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_stp_summary_tables_2021_22_v001.xlsx) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/clinicalcommissioninggroupmidyearpopulationestimates)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "The mean cost of items dispensed per capita in England was £171 in 2021/22.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "The mean cost of items dispensed per capita in England was £178 in 2021/22.", width = "100%")` 
 ::: 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "Cambridgeshire and Peterborough STP had the highest cost per capita of £355.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "NHS Cambridgeshire and Peterborough Integrated Care Board had the highest cost per capita of £379.", width = "100%")` 
 :::
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "Our Healthier South East London STP had the lowest of £114.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "NHS South East London Integrated Care BoardP had the lowest of £119.", width = "100%")` 
 :::
 ::::
 
-It is worth noting that Cambridgeshire and Peterborough STP offer specialist stoma care, 34% of their total costs of £320 million in 2021/22 were in BNF chapter 23 (Stoma Appliances).
+It is worth noting that NHS Cambridgeshire and Peterborough Integrated Care Board offer specialist stoma care, 34% of their total costs of £340 million in 2022/23 were in BNF chapter 23 (Stoma Appliances).
 
 ### `r paste0("Figure 10: Top 10 presentations by percentage increase in unit cost ",paste0(substr(max_data_fy_minus_1,1,5), substr(max_data_fy_minus_1, 8, 9)), " to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
@@ -374,17 +379,14 @@ Source: [Additional Tables - Prescription Cost Analysis - A12](https://nhsbsa-op
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
-`r infoBox_border(header = "", text = "The chart in this section has been limited to presentations with a total cost in 2021/22 greater than £1 million.<br><br>A unit cost for a presentation is calculated by dividing the total cost of items dispensed in the period by the total quantity.", width = "100%")` 
+`r infoBox_border(header = "", text = "The chart in this section has been limited to presentations with a total cost in 2022/23 greater than £1 million.<br><br>A unit cost for a presentation is calculated by dividing the total cost of items dispensed in the period by the total quantity.", width = "100%")` 
 ::: 
 ::::
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
-:::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "Cetirizine 1mg/ml oral solution sugar free increased in unit cost the most in 2021/22 by 604%.", width = "100%")` 
+:::{.col-md-12} 
+`r infoBox_no_border(header = "", text = "Chloral hydrate 500mg/5ml oral solution/mixture BP 2000 increased in unit cost the most in 2022/23 by 2,024%.", width = "100%")` 
 ::: 
-:::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "Donepezil 10mg orodispersible tablets sugar free had the largest increase in actual costs, from 35p per unit to 231p. ", width = "100%")` 
-:::
 ::::
 
 ### `r paste0("Figure 11: Top 10 presentations by percentage decrease in unit cost ",paste0(substr(max_data_fy_minus_1,1,5), substr(max_data_fy_minus_1, 8, 9)), " to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
@@ -401,17 +403,14 @@ Source: [Additional Tables - Prescription Cost Analysis - A12](https://nhsbsa-op
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
-`r infoBox_border(header = "", text = "The chart in this section has been limited to presentations with a total cost in 2021/22 greater than £1 million.<br><br>A unit cost for a presentation is calculated by dividing the total cost of items dispensed in the period by the total quantity.", width = "100%")` 
+`r infoBox_border(header = "", text = "The chart in this section has been limited to presentations with a total cost in 2022/23 greater than £1 million.<br><br>A unit cost for a presentation is calculated by dividing the total cost of items dispensed in the period by the total quantity.", width = "100%")` 
 ::: 
 ::::
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
-:::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "Cetirizine 1mg/ml oral solution sugar free increased in unit cost the most in 2021/22 by 604%.", width = "100%")` 
+:::{.col-md-12} 
+`r infoBox_no_border(header = "", text = "Salofalk 1g/application foam enema decreased in unit cost the most in 2022/23 by 78%.", width = "100%")` 
 ::: 
-:::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "Donepezil 10mg orodispersible tablets sugar free had the largest increase in actual costs, from 35p per unit to 231p. ", width = "100%")` 
-:::
 ::::
 
 
@@ -428,14 +427,14 @@ Source: [Additional Tables - Prescription Cost Analysis - A13](https://nhsbsa-op
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
-`r infoBox_border(header = "", text = "The chart in this section has been limited to presentations with a total cost in 2021/22 greater than £1 million.", width = "100%")` 
+`r infoBox_border(header = "", text = "The chart in this section has been limited to presentations with a total cost in 2022/23 greater than £1 million.", width = "100%")` 
 ::: 
 ::::
 
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
-`r infoBox_no_border(header = "", text = "Between 2020/21 and 2021/22 the total costs of FreeStyle Libre 2 Sensor kits increased by £70 million, the highest absolute change of all presentations. The FreeStyle Libre 2 Sensor was added to part IX of the drug tariff in November 2020.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "Between 2021/22 and 2022/23 the total costs of Apixaban 5mg tablets increased by £280 million, the highest absolute change of all presentations. LINE HERE ABOUT WHEN APIXIBAN BECAME GENERIC - JUST CHECK FOR EXACT DATE ON THIS.", width = "100%")` 
 ::: 
 ::::
 
@@ -458,7 +457,7 @@ Source: [Additional Tables - Prescription Cost Analysis - A13](https://nhsbsa-op
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
-`r infoBox_no_border(header = "", text = "Between 2020/21 and 2021/22 the total costs of FreeStyle Libre 2 Sensor kits increased by £70 million, the highest absolute change of all presentations. The FreeStyle Libre 2 Sensor was added to part IX of the drug tariff in November 2020.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "Between 2021/22 and 2022/23 the total costs of Eliquis 5mg tablets decreased by £260 million, the highest absolute change of all presentations. AS ABOVE LINE ABOUT GENERIC APIXIBAN AS ELQUIS IS BRANDED VERSION.", width = "100%")` 
 ::: 
 ::::
 
@@ -485,13 +484,13 @@ Source: [Additional Tables - Prescription Cost Analysis - A1](https://nhsbsa-ope
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "20 items per head of population were dispensed in England in 2020/21.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "20 items per head of population were dispensed in England in 2021/22.", width = "100%")` 
 ::: 
 :::{.col-md-4} 
 `r infoBox_no_border(header = "", text = "This was 1 item more than Scotland who had the fewest items dispensed per capita of 19.", width = "100%")` 
 ::: 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "26 items per head of population were dispensed in Wales in 2020/21.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "26 items per head of population were dispensed in Wales in 2021/22.", width = "100%")` 
 ::: 
 ::::
 
@@ -509,10 +508,10 @@ Source: [Additional Tables - Prescription Cost Analysis - A1](https://nhsbsa-ope
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "England had the lowest prescription item cost per head of population in 2020/21 of £170.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "England had the lowest prescription item cost per head of population in 2020/21 of £171.", width = "100%")` 
 ::: 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "This was £70 less than Northern Ireland at £240 per capita.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "This was £76 less than Northern Ireland at £247 per capita.", width = "100%")` 
 ::: 
 ::::
 
@@ -524,7 +523,7 @@ Source: [Additional Tables - Prescription Cost Analysis - A1](https://nhsbsa-ope
 
 The NHSBSA publishes a [monthly administrative management information dataset](https://www.nhsbsa.nhs.uk/prescription-data/dispensing-data/prescription-cost-analysis-pca-data) for PCA using the same methodology as these statistics however, it is not an Official Statistic.
 
-There's a slight difference between the annual National Statistics and the monthly administrative data for PCA. The annual publication uses the geographical structure as of the 31st March for that year, while the monthly data uses the structure at the end of the month. If a dispensing contractor changes parent organisation during the year, this may affect the STP level total in the aggregated monthly data compared to the annual National Statistics, but it won't affect the national totals. However, such cases are rare.
+There's a slight difference between the annual National Statistics and the monthly administrative data for PCA. The annual publication uses the geographical structure as of the 31st March for that year, while the monthly data uses the structure at the end of the month. If a dispensing contractor changes parent organisation during the year, this may affect the ICB level total in the aggregated monthly data compared to the annual National Statistics, but it won't affect the national totals. However, such cases are rare.
 
 
 ### 4.2. Uses of these statistics {.toc-ignore}
@@ -542,10 +541,6 @@ These statistics serve several purposes, including:
 * monitoring the proportion of prescriptions dispensed generically
 
 ### 4.3. Changes to this publication {.toc-ignore}
-
-We have updated figures 8 and 9 relating to the items and costs per capita by STP to use maps to visualise the data.
-
-Data in the summary tables is no longer provided to the lowest level of SNOMED code. Data at this level will be provided via our [Open Data Portal (ODP)](https://opendata.nhsbsa.net/).
 
 For full details of the changes made please refer to the [Background Information and Methodology note](https://www.nhsbsa.nhs.uk/sites/default/files/2022-06/pca_2022_background_information_methodology_v001.odt) released alongside these statistics.
 

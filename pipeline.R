@@ -181,70 +181,11 @@ log_print("Population data loaded", hide_notes = TRUE)
 sc_pca <-
   nhsbsaExternalData::scottish_pca_extraction(link = config$scotland_pca)
 ni_pca <-
-  nhsbsaExternalData::northern_irish_pca_extraction_new(link = config$ni_pca)
+  nhsbsaExternalData::northern_irish_pca_extraction(link = config$ni_pca)
 wa_pca <-
   nhsbsaExternalData::wales_pca_extraction(file_path = config$wa_pca)
 log_print("Dev nation PCA data loaded", hide_notes = TRUE)
 
-#dev_nations_data
-dev_nations_data <- data.frame(
-  "Country" = c("England",
-                "Wales",
-                "Scotland",
-                "Northern Ireland"),
-  "TOTAL_ITEMS" = c(
-    add_anl_1 %>%
-      filter(YEAR_DESC == max_data_fy_minus_1) %>%
-      select(TOTAL_ITEMS) %>%
-      pull(),
-    wa_pca %>%
-      select(TOTAL_ITEMS) %>%
-      pull(),
-    sc_pca %>%
-      select(TOTAL_ITEMS) %>%
-      pull(),
-    ni_pca %>%
-      select(TOTAL_ITEMS) %>%
-      pull()
-  ),
-  "TOTAL_COSTS" = c(
-    add_anl_1 %>%
-      filter(YEAR_DESC == max_data_fy_minus_1) %>%
-      select(TOTAL_NIC) %>%
-      pull(),
-    wa_pca %>%
-      select(TOTAL_COST) %>%
-      pull(),
-    sc_pca %>%
-      select(TOTAL_COST) %>%
-      pull(),
-    ni_pca %>%
-      select(TOTAL_COST) %>%
-      pull()
-  ),
-  "POP" = c(
-    en_ons_national_pop %>%
-      filter(YEAR == max(YEAR)) %>%
-      select(ENPOP) %>%
-      pull(),
-    wa_ons_national_pop %>%
-      filter(YEAR == max(YEAR)) %>%
-      select(WAPOP) %>%
-      pull(),
-    sc_ons_national_pop %>%
-      filter(YEAR == max(YEAR)) %>%
-      select(SCPOP) %>%
-      pull(),
-    ni_ons_national_pop %>%
-      filter(YEAR == max(YEAR)) %>%
-      select(NIPOP) %>%
-      pull()
-  )
-) %>%
-  mutate(
-    ITEMS_PER_CAPITA = round(TOTAL_ITEMS / POP, 1),
-    COSTS_PER_CAPITA = round(TOTAL_COSTS / POP, 2)
-  )
 
 # 5. pull data from warehouse if more recent data is available ------
 #check max DWH fy against max data fy and pull data if different
@@ -502,6 +443,7 @@ stp_data_cy_agg <- pca_aggregations(stp_data_cy, area = "ICB")
 log_print("ICB CY data aggregated", hide_notes = TRUE)
 
 # 8. Pull data for additional analysis ------------
+#dev_nations_data (requires add_anl_1)
 add_anl_1 <-
   nhsbsaDataExtract::pca_item_cost_per_capita(con = con) |>
   dplyr::left_join(
@@ -516,6 +458,65 @@ add_anl_1 <-
     NIC_PER_CAPITA = TOTAL_NIC / ENPOP
   ) |>
   dplyr::select(-JOIN_YEAR)
+
+dev_nations_data <- data.frame(
+  "Country" = c("England",
+                "Wales",
+                "Scotland",
+                "Northern Ireland"),
+  "TOTAL_ITEMS" = c(
+    add_anl_1 %>%
+      filter(YEAR_DESC == max_data_fy_minus_1) %>%
+      select(TOTAL_ITEMS) %>%
+      pull(),
+    wa_pca %>%
+      select(TOTAL_ITEMS) %>%
+      pull(),
+    sc_pca %>%
+      select(TOTAL_ITEMS) %>%
+      pull(),
+    ni_pca %>%
+      select(TOTAL_ITEMS) %>%
+      pull()
+  ),
+  "TOTAL_COSTS" = c(
+    add_anl_1 %>%
+      filter(YEAR_DESC == max_data_fy_minus_1) %>%
+      select(TOTAL_NIC) %>%
+      pull(),
+    wa_pca %>%
+      select(TOTAL_COST) %>%
+      pull(),
+    sc_pca %>%
+      select(TOTAL_COST) %>%
+      pull(),
+    ni_pca %>%
+      select(TOTAL_COST) %>%
+      pull()
+  ),
+  "POP" = c(
+    en_ons_national_pop %>%
+      filter(YEAR == max(YEAR)) %>%
+      select(ENPOP) %>%
+      pull(),
+    wa_ons_national_pop %>%
+      filter(YEAR == max(YEAR)) %>%
+      select(WAPOP) %>%
+      pull(),
+    sc_ons_national_pop %>%
+      filter(YEAR == max(YEAR)) %>%
+      select(SCPOP) %>%
+      pull(),
+    ni_ons_national_pop %>%
+      filter(YEAR == max(YEAR)) %>%
+      select(NIPOP) %>%
+      pull()
+  )
+) %>%
+  mutate(
+    ITEMS_PER_CAPITA = round(TOTAL_ITEMS / POP, 1),
+    COSTS_PER_CAPITA = round(TOTAL_COSTS / POP, 2)
+  )
 
 add_anl_2 <- nhsbsaDataExtract::pca_top_drug_cost(con = con)
 add_anl_3 <- nhsbsaDataExtract::pca_top_item_cost(con = con)
