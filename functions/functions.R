@@ -636,7 +636,7 @@ get_download_button <- function(data = data, title = "Download chart data", file
 #---------------
 
 ### add_anl_4ii function
-pca_exemtion_categories <- function(con) {
+pca_exemption_categories <- function(con) {
 raw_data <- dplyr::tbl(con,
                               from = dbplyr::in_schema("AML", "PCA_MY_FY_CY_FACT")) |>
   dplyr::filter(MONTH_TYPE %in% c("FY"),YEAR_DESC != "2013/2014") |>

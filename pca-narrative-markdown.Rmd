@@ -254,14 +254,23 @@ In 2022/23, 85% of prescription items were prescribed generically, which is slig
 
 Regarding the cost of reimbursement, in 2022/23, generic prescribing accounted for 62% of the total cost. This is a increase of 1 percentage point from the previous year. The proportion of costs attributed to generic prescribing has shown greater variation, with a range of 7 percentage points over the period. 
 
-### `r paste0("Figure 6: The 10 most dispensed chemical substances by total items in ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+### `r paste0("Figure 6: Sankey chart to show the flow of prescribing volumes England ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
-```{r top_10_items, out.width = "100%"}
+```{r presc_sankey, out.width = "100%", out.height=600}
 
 figure_6
 
 ```
 `r get_download_button(title = "Download chart data", data = figure_6_data, filename = "figure_6")`
+
+### `r paste0("Figure 7: The 10 most dispensed chemical substances by total items in ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+
+```{r top_10_items, out.width = "100%"}
+
+figure_7
+
+```
+`r get_download_button(title = "Download chart data", data = figure_7_data, filename = "figure_7")`
 
 Source: [Additional Tables - Prescription Cost Analysis - A3](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
 
@@ -282,14 +291,14 @@ Source: [Additional Tables - Prescription Cost Analysis - A3](https://nhsbsa-ope
 
 [Atorvastatin](https://www.nhs.uk/medicines/atorvastatin/) was the most dispensed chemical substance in 2022/23, with 59 million items. This medication is a type of statin that is commonly used to lower cholesterol and help prevent heart disease. Four of the top ten dispensed chemical substances belong to BNF chapter 02 - Cardiovascular System. These substances are Atorvastatin, Amlodipine, Ramipril, and Bisoprolol fumarate.
 
-### `r paste0("Figure 7: The 10 most dispensed chemical substances by cost in ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+### `r paste0("Figure 8: The 10 most dispensed chemical substances by cost in ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
 ```{r top_10_costs, out.width = "100%"}
 
-figure_7
+figure_8
 
 ```
-`r get_download_button(title = "Download chart data", data = figure_7_data, filename = "figure_7")`
+`r get_download_button(title = "Download chart data", data = figure_8_data, filename = "figure_8")`
 
 Source: [Additional Tables - Prescription Cost Analysis - A2](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
 
@@ -311,14 +320,14 @@ The top ten chemical substances by cost included three drugs that are commonly u
 
 The top ten chemical substances by cost included two drugs that are commonly used to treat respiratory illnesses. These are Beclometasone dipropionate and Budesonide.
 
-### `r paste0("Figure ",8,": Dispensed items per capita by Sustainability and Transformation Partnership (ICB) ",year_tidy)`
+### `r paste0("Figure ",9,": Dispensed items per capita by Sustainability and Transformation Partnership (ICB) ",year_tidy)`
 
 ```{r items_per_pop, out.width = "100%"}
 
-figure_8
+figure_9
     
 ```
-`r get_download_button(title = "Download chart data", data = figure_8_data, filename = "figure_8")`
+`r get_download_button(title = "Download chart data", data = figure_9_data, filename = "figure_9")`
 
 Source: [Summary Tables - Prescription Cost Analysis - ICB National](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_stp_summary_tables_2021_22_v001.xlsx) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/clinicalcommissioninggroupmidyearpopulationestimates)
 
@@ -340,14 +349,14 @@ Source: [Summary Tables - Prescription Cost Analysis - ICB National](https://nhs
 :::
 ::::
 
-### `r paste0("Figure ",9,": Cost per capita (£) by Sustainability and Transformation Partnership (ICB) ",year_tidy)`
+### `r paste0("Figure ",10,": Cost per capita (£) by Sustainability and Transformation Partnership (ICB) ",year_tidy)`
 
 ```{r nic_per_pop, out.width = "100%"}
 
-figure_9
+figure_10
 
 ```
-`r get_download_button(title = "Download chart data", data = figure_9_data, filename = "figure_9")`
+`r get_download_button(title = "Download chart data", data = figure_9_data, filename = "figure_10")`
 
 Source: [Summary Tables - Prescription Cost Analysis - ICB National](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_stp_summary_tables_2021_22_v001.xlsx) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/clinicalcommissioninggroupmidyearpopulationestimates)
 
@@ -365,33 +374,9 @@ Source: [Summary Tables - Prescription Cost Analysis - ICB National](https://nhs
 
 It is worth noting that NHS Cambridgeshire and Peterborough Integrated Care Board offer specialist stoma care, 34% of their total costs of £340 million in 2022/23 were in BNF chapter 23 (Stoma Appliances).
 
-### `r paste0("Figure 10: Top 10 presentations by percentage increase in unit cost ",paste0(substr(max_data_fy_minus_1,1,5), substr(max_data_fy_minus_1, 8, 9)), " to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+### `r paste0("Figure 11: Top 10 presentations by percentage increase in unit cost ",paste0(substr(max_data_fy_minus_1,1,5), substr(max_data_fy_minus_1, 8, 9)), " to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
 ```{r unit_cost_increase, out.width = "100%"}
-
-figure_10
-
-```
-`r get_download_button(title = "Download chart data", data = figure_10_data, filename = "figure_10")`
-
-
-Source: [Additional Tables - Prescription Cost Analysis - A12](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
-
-::::{.row style="display: flex; padding-bottom: 10px;"} 
-:::{.col-md-12} 
-`r infoBox_border(header = "", text = "The chart in this section has been limited to presentations with a total cost in 2022/23 greater than £1 million.<br><br>A unit cost for a presentation is calculated by dividing the total cost of items dispensed in the period by the total quantity.", width = "100%")` 
-::: 
-::::
-
-::::{.row style="display: flex; padding-bottom: 10px;"} 
-:::{.col-md-12} 
-`r infoBox_no_border(header = "", text = "Chloral hydrate 500mg/5ml oral solution/mixture BP 2000 increased in unit cost the most in 2022/23 by 2,024%.", width = "100%")` 
-::: 
-::::
-
-### `r paste0("Figure 11: Top 10 presentations by percentage decrease in unit cost ",paste0(substr(max_data_fy_minus_1,1,5), substr(max_data_fy_minus_1, 8, 9)), " to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
-
-```{r unit_cost_decrease, out.width = "100%"}
 
 figure_11
 
@@ -409,19 +394,43 @@ Source: [Additional Tables - Prescription Cost Analysis - A12](https://nhsbsa-op
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
-`r infoBox_no_border(header = "", text = "Salofalk 1g/application foam enema decreased in unit cost the most in 2022/23 by 78%.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "Chloral hydrate 500mg/5ml oral solution/mixture BP 2000 increased in unit cost the most in 2022/23 by 2,024%.", width = "100%")` 
 ::: 
 ::::
 
+### `r paste0("Figure 12: Top 10 presentations by percentage decrease in unit cost ",paste0(substr(max_data_fy_minus_1,1,5), substr(max_data_fy_minus_1, 8, 9)), " to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
-### `r paste0("Figure 12: Top 10 presentations by increase in total cost ", paste0(substr(max_data_fy_minus_1,1,5), substr(max_data_fy_minus_1, 8, 9)), " to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
-
-```{r abs_cost_increase, out.width = "100%"}
+```{r unit_cost_decrease, out.width = "100%"}
 
 figure_12
 
 ```
 `r get_download_button(title = "Download chart data", data = figure_12_data, filename = "figure_12")`
+
+
+Source: [Additional Tables - Prescription Cost Analysis - A12](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
+
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-12} 
+`r infoBox_border(header = "", text = "The chart in this section has been limited to presentations with a total cost in 2022/23 greater than £1 million.<br><br>A unit cost for a presentation is calculated by dividing the total cost of items dispensed in the period by the total quantity.", width = "100%")` 
+::: 
+::::
+
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-12} 
+`r infoBox_no_border(header = "", text = "Salofalk 1g/application foam enema decreased in unit cost the most in 2022/23 by 78%.", width = "100%")` 
+::: 
+::::
+
+
+### `r paste0("Figure 13: Top 10 presentations by increase in total cost ", paste0(substr(max_data_fy_minus_1,1,5), substr(max_data_fy_minus_1, 8, 9)), " to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+
+```{r abs_cost_increase, out.width = "100%"}
+
+figure_13
+
+```
+`r get_download_button(title = "Download chart data", data = figure_13_data, filename = "figure_13")`
 
 Source: [Additional Tables - Prescription Cost Analysis - A13](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
 
@@ -438,14 +447,14 @@ Source: [Additional Tables - Prescription Cost Analysis - A13](https://nhsbsa-op
 ::: 
 ::::
 
-### `r paste0("Figure 13: Top 10 presentations by decrease in total cost ", paste0(substr(max_data_fy_minus_1,1,5), substr(max_data_fy_minus_1, 8, 9)), " to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+### `r paste0("Figure 14: Top 10 presentations by decrease in total cost ", paste0(substr(max_data_fy_minus_1,1,5), substr(max_data_fy_minus_1, 8, 9)), " to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
 ```{r abs_cost_decrease, out.width = "100%"}
 
-figure_13
+figure_14
 
 ```
-`r get_download_button(title = "Download chart data", data = figure_13_data, filename = "figure_13")`
+`r get_download_button(title = "Download chart data", data = figure_14_data, filename = "figure_14")`
 
 Source: [Additional Tables - Prescription Cost Analysis - A13](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
 
@@ -471,14 +480,14 @@ Source: [Additional Tables - Prescription Cost Analysis - A13](https://nhsbsa-op
 ::: 
 ::::
 
-### `r paste0("Figure 14: Items per capita for the UK nations ", max_data_fy_minus_1)`
+### `r paste0("Figure 15: Items per capita for the UK nations ", max_data_fy_minus_1)`
 
 ```{r uk_comparisons_items, out.width = "100%"}
 
-figure_14
+figure_15
 
 ```
-`r get_download_button(title = "Download chart data", data = figure_14_data, filename = "figure_14")`
+`r get_download_button(title = "Download chart data", data = figure_15_data, filename = "figure_15")`
 
 Source: [Additional Tables - Prescription Cost Analysis - A1](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx) | [Public Health Scotland - Dispenser payments and prescription cost analysis](https://beta.isdscotland.org/find-publications-and-data/health-services/pharmacy-and-prescribing/dispenser-payments-and-prescription-cost-analysis/) | [Welsh Government - Prescriptions in Wales](https://gov.wales/prescriptions-wales-april-2019-march-2020) | [HSC Business Services Organisation - General pharmaceutical services and prescribing statistics](http://www.hscbusiness.hscni.net/services/3176.htm) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatestimeseriesdataset)
 
@@ -494,15 +503,15 @@ Source: [Additional Tables - Prescription Cost Analysis - A1](https://nhsbsa-ope
 ::: 
 ::::
 
-### `r paste0("Figure 15: Cost per capita for the UK nations ", max_data_fy_minus_1)`
+### `r paste0("Figure 16: Cost per capita for the UK nations ", max_data_fy_minus_1)`
 
 ```{r uk_comparisons_costs, out.width = "100%"}
 
-figure_15
+figure_16
 
 
 ```
-`r get_download_button(title = "Download chart data", data = figure_15_data, filename = "figure_15")`
+`r get_download_button(title = "Download chart data", data = figure_16_data, filename = "figure_16")`
 
 Source: [Additional Tables - Prescription Cost Analysis - A1](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx) | [Public Health Scotland - Dispenser payments and prescription cost analysis](https://beta.isdscotland.org/find-publications-and-data/health-services/pharmacy-and-prescribing/dispenser-payments-and-prescription-cost-analysis/) | [Welsh Government - Prescriptions in Wales](https://gov.wales/prescriptions-wales-april-2019-march-2020) | [HSC Business Services Organisation - General pharmaceutical services and prescribing statistics](http://www.hscbusiness.hscni.net/services/3176.htm) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatestimeseriesdataset)
 

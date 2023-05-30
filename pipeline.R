@@ -397,6 +397,35 @@ if (max_dw_fy <= max_data_fy) {
   log_print("New data pulled from warehouse and saved to Y drive", hide_notes = TRUE)
 }
 
+# fix bnf section name issues
+nat_data_fy <- nat_data_fy |>
+  dplyr::mutate(SECTION_NAME = case_when(
+    SECTION_NAME == "Oral nutrition (OLD - DO NOT USE)" ~ "Oral nutrition",
+    SECTION_NAME == "Sympathomimetics"  ~ "Sympathomimetics and other vasoconstrictor drugs",
+    TRUE ~ SECTION_NAME
+  ))
+
+nat_data_cy <- nat_data_cy |>
+  dplyr::mutate(SECTION_NAME = case_when(
+    SECTION_NAME == "Oral nutrition (OLD - DO NOT USE)" ~ "Oral nutrition",
+    SECTION_NAME == "Sympathomimetics"  ~ "Sympathomimetics and other vasoconstrictor drugs",
+    TRUE ~ SECTION_NAME
+  ))
+
+stp_data_fy <- stp_data_fy |>
+  dplyr::mutate(SECTION_NAME = case_when(
+    SECTION_NAME == "Oral nutrition (OLD - DO NOT USE)" ~ "Oral nutrition",
+    SECTION_NAME == "Sympathomimetics"  ~ "Sympathomimetics and other vasoconstrictor drugs",
+    TRUE ~ SECTION_NAME
+  ))
+
+stp_data_cy <- stp_data_fy |>
+  dplyr::mutate(SECTION_NAME = case_when(
+    SECTION_NAME == "Oral nutrition (OLD - DO NOT USE)" ~ "Oral nutrition",
+    SECTION_NAME == "Sympathomimetics"  ~ "Sympathomimetics and other vasoconstrictor drugs",
+    TRUE ~ SECTION_NAME
+  ))
+  
 # 6. build variable for max and prev fy to use in headers ------
 #get max fy from latest data
 max_data_fy <- nat_data_fy |>
@@ -520,8 +549,7 @@ dev_nations_data <- data.frame(
 
 add_anl_2 <- nhsbsaDataExtract::pca_top_drug_cost(con = con)
 add_anl_3 <- nhsbsaDataExtract::pca_top_item_cost(con = con)
-add_anl_4i <- nhsbsaDataExtract::pca_top_items_status(con = con)
-add_anl_4ii <- pca_exemtion_categories(con = con)
+add_anl_4 <- nhsbsaDataExtract::pca_top_items_status(con = con)
 add_anl_5 <- nhsbsaDataExtract::pca_item_cost_class(con = con)
 add_anl_6 <- nhsbsaDataExtract::pca_item_generic_bnf(con = con)
 add_anl_7 <- nhsbsaDataExtract::pca_item_cost_BNF(con = con)
@@ -540,6 +568,10 @@ add_anl_14 <-
   nhsbsaDataExtract::pca_bottom_total_cost_change(con = con)
 
 log_print("Data pulled for additional analysis", hide_notes = TRUE)
+
+pca_exemption_categories <- pca_exemption_categories(con = con)
+log_print("Data pulled for exemption categories", hide_notes = TRUE)
+
 
 
 # 9. create chart and data for them ----------
@@ -674,7 +706,81 @@ figure_5 <- nhsbsaVis::group_chart_hc(
 )
 
 # figure 6
-figure_6_data <- add_anl_3 |>
+figure_6_df <- add_anl_5 |>
+  filter(YEAR_DESC == max(YEAR_DESC))
+
+
+figure_6_data <- data.frame(
+  from = c(
+    "Total<br>items",
+    "Total<br>items",
+    "Total<br>items",
+    "Prescribed<br>generically",
+    "Prescribed<br>generically",
+    "Prescribed<br>propietory"
+  ),
+  to = c(
+    "Prescribed<br>generically",
+    "Prescribed<br>propietory",
+    "Dressings<br>and appliances",
+    "Dispensed<br>generically",
+    "Dispensed<br>propietory",
+    "Dispensed<br>propietory"
+  ),
+  weight = c(
+    figure_6_df$PRESC_GEN_ITEMS[1],
+    figure_6_df$PRESC_DISP_PROP_ITEMS[1],
+    figure_6_df$APPLIANCE_ITEMS[1],
+    figure_6_df$PRESC_DISP_GEN_ITEMS[1],
+    figure_6_df$PRESC_GEN_DISP_PROP_ITEMS[1],
+    figure_6_df$PRESC_DISP_PROP_ITEMS[1]
+  )
+)
+
+figure_6 <- highchart() |>
+  hc_chart(type = "sankey",
+           style = list(fontFamily = "Arial")) |>
+  hc_add_series(
+    data = figure_6_data,
+    nodes = unique(c(figure_6_data$from, figure_6_data$to))
+  ) |>
+  hc_plotOptions(sankey = list(
+    dataLabels = list(
+      enabled = T,
+      style = list(
+        fontSize = "16px",
+        color = "black",
+        textOutline = "none"
+      ),
+      backgroundColor = 'rgba(232, 237, 238, 0.5)',
+      borderRadius = 2,
+      formatter = JS(
+        "function() {
+        if (this.point.isNode) {
+        return this.point.name;
+        } else {
+        var ynum = this.point.weight / 1000000;
+    var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
+    return ynum.toLocaleString('en-GB', options) + 'M';
+        }
+        }"
+      )
+    ),
+    nodeWidth = 15
+  ),
+  series = list(
+    allowPointSelect = FALSE,
+    states = list(
+      hover = list(
+        enabled = FALSE
+      )
+    )
+  )) |>
+  hc_colors(c("#005EB8", "#006747", "#330072", "#ED8B00", "#009639", "#AE2573")) |>
+  hc_tooltip(enabled = F)
+
+# figure 7
+figure_7_data <- add_anl_3 |>
   group_by(CHEMICAL_SUBSTANCE_BNF_DESCR, BNF_CHEMICAL_SUBSTANCE) |>
   rename(TOTAL_ITEMS = 5) |>
   summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS)) |>
@@ -683,8 +789,8 @@ figure_6_data <- add_anl_3 |>
   filter(RANK <= 10) |>
   arrange(RANK)
 
-figure_6 <- nhsbsaVis::basic_chart_hc(
-  figure_6_data,
+figure_7 <- nhsbsaVis::basic_chart_hc(
+  figure_7_data,
   x = CHEMICAL_SUBSTANCE_BNF_DESCR,
   y = TOTAL_ITEMS,
   type = "bar",
@@ -693,8 +799,8 @@ figure_6 <- nhsbsaVis::basic_chart_hc(
   title = ""
 )
 
-# figure 7
-figure_7_data <- add_anl_2 |>
+# figure 8
+figure_8_data <- add_anl_2 |>
   group_by(CHEMICAL_SUBSTANCE_BNF_DESCR, BNF_CHEMICAL_SUBSTANCE) |>
   rename(TOTAL_NIC = 5) |>
   summarise(TOTAL_NIC = sum(TOTAL_NIC)) |>
@@ -703,8 +809,8 @@ figure_7_data <- add_anl_2 |>
   filter(RANK <= 10) |>
   arrange(RANK)
 
-figure_7 <- nhsbsaVis::basic_chart_hc(
-  figure_7_data,
+figure_8 <- nhsbsaVis::basic_chart_hc(
+  figure_8_data,
   x = CHEMICAL_SUBSTANCE_BNF_DESCR,
   y = TOTAL_NIC,
   type = "bar",
@@ -714,8 +820,8 @@ figure_7 <- nhsbsaVis::basic_chart_hc(
   currency = TRUE
 )
 
-# figure 8
-figure_8_data <-  stp_data_cy_agg$National |>
+# figure 9
+figure_9_data <-  stp_data_cy_agg$National |>
   dplyr::select(`ICB Code`,
                 `Total Items`) |>
   dplyr::rename(ICB_CODE = 1,
@@ -727,7 +833,7 @@ figure_8_data <-  stp_data_cy_agg$National |>
                    by = c("ICB_CODE" = "ICB_CODE")) |>
   dplyr::mutate("TOTAL_ITEMS_PER_POP" = TOTAL_ITEMS / POP)
 
-figure_8 <- nhsbsaVis::icb_map(
+figure_9 <- nhsbsaVis::icb_map(
   data = stp_data_cy_agg$National,
   icb_code_column = "ICB Code",
   value_column = "Total Items",
@@ -738,8 +844,8 @@ figure_8 <- nhsbsaVis::icb_map(
   scale_rounding = 10
 )
 
-# figure 9
-figure_9_data <-  stp_data_cy_agg$National |>
+# figure 10
+figure_10_data <-  stp_data_cy_agg$National |>
   dplyr::select(`ICB Code`,
                 `Total Cost (GBP)`) |>
   dplyr::rename(ICB_CODE = 1,
@@ -751,7 +857,7 @@ figure_9_data <-  stp_data_cy_agg$National |>
                    by = c("ICB_CODE" = "ICB_CODE")) |>
   dplyr::mutate("TOTAL_NIC_PER_POP" = TOTAL_NIC / POP)
 
-figure_9 <- nhsbsaVis::icb_map(
+figure_10 <- nhsbsaVis::icb_map(
   data = stp_data_cy_agg$National,
   icb_code_column = "ICB Code",
   value_column = "Total Cost (GBP)",
@@ -762,8 +868,8 @@ figure_9 <- nhsbsaVis::icb_map(
   scale_rounding = 100
 )
 
-# figure 10
-figure_10_data <- add_anl_11 |>
+# figure 11
+figure_11_data <- add_anl_11 |>
   rename(UNIT_COST_CHANGE = 24,
          DISP_PRESEN_BNF_DESCR = 2) |>
   slice_max(UNIT_COST_CHANGE, n = 10) |>
@@ -772,8 +878,8 @@ figure_10_data <- add_anl_11 |>
          VMPP_UOM,
          UNIT_COST_CHANGE)
 
-figure_10 <- nhsbsaVis::basic_chart_hc(
-  figure_10_data,
+figure_11 <- nhsbsaVis::basic_chart_hc(
+  figure_11_data,
   x = DISP_PRESEN_BNF_DESCR,
   y = UNIT_COST_CHANGE,
   type = "bar",
@@ -782,8 +888,8 @@ figure_10 <- nhsbsaVis::basic_chart_hc(
   title = ""
 )
 
-# figure 11
-figure_11_data <- add_anl_12 |>
+# figure 12
+figure_12_data <- add_anl_12 |>
   rename(UNIT_COST_CHANGE = 24,
          DISP_PRESEN_BNF_DESCR = 2) |>
   slice_min(UNIT_COST_CHANGE, n = 10) |>
@@ -792,7 +898,7 @@ figure_11_data <- add_anl_12 |>
          VMPP_UOM,
          UNIT_COST_CHANGE)
 
-figure_11 <- figure_11_data |>
+figure_12 <- figure_12_data |>
   mutate(UNIT_COST_CHANGE = UNIT_COST_CHANGE * -1) |>
   nhsbsaVis::basic_chart_hc(
     x = DISP_PRESEN_BNF_DESCR,
@@ -803,8 +909,8 @@ figure_11 <- figure_11_data |>
     title = ""
   )
 
-# figure 12
-figure_12_data <- add_anl_13 |>
+# figure 13
+figure_13_data <- add_anl_13 |>
   rename(NIC_CHANGE = 18,
          DISP_PRESEN_BNF_DESCR = 2) |>
   slice_max(NIC_CHANGE, n = 10) |>
@@ -813,8 +919,8 @@ figure_12_data <- add_anl_13 |>
          VMPP_UOM,
          NIC_CHANGE)
 
-figure_12 <- nhsbsaVis::basic_chart_hc(
-  figure_12_data,
+figure_13 <- nhsbsaVis::basic_chart_hc(
+  figure_13_data,
   x = DISP_PRESEN_BNF_DESCR,
   y = NIC_CHANGE,
   type = "bar",
@@ -824,8 +930,8 @@ figure_12 <- nhsbsaVis::basic_chart_hc(
   currency = TRUE
 )
 
-# figure 12
-figure_13_data <- add_anl_14 |>
+# figure 14
+figure_14_data <- add_anl_14 |>
   rename(NIC_CHANGE = 18,
          DISP_PRESEN_BNF_DESCR = 2) |>
   slice_min(NIC_CHANGE, n = 10) |>
@@ -834,7 +940,7 @@ figure_13_data <- add_anl_14 |>
          VMPP_UOM,
          NIC_CHANGE)
 
-figure_13 <- figure_13_data |>
+figure_14 <- figure_14_data |>
   mutate(NIC_CHANGE = NIC_CHANGE * -1) |>
   nhsbsaVis::basic_chart_hc(
     x = DISP_PRESEN_BNF_DESCR,
@@ -846,8 +952,8 @@ figure_13 <- figure_13_data |>
     currency = TRUE
   )
 
-# figure 14
-figure_14_data <- dev_nations_data |>
+# figure 15
+figure_15_data <- dev_nations_data |>
   arrange(desc(ITEMS_PER_CAPITA)) |>
   select(Country,
          POP,
@@ -855,9 +961,9 @@ figure_14_data <- dev_nations_data |>
          ITEMS_PER_CAPITA
          )
 
-figure_14 <-
+figure_15 <-
   basic_chart_hc(
-    figure_14_data,
+    figure_15_data,
     x = Country,
     y = ITEMS_PER_CAPITA,
     type = "column",
@@ -866,8 +972,8 @@ figure_14 <-
     title = ""
   )
 
-# figure 15
-figure_15_data <- dev_nations_data |>
+# figure 16
+figure_16_data <- dev_nations_data |>
   arrange(desc(COSTS_PER_CAPITA)) |>
   select(Country,
          POP,
@@ -875,9 +981,9 @@ figure_15_data <- dev_nations_data |>
          COSTS_PER_CAPITA
   )
 
-figure_15 <-
+figure_16 <-
   basic_chart_hc(
-    figure_15_data,
+    figure_16_data,
     x = Country,
     y = COSTS_PER_CAPITA,
     type = "column",

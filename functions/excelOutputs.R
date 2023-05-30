@@ -1000,7 +1000,7 @@ openxlsx::saveWorkbook(
   fy_stp_wb,
   #automate names
   paste0(
-    "outputs/pca_stp_summary_tables_",
+    "outputs/pca_icb_summary_tables_",
     substr(max_data_fy, 1, 4),
     "_",
     substr(max_data_fy, 8, 9),
@@ -1277,7 +1277,7 @@ accessibleTables::format_data(cy_stp_wb,
 openxlsx::saveWorkbook(
   cy_stp_wb,
   #automate names
-  paste0("outputs/pca_stp_summary_tables_",
+  paste0("outputs/pca_icb_summary_tables_",
          max_data_cy,
          "_v001.xlsx"),
   overwrite = TRUE
@@ -1290,8 +1290,7 @@ sheetNames_add_anl <- c(
   "Table_A1",
   "Table_A2",
   "Table_A3",
-  "Table_A4i",
-  "Table_A4ii",
+  "Table_A4",
   "Table_A5",
   "Table_A6",
   "Table_A7",
@@ -1586,8 +1585,8 @@ accessibleTables::format_data(add_anl_wb,
                               "right",
                               "#,##0.00")
 
-#additional analysis - table a4i
-names(add_anl_4i) <- c(
+#additional analysis - table a4
+names(add_anl_4) <- c(
   "Financial Year",
   "Total Exempt Items",
   "Total Charged Items",
@@ -1600,88 +1599,43 @@ names(add_anl_4i) <- c(
 # write data to sheet
 accessibleTables::write_sheet(
   add_anl_wb,
-  "Table_A4i",
+  "Table_A4",
   paste0(
-    "Table A4i: Total items and cost by charge status, 2014/2015 to ",
+    "Table A4: Total items and cost by charge status, 2014/2015 to ",
     max_data_fy
   ),
   c(
     "A charged item is one where the patient has paid the set fee that has been collected by the dispensing contractor.",
     "An exempt item is one where the patient has not paid the set fee for their prescription as they hold a valid exemption. More information on exemption categories can be found at https://www.nhsbsa.nhs.uk/help-nhs-prescription-costs/free-nhs-prescriptions."
   ),
-  add_anl_4i,
+  add_anl_4,
   14
 )
 
 #left align column A
 accessibleTables::format_data(add_anl_wb,
-                              "Table_A4i",
+                              "Table_A4",
                               c("A"),
                               "left",
                               "")
 
 #format columns B:C
 accessibleTables::format_data(add_anl_wb,
-                              "Table_A4i",
+                              "Table_A4",
                               c("B", "C"),
                               "right",
                               "#,##0")
 
 #format columns D:G
 accessibleTables::format_data(add_anl_wb,
-                              "Table_A4i",
+                              "Table_A4",
                               c("D", "E", "F", "G"),
                               "right",
                               "#,##0.00")
 
-#additional analysis - table a4ii
-names(add_anl_4ii) <- c(
-  "Financial Year",
-  "Exemption category code",
-  "Exemption category",
-  "Total items",
-  "Total cost (GBP)"
-)
-
-# write data to sheet
-accessibleTables::write_sheet(
-  add_anl_wb,
-  "Table_A4ii",
-  paste0(
-    "Table A4ii: Total items and cost by exemption, 2014/2015 to ",
-    max_data_fy
-  ),
-  c(
-    "A charged item is one where the patient has paid the set fee that has been collected by the dispensing contractor.",
-    "An exempt item is one where the patient has not paid the set fee for their prescription as they hold a valid exemption. More information on exemption categories can be found at https://www.nhsbsa.nhs.uk/help-nhs-prescription-costs/free-nhs-prescriptions.",
-    "Items assigned an exemption category code of '-' have an unknown exemption category, or an exemption category that was not capture during processing."
-  ),
-  add_anl_4ii,
-  14
-)
-
-#left align column A
-accessibleTables::format_data(add_anl_wb,
-                              "Table_A4ii",
-                              c("A", "B", "C"),
-                              "left",
-                              "")
-
-#format columns B:C
-accessibleTables::format_data(add_anl_wb,
-                              "Table_A4ii",
-                              c("D"),
-                              "right",
-                              "#,##0")
-
-#format columns D:G
-accessibleTables::format_data(add_anl_wb,
-                              "Table_A4ii",
-                              c("E"),
-                              "right",
-                              "#,##0.00")
 
 #additional analysis - table a5
+
 names(add_anl_5) <- c(
   "Financial Year",
   "Items prescribed
@@ -1793,6 +1747,10 @@ names(add_anl_5) <- c(
  (GBP)"
 )
 
+add_anl_5 <- add_anl_5 |>
+  mutate(`Items prescribed\n generically\n excluding appliances (%)` = `Items prescribed\n generically` / (`Total Items` - `Dressings and appliances`) * 100, .before = `Items prescribed\n and dispensed\n generically\n (%)`) |>
+  mutate(`Cost of items\n prescribed\n generically\n excluding appliances (%)` = `Cost of items\n prescribed\n generically\n (GBP)` / (`Total Cost\n (GBP)` - `Cost of Appliances and Dressings prescribed\n (GBP) `) * 100, .before = `Cost of items\n prescribed and\n dispensed\n generically\n (%)`)
+
 # write data to sheet
 accessibleTables::write_sheet(
   add_anl_wb,
@@ -1852,7 +1810,9 @@ accessibleTables::format_data(
     "Z",
     "AA",
     "AB",
-    "AC"
+    "AC",
+    "AD",
+    "AE"
   ),
   "right",
   "#,##0.00"
@@ -2983,6 +2943,95 @@ openxlsx::saveWorkbook(
   #automate names
   paste0(
     "outputs/pca_additional_tables_",
+    substr(max_data_fy, 1, 4),
+    "_",
+    substr(max_data_fy, 8, 9),
+    "_v001.xlsx"
+  ),
+  overwrite = TRUE
+)
+
+# 6. create exemption categories excel ------
+
+#rename data 
+names(pca_exemption_categories) <- c(
+  "Financial year",
+  "Exemption category code",
+  "Exemption category",
+  "Total items",
+  "Total cost (GBP)"
+)
+
+#create workbook and meta data
+sheetNames_ex_cat <- c(
+  "Exemption_categories"
+)
+
+ex_cat_wb <- create_wb(sheetNames_ex_cat)
+
+meta_fields_ex_cat <- c(
+ "Financial year",
+ "Exemption category code",
+ "Exemption category",
+ "Total items",
+ "Total cost (GBP)"
+)
+
+meta_descs_ex_cat<- c(
+ "The financial year to which the data belongs.",
+ "The specific code for the category that was selected by the patient on the back of the prescription form.",
+ "The category that was selected by the patient on the back of the prescription form.",
+ "The number prescription items dispensed. 'Items' is the number of times a product appears on a prescription form. Prescription forms include both paper prescriptions and electronic messages.",
+ "Total cost is the amount that would be paid using the basic price of the prescribed drug or appliance and the quantity prescribed. Sometimes called the 'Net Ingredient Cost' (NIC). The basic price is given either in the Drug Tariff or is determined from prices published by manufacturers, wholesalers or suppliers. Basic price is set out in Parts 8 and 9 of the Drug Tariff. For any drugs or appliances not in Part 8, the price is usually taken from the manufacturer, wholesaler or supplier of the product. This is given in GBP."
+)
+
+accessibleTables::create_metadata(ex_cat_wb,
+                                  meta_fields_ex_cat,
+                                  meta_descs_ex_cat)
+
+# write data to sheet
+accessibleTables::write_sheet(
+  ex_cat_wb,
+  "Exemption_categories",
+  paste0(
+    "Total items and cost by exemption category, 2014/15 to ",
+    max_data_fy
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different tables. Costs are rounded to the nearest pence.",
+    "Items assigned an exemption category code of '-' have an unknown exemption category, or an exemption category that was not capture during processing."
+  ),
+  pca_exemption_categories,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(ex_cat_wb,
+                              "Exemption_categories",
+                              c("A"),
+                              "left",
+                              "")
+
+#format columns B and D
+accessibleTables::format_data(ex_cat_wb,
+                              "Exemption_categories",
+                              c("B", "C"),
+                              "right",
+                              "#,##0")
+
+#format columns C, E, F, G
+accessibleTables::format_data(ex_cat_wb,
+                              "Exemption_categories",
+                              c("D", "E"),
+                              "right",
+                              "#,##0.00")
+
+#save file into outputs folder
+openxlsx::saveWorkbook(
+  ex_cat_wb,
+  #automate names
+  paste0(
+    "outputs/pca_exemption_categories_",
     substr(max_data_fy, 1, 4),
     "_",
     substr(max_data_fy, 8, 9),
