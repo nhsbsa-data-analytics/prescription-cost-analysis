@@ -45,7 +45,7 @@ knitr::opts_chunk$set(echo = FALSE,
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
-`r infoBox_border(header = "Changes to these statistics", text = paste0("CHANGES HERE. We are interested in any feedback about the publication or these changes, which you can send by using our ", htmltools::HTML("<a href='https://online1.snapsurveys.com/Official_Statistics_Feedback'>Official Statistics feedback survey</a>"),"."), width = "100%")` 
+`r infoBox_border(header = "Changes to these statistics", text = paste0("CHANGES HERE. We are interested in any feedback about the publication or these changes, which you can send by using our ", htmltools::HTML(paste("<a href='",config$stats_survey_link,"'>Official Statistics feedback survey</a>")),"."), width = "100%")` 
 ::: 
 ::::
 
@@ -60,7 +60,7 @@ knitr::opts_chunk$set(echo = FALSE,
 :::
 ::::
 
-The cost of prescription items dispensed in the community in England was £10.4 billion, a 8% increase from £9.69 billion in 2021/22.
+The cost of prescription items dispensed in the community in England was £10.4 billion, an 8% increase from £9.69 billion in 2021/22.
 
 The number of prescription items dispensed in the community in England was 1.18 billion, a 3% increase from 1.14 billion in 2021/22.
 
@@ -76,7 +76,7 @@ Apixaban 5mg tablets had the largest increase in cost between 2021/22 and 2022/2
 
 Prescription Cost Analysis (PCA) includes information about the costs and volumes of prescription items that have been dispensed in England.
 
-These statistics cover prescription items that were prescribed in England, Scotland, Wales, Northern Ireland, and the Channel Islands that were subsequently dispensed in the community in England and submitted to the NHSBSA for reimbursement. When a prescription is 'dispensed in the community', it means that is was dispensed at a pharmacy, by and applicance contractor, dispensing doctor, or as a personally administered item. However, if a prescription item has been prescribed in England but dispensed elsewhere in the United Kingdom, it would not be included in these statistics.
+These statistics cover prescription items that were prescribed in England, Scotland, Wales, Northern Ireland, and the Channel Islands that were subsequently dispensed in the community in England and submitted to the NHS Business Services Authority (NHSBSA) for reimbursement. When a prescription is 'dispensed in the community', it means that it was dispensed at a pharmacy, by and applicance contractor, dispensing doctor, or as a personally administered item. However, if a prescription item has been prescribed in England but dispensed elsewhere in the United Kingdom, it has not been included in these statistics.
 
 This publication is a National Statistic release. National Statistics status means that PCA meets the highest standards of trustworthiness, quality, and public value and complies with all aspects of the [Code of Practice for Statistics](https://code.statisticsauthority.gov.uk/).
 
@@ -86,7 +86,7 @@ The designation of this publication as a National Statistic was confirmed in May
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
-`r infoBox_border(header = "Item", text = "A single unit of medication listed seperately on a prescription form. In this publication, an example of an item would be Paracetemol 500mg x28.", width = "100%")` 
+`r infoBox_border(header = "Item", text = "A single unit of medication listed separately on a prescription form. In this publication, an example of an item would be Paracetamol 500mg x28.", width = "100%")` 
 ::: 
 ::::
 
@@ -104,7 +104,7 @@ The designation of this publication as a National Statistic was confirmed in May
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
-`r infoBox_border("Generic prescribing", text = "This is when a drug is prescribed using its non-proprietory name instead of a specific brand name. This allows for any suitable drug that meets the same standards as the brand name drug to be dispensed, which can result in cost savings.", width = "100%")`
+`r infoBox_border("Generic prescribing", text = "This is when a drug is prescribed using its non-proprietary name instead of a specific brand name. This allows for any suitable drug that meets the same standards as the brand name drug to be dispensed, which can result in cost savings.", width = "100%")`
 ::: 
 ::::
 
@@ -127,14 +127,14 @@ figure_1
 ```
 `r get_download_button(title = "Download chart data", data = figure_1_data, filename = "figure_1")`
 
-Source: [Summary Tables - Prescription Cost Analysis - National](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_summary_tables_2021_22_v001.xlsx)
+Source: [Summary Tables - Prescription Cost Analysis - National](`r config$fy_nat_link`)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
 `r infoBox_no_border(header = "", text = "Prescription items dispensed in the community in England cost £10.4 billion.", width = "100%")` 
 ::: 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "8% increase in costs from 2021/22 to 2022/23.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "There was an 8% increase in costs from 2021/22 to 2022/23.", width = "100%")` 
 :::
 :::{.col-md-4} 
 `r infoBox_no_border(header = "", text = "2022/23 is the fourth consecutive year that costs have increased.", width = "100%")` 
@@ -152,14 +152,14 @@ figure_2
 ```
 `r get_download_button(title = "Download chart data", data = figure_2_data, filename = "figure_2")`
 
-Source: [Summary Tables - Prescription Cost Analysis - National](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_summary_tables_2021_22_v001.xlsx)
+Source: [Summary Tables - Prescription Cost Analysis - National](`r config$fy_nat_link`)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
 `r infoBox_no_border(header = "", text = "1.18 billion items were dispensed in the community in England.", width = "100%")` 
 ::: 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "3% increase in items from 2021/22 to 2022/23.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "There was a 3% increase in items from 2021/22 to 2022/23.", width = "100%")` 
 :::
 :::{.col-md-4} 
 `r infoBox_no_border(header = "", text = "Items dispensed continue to trend upwards.", width = "100%")` 
@@ -177,12 +177,12 @@ figure_3
 ```
 `r get_download_button(title = "Download chart data", data = figure_3_data, filename = "figure_3")`
 
-Source: [Summary Tables - Prescription Cost Analysis - Chapter](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_summary_tables_2021_22_v001.xlsx)
+Source: [Summary Tables - Prescription Cost Analysis - Chapter](`r config$fy_nat_link`)
 
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
-`r infoBox_border(header = "", text = "These statistics use a system called the British National Formulary (BNF) to group medicines togther based on their primary theraputic indication. The BNF has multiple levels, starting with the largest grouping called chapters, follwed by sections, paragraphs, sub-paragraphs, chemical substances, products, and individual presentations.<br><br>The NHS Business Services Authority (NHSBSA) uses the BNF classification system implemented prior to the release of edition 70, which includes 6 additional chapters (18 to 23) created by NHS Prescription Services. These chapters are used to classify products that fall outside the chapters 1 to 15, and mainly include dressing, appliances and medical devices.<br><br>However, presentations in chapters 20 to 23 do not have assigned BNF paragraphs, sub-paragraphs, chemical substances, or products.", width = "100%")` 
+`r infoBox_border(header = "", text = "These statistics use a system called the British National Formulary (BNF) to group medicines togther based on their primary theraputic indication. The BNF has multiple levels, starting with the largest grouping called chapters, follwed by sections, paragraphs, sub-paragraphs, chemical substances, products, and individual presentations.<br><br>The NHSBSA uses the BNF classification system implemented prior to the release of edition 70, which includes 6 additional chapters (18 to 23) created by NHS Prescription Services. These chapters are used to classify products that fall outside the chapters 1 to 15, and mainly include dressing, appliances and medical devices.<br><br>However, presentations in chapters 20 to 23 do not have assigned BNF paragraphs, sub-paragraphs, chemical substances, or products.", width = "100%")` 
 ::: 
 ::::
 
@@ -209,7 +209,7 @@ figure_4
 ```
 `r get_download_button(title = "Download chart data", data = figure_4_data, filename = "figure_4")`
 
-Source: [Summary Tables - Prescription Cost Analysis - Chapter](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_summary_tables_2021_22_v001.xlsx)
+Source: [Summary Tables - Prescription Cost Analysis - Chapter](`r config$fy_nat_link`)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
@@ -236,7 +236,7 @@ figure_5
 ```
 `r get_download_button(title = "Download chart data", data = figure_5_data, filename = "figure_5")`
 
-Source: [Additional Tables - Prescription Cost Analysis - table A5](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
+Source: [Additional Tables - Prescription Cost Analysis - table A5](`r config$add_anl_link`)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
@@ -250,13 +250,13 @@ Source: [Additional Tables - Prescription Cost Analysis - table A5](https://nhsb
 :::
 ::::
 
-In 2022/23, 85% of prescription items were prescribed generically, which is slightly higher then the previous year. However, the rate of generic prescribing has remained consistent over the period. There has been a 1 percentage point variation between 2014/15 and 2022/23. Note that these figures exclude preparation class 4 products - appliances.
+In 2022/23, 85% of prescription items were prescribed generically, which is slightly higher then the previous year. However, the rate of generic prescribing has remained consistent over the period. There has been a 1 percentage point variation in the period between 2014/15 and 2022/23. Note that these figures exclude preparation class 4 products - appliances.
 
-Regarding the cost of reimbursement, in 2022/23, generic prescribing accounted for 62% of the total cost. This is a increase of 1 percentage point from the previous year. The proportion of costs attributed to generic prescribing has shown greater variation, with a range of 7 percentage points over the period. 
+Regarding the cost of reimbursement, in 2022/23, generic prescribing accounted for 62% of the total cost. This is a increase of 1 percentage point from the previous year. The proportion of costs attributed to generic prescribing has shown greater variation, with a range of 7 percentage points in the period 2014/15 to 2022/23. 
 
-### `r paste0("Figure 6: Sankey chart to show the flow of prescribing volumes England ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+### `r paste0("Figure 6: Sankey chart to show the flow of prescribing and dispensing volumes England ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
-```{r presc_sankey, out.width = "100%", out.height=600}
+```{r presc_sankey, out.width = "100%", out.height=400}
 
 figure_6
 
@@ -272,7 +272,7 @@ figure_7
 ```
 `r get_download_button(title = "Download chart data", data = figure_7_data, filename = "figure_7")`
 
-Source: [Additional Tables - Prescription Cost Analysis - A3](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
+Source: [Additional Tables - Prescription Cost Analysis - A3](`r config$add_anl_link`)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
@@ -300,7 +300,7 @@ figure_8
 ```
 `r get_download_button(title = "Download chart data", data = figure_8_data, filename = "figure_8")`
 
-Source: [Additional Tables - Prescription Cost Analysis - A2](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
+Source: [Additional Tables - Prescription Cost Analysis - A2](`r config$add_anl_link`)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
@@ -329,23 +329,23 @@ figure_9
 ```
 `r get_download_button(title = "Download chart data", data = figure_9_data, filename = "figure_9")`
 
-Source: [Summary Tables - Prescription Cost Analysis - ICB National](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_stp_summary_tables_2021_22_v001.xlsx) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/clinicalcommissioninggroupmidyearpopulationestimates)
+Source: [Summary Tables - Prescription Cost Analysis - ICB National](`r config$fy_icb_link`) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/clinicalcommissioninggroupmidyearpopulationestimates)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
-`r infoBox_border(header = "", text = "Integrated care boards (ICB) are statutory NHS organisations which are responsible for developing a plan for meeting the health needs of the population, managing the NHS budget and arranging for the provision of health services in a geographical area. <br><br>However, it's important to note that the ICB listed in these statistics refers to the dispensing contractor as listed in the NHSBSA admistrative records, rather than the prescribing organisation of an item.<br><br>Prescribing and dispensing trends can vary regionally, and there are many factors that can influence these decisions. Some of the factors that can affect prescribing and dispensing trends include population demographics, prevalence of chronic disease, and the presence of specialist dispensing contractors within a given area.<br><br>If you're interested in learning more about ICBs and how they were used in these statistics, please refer to the [Background Information and Methodology note](https://www.nhsbsa.nhs.uk/sites/default/files/2022-06/pca_2022_background_information_methodology_v001.odt) that accompanies this release.", width = "100%")` 
+`r infoBox_border(header = "", text = paste("Integrated care boards (ICB) are statutory NHS organisations which are responsible for developing a plan for meeting the health needs of the population, managing the NHS budget and arranging for the provision of health services in a geographical area. <br><br>However, it's important to note that the ICB listed in these statistics refers to the dispensing contractor as listed in the NHSBSA admistrative records, rather than the prescribing organisation of an item.<br><br>Prescribing and dispensing trends can vary regionally, and there are many factors that can influence these decisions. Some of the factors that can affect prescribing and dispensing trends include population demographics, prevalence of chronic disease, and the presence of specialist dispensing contractors within a given area.<br><br>If you're interested in learning more about ICBs and how they were used in these statistics, please refer to the [Background Information and Methodology note](",config$background_link,") that accompanies this release."), width = "100%")` 
 ::: 
 ::::
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "The mean number of items dispensed per capita in England was 21 in 2021/22.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "The mean number of items dispensed per capita in England was 21 in 2022/23.", width = "100%")` 
 ::: 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "NHS Lincolnshire Integrated Care Board had the highest dispensed items per capita with 28.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "NHS West Yorkshire Integrated Care Board had the highest dispensed items per capita with 29.", width = "100%")` 
 :::
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "NHS North Central London Integrated Care Board had the lowest with 13.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "NHS Surrey Heartlands Integrated Care Board had the lowest with 13.", width = "100%")` 
 :::
 ::::
 
@@ -356,19 +356,19 @@ Source: [Summary Tables - Prescription Cost Analysis - ICB National](https://nhs
 figure_10
 
 ```
-`r get_download_button(title = "Download chart data", data = figure_9_data, filename = "figure_10")`
+`r get_download_button(title = "Download chart data", data = figure_10_data, filename = "figure_10")`
 
-Source: [Summary Tables - Prescription Cost Analysis - ICB National](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_stp_summary_tables_2021_22_v001.xlsx) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/clinicalcommissioninggroupmidyearpopulationestimates)
+Source: [Summary Tables - Prescription Cost Analysis - ICB National](`r config$fy_icb_link`) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/clinicalcommissioninggroupmidyearpopulationestimates)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "The mean cost of items dispensed per capita in England was £178 in 2021/22.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "The mean cost of items dispensed per capita in England was £184 in 2022/23.", width = "100%")` 
 ::: 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "NHS Cambridgeshire and Peterborough Integrated Care Board had the highest cost per capita of £379.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "NHS Cambridgeshire and Peterborough Integrated Care Board had the highest cost per capita of £390.", width = "100%")` 
 :::
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "NHS South East London Integrated Care BoardP had the lowest of £119.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "NHS South East London Integrated Care BoardP had the lowest of £123.", width = "100%")` 
 :::
 ::::
 
@@ -384,7 +384,7 @@ figure_11
 `r get_download_button(title = "Download chart data", data = figure_11_data, filename = "figure_11")`
 
 
-Source: [Additional Tables - Prescription Cost Analysis - A12](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
+Source: [Additional Tables - Prescription Cost Analysis - A11](`r config$add_anl_link`)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
@@ -408,7 +408,7 @@ figure_12
 `r get_download_button(title = "Download chart data", data = figure_12_data, filename = "figure_12")`
 
 
-Source: [Additional Tables - Prescription Cost Analysis - A12](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
+Source: [Additional Tables - Prescription Cost Analysis - A12](`r config$add_anl_link`)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
@@ -432,7 +432,7 @@ figure_13
 ```
 `r get_download_button(title = "Download chart data", data = figure_13_data, filename = "figure_13")`
 
-Source: [Additional Tables - Prescription Cost Analysis - A13](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
+Source: [Additional Tables - Prescription Cost Analysis - A13](`r config$add_anl_link`)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
@@ -456,7 +456,7 @@ figure_14
 ```
 `r get_download_button(title = "Download chart data", data = figure_14_data, filename = "figure_14")`
 
-Source: [Additional Tables - Prescription Cost Analysis - A13](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx)
+Source: [Additional Tables - Prescription Cost Analysis - A14](`r config$add_anl_link`)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
@@ -476,7 +476,7 @@ Source: [Additional Tables - Prescription Cost Analysis - A13](https://nhsbsa-op
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
-`r infoBox_border(header = "", text = "Prescription Cost Analysis statistics are produced seperately by each UK nation, but there are differences in data collection, healthcare structures, and methodolgy. Therefore, it's important to be cautious when comparing PCA data between different UK nations and to consider the broader context of the UK's health and social care landscape.<br><br>We've selected come measures that enable broad comparisons between the different deveolved authorities, but for more detailed information, please refer to each country's individual publication.<br><br>We based our comparisons on the latest available PCA data and mid-year population estimates from the Office for National Statistics (ONS), for the financail year 2021/22, using 2020 mid-year population estimates to calculate per capita measures. For Wales, the data relates to prescriptions issued by Welsh GPs and dispensed in Wales or other UK countries, as we did not have figures for prescriptions dispensed solely in Wales at the time of publication.<br><br>For more information on the PCA publications of each UK nation and the differences between them, please read the [Background Information and Methodology note](https://www.nhsbsa.nhs.uk/sites/default/files/2022-06/pca_2022_background_information_methodology_v001.odt) released alongside this publication.", width = "100%")` 
+`r infoBox_border(header = "", text = paste("Prescription Cost Analysis statistics are produced seperately by each UK nation, but there are differences in data collection, healthcare structures, and methodolgy. Therefore, it's important to be cautious when comparing PCA data between different UK nations and to consider the broader context of the UK's health and social care landscape.<br><br>We've selected come measures that enable broad comparisons between the different deveolved authorities, but for more detailed information, please refer to each country's individual publication.<br><br>We based our comparisons on the latest available PCA data and mid-year population estimates from the Office for National Statistics (ONS), for the financail year 2021/22, using 2020 mid-year population estimates to calculate per capita measures. For Wales, the data relates to prescriptions issued by Welsh GPs and dispensed in Wales or other UK countries, as we did not have figures for prescriptions dispensed solely in Wales at the time of publication.<br><br>For more information on the PCA publications of each UK nation and the differences between them, please read the [Background Information and Methodology note](",config$background_link,") released alongside this publication."), width = "100%")` 
 ::: 
 ::::
 
@@ -489,7 +489,7 @@ figure_15
 ```
 `r get_download_button(title = "Download chart data", data = figure_15_data, filename = "figure_15")`
 
-Source: [Additional Tables - Prescription Cost Analysis - A1](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx) | [Public Health Scotland - Dispenser payments and prescription cost analysis](https://beta.isdscotland.org/find-publications-and-data/health-services/pharmacy-and-prescribing/dispenser-payments-and-prescription-cost-analysis/) | [Welsh Government - Prescriptions in Wales](https://gov.wales/prescriptions-wales-april-2019-march-2020) | [HSC Business Services Organisation - General pharmaceutical services and prescribing statistics](http://www.hscbusiness.hscni.net/services/3176.htm) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatestimeseriesdataset)
+Source: [Additional Tables - Prescription Cost Analysis - A1](`r config$add_anl_link`) | [Public Health Scotland - Dispenser payments and prescription cost analysis](`r config$scotland_pca`) | [Welsh Government - Prescriptions in Wales](`r config$wa_pca_link`) | [HSC Business Services Organisation - General pharmaceutical services and prescribing statistics](`r config$ni_pca`) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatestimeseriesdataset)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
@@ -513,7 +513,7 @@ figure_16
 ```
 `r get_download_button(title = "Download chart data", data = figure_16_data, filename = "figure_16")`
 
-Source: [Additional Tables - Prescription Cost Analysis - A1](https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2021_22_v001.xlsx) | [Public Health Scotland - Dispenser payments and prescription cost analysis](https://beta.isdscotland.org/find-publications-and-data/health-services/pharmacy-and-prescribing/dispenser-payments-and-prescription-cost-analysis/) | [Welsh Government - Prescriptions in Wales](https://gov.wales/prescriptions-wales-april-2019-march-2020) | [HSC Business Services Organisation - General pharmaceutical services and prescribing statistics](http://www.hscbusiness.hscni.net/services/3176.htm) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatestimeseriesdataset)
+Source: [Additional Tables - Prescription Cost Analysis - A1](`r config$add_anl_link`) | [Public Health Scotland - Dispenser payments and prescription cost analysis](`r config$scotland_pca`) | [Welsh Government - Prescriptions in Wales](`r config$wa_pca_link`) | [HSC Business Services Organisation - General pharmaceutical services and prescribing statistics](`r config$ni_pca`) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatestimeseriesdataset)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-6} 
@@ -530,7 +530,7 @@ Source: [Additional Tables - Prescription Cost Analysis - A1](https://nhsbsa-ope
 
 ### 4.1. Monthly PCA data {.toc-ignore}
 
-The NHSBSA publishes a [monthly administrative management information dataset](https://www.nhsbsa.nhs.uk/prescription-data/dispensing-data/prescription-cost-analysis-pca-data) for PCA using the same methodology as these statistics however, it is not an Official Statistic.
+The NHSBSA publishes a [monthly administrative management information dataset](`r config$nhsbsa_pca_link`) for PCA using the same methodology as these statistics however, it is not an Official Statistic.
 
 There's a slight difference between the annual National Statistics and the monthly administrative data for PCA. The annual publication uses the geographical structure as of the 31st March for that year, while the monthly data uses the structure at the end of the month. If a dispensing contractor changes parent organisation during the year, this may affect the ICB level total in the aggregated monthly data compared to the annual National Statistics, but it won't affect the national totals. However, such cases are rare.
 
@@ -551,7 +551,7 @@ These statistics serve several purposes, including:
 
 ### 4.3. Changes to this publication {.toc-ignore}
 
-For full details of the changes made please refer to the [Background Information and Methodology note](https://www.nhsbsa.nhs.uk/sites/default/files/2022-06/pca_2022_background_information_methodology_v001.odt) released alongside these statistics.
+For full details of the changes made please refer to the [Background Information and Methodology note](`r config$background_link`) released alongside these statistics.
 
 ### 4.4. Timeliness of this publication {.toc-ignore}
 
@@ -602,7 +602,7 @@ These contact details are only for accessibility queries. This inbox is not for 
 
 Feedback is important to us. We welcome any questions and comments relating to these statistics. 
 
-You can complete a [short survey about this publication](https://wh1.snapsurveys.com/s.asp?k=159366616170) to help us improve the Official Statistics that we produce. All responses will remain anonymous, and individuals will not be identifiable in any report that we produce.
+You can complete a [short survey about this publication](`r config$stats_survey_link`) to help us improve the Official Statistics that we produce. All responses will remain anonymous, and individuals will not be identifiable in any report that we produce.
 
 You can view our [privacy policy](https://www.nhsbsa.nhs.uk/our-policies/privacy) on our website to see how your data is used and stored.
 

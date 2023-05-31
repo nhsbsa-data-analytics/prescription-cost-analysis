@@ -397,35 +397,6 @@ if (max_dw_fy <= max_data_fy) {
   log_print("New data pulled from warehouse and saved to Y drive", hide_notes = TRUE)
 }
 
-# fix bnf section name issues
-nat_data_fy <- nat_data_fy |>
-  dplyr::mutate(SECTION_NAME = case_when(
-    SECTION_NAME == "Oral nutrition (OLD - DO NOT USE)" ~ "Oral nutrition",
-    SECTION_NAME == "Sympathomimetics"  ~ "Sympathomimetics and other vasoconstrictor drugs",
-    TRUE ~ SECTION_NAME
-  ))
-
-nat_data_cy <- nat_data_cy |>
-  dplyr::mutate(SECTION_NAME = case_when(
-    SECTION_NAME == "Oral nutrition (OLD - DO NOT USE)" ~ "Oral nutrition",
-    SECTION_NAME == "Sympathomimetics"  ~ "Sympathomimetics and other vasoconstrictor drugs",
-    TRUE ~ SECTION_NAME
-  ))
-
-stp_data_fy <- stp_data_fy |>
-  dplyr::mutate(SECTION_NAME = case_when(
-    SECTION_NAME == "Oral nutrition (OLD - DO NOT USE)" ~ "Oral nutrition",
-    SECTION_NAME == "Sympathomimetics"  ~ "Sympathomimetics and other vasoconstrictor drugs",
-    TRUE ~ SECTION_NAME
-  ))
-
-stp_data_cy <- stp_data_fy |>
-  dplyr::mutate(SECTION_NAME = case_when(
-    SECTION_NAME == "Oral nutrition (OLD - DO NOT USE)" ~ "Oral nutrition",
-    SECTION_NAME == "Sympathomimetics"  ~ "Sympathomimetics and other vasoconstrictor drugs",
-    TRUE ~ SECTION_NAME
-  ))
-  
 # 6. build variable for max and prev fy to use in headers ------
 #get max fy from latest data
 max_data_fy <- nat_data_fy |>
@@ -720,17 +691,17 @@ figure_6_data <- data.frame(
     "Prescribed<br>propietory"
   ),
   to = c(
+    "Dressings<br>and appliances",
     "Prescribed<br>generically",
     "Prescribed<br>propietory",
-    "Dressings<br>and appliances",
     "Dispensed<br>generically",
     "Dispensed<br>propietory",
     "Dispensed<br>propietory"
   ),
   weight = c(
+    figure_6_df$APPLIANCE_ITEMS[1],
     figure_6_df$PRESC_GEN_ITEMS[1],
     figure_6_df$PRESC_DISP_PROP_ITEMS[1],
-    figure_6_df$APPLIANCE_ITEMS[1],
     figure_6_df$PRESC_DISP_GEN_ITEMS[1],
     figure_6_df$PRESC_GEN_DISP_PROP_ITEMS[1],
     figure_6_df$PRESC_DISP_PROP_ITEMS[1]
@@ -748,7 +719,7 @@ figure_6 <- highchart() |>
     dataLabels = list(
       enabled = T,
       style = list(
-        fontSize = "16px",
+        fontSize = "12px",
         color = "black",
         textOutline = "none"
       ),
@@ -776,8 +747,9 @@ figure_6 <- highchart() |>
       )
     )
   )) |>
-  hc_colors(c("#005EB8", "#006747", "#330072", "#ED8B00", "#009639", "#AE2573")) |>
+  hc_colors(c("#005EB8", "#ED8B00", "#006747", "#330072",  "#009639", "#AE2573")) |>
   hc_tooltip(enabled = F)
+
 
 # figure 7
 figure_7_data <- add_anl_3 |>
@@ -821,7 +793,7 @@ figure_8 <- nhsbsaVis::basic_chart_hc(
 )
 
 # figure 9
-figure_9_data <-  stp_data_cy_agg$National |>
+figure_9_data <-  stp_data_fy_agg$National |>
   dplyr::select(`ICB Code`,
                 `Total Items`) |>
   dplyr::rename(ICB_CODE = 1,
@@ -834,7 +806,7 @@ figure_9_data <-  stp_data_cy_agg$National |>
   dplyr::mutate("TOTAL_ITEMS_PER_POP" = TOTAL_ITEMS / POP)
 
 figure_9 <- nhsbsaVis::icb_map(
-  data = stp_data_cy_agg$National,
+  data = stp_data_fy_agg$National,
   icb_code_column = "ICB Code",
   value_column = "Total Items",
   geo_data = icb_geo_data,
@@ -845,7 +817,7 @@ figure_9 <- nhsbsaVis::icb_map(
 )
 
 # figure 10
-figure_10_data <-  stp_data_cy_agg$National |>
+figure_10_data <-  stp_data_fy_agg$National |>
   dplyr::select(`ICB Code`,
                 `Total Cost (GBP)`) |>
   dplyr::rename(ICB_CODE = 1,
@@ -858,7 +830,7 @@ figure_10_data <-  stp_data_cy_agg$National |>
   dplyr::mutate("TOTAL_NIC_PER_POP" = TOTAL_NIC / POP)
 
 figure_10 <- nhsbsaVis::icb_map(
-  data = stp_data_cy_agg$National,
+  data = stp_data_fy_agg$National,
   icb_code_column = "ICB Code",
   value_column = "Total Cost (GBP)",
   geo_data = icb_geo_data,
