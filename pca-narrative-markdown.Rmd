@@ -475,7 +475,7 @@ Source: [Additional Tables - Prescription Cost Analysis - A14](`r config$add_anl
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
-`r infoBox_no_border(header = "", text = "Between 2021/22 and 2022/23 the total costs of Eliquis 5mg tablets decreased by £260 million, the highest absolute decrease of all presentations. Elquis is a propietory version of Apixiban which a generic version of was made available to suppliers in May 2022.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "Between 2021/22 and 2022/23 the total costs of Eliquis 5mg tablets decreased by £260 million, the highest absolute decrease of all presentations. Eliquis is a propietory version of Apixiban which a generic version of was made available to suppliers in May 2022.", width = "100%")` 
 ::: 
 ::::
 
