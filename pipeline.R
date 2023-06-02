@@ -998,6 +998,16 @@ rmarkdown::render("pca-narrative-markdown.Rmd",
 
 log_print("Narrative markdown generated", hide_notes = TRUE)
 
+rmarkdown::render("pca-background-june-2023.Rmd",
+                  output_format = "html_document",
+                  output_file = "outputs/pca_background_info_methodology_v001.html")
+
+rmarkdown::render("pca-background-june-2023.Rmd",
+                  output_format = "word_document",
+                  output_file = "outputs/pca_background_info_methodology_v001.docx")
+
+log_print("Background markdown generated", hide_notes = TRUE)
+
 
 # 13. disconnect from DWH  ---------
 DBI::dbDisconnect(con)
