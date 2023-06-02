@@ -484,7 +484,7 @@ This is the total quantity of a drug or appliance that was prescribed. This is c
 ## 9 Feedback and contact us
 Feedback is important to us. We welcome any questions and comments relating to this document. Please quote ‘PCA – Background Information and Methodology Note’ in the subject title of any correspondence.
 
-A [Continuous feedback survey](https://online1.snapsurveys.com/interview/caf0d685-0500-48d2-8b96-1c434a956819) is available on the Prescription Cost Analysis web page that can be completed by users.
+A [Continuous feedback survey](`r config$stats_survey_link`) is available on the Prescription Cost Analysis web page that can be completed by users.
 
 ### 9.1 COntact us 
 
