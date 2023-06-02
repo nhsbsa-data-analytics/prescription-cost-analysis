@@ -3,6 +3,9 @@ title: "Prescription Cost Analysis"
 pagetitle: "Background Information and methodology"
 always_allow_html: true
 output:
+  word_document:
+    toc: yes
+    toc_depth: '2'
   html_document:
     anchor_sections: no
     css: www/style.css
@@ -10,9 +13,6 @@ output:
     toc_depth: 2
     toc_float:
       collapsed: no
-  word_document:
-    toc: yes
-    toc_depth: '2'
 ---
 
 <script>
@@ -300,14 +300,12 @@ As well as the changes described in the ‘Methodology’ section of this docume
 ### 3.1 Drug Breakdowns
 
 We have included an additional table within the supporting summary tables that provides data at a more granular level, giving the SNOMED codes of drugs, appliances, and medical devices. In this table a single BNF presentation can have multiple SNOMED codes assigned to it. These SNOMED codes each relate to an individual VMP or AMP that hold the same BNF code. This is most often the case for preparation class 1 drugs and their preparation class 5 equivalents. This disaggregates data across the different suppliers of these generic drugs.
-In the 2019 release of PCA we were unable to include the ‘Standard Quantity Unit’ field due to the completion of our ‘One Drug Database’ project that meant this data was no longer available to us. To meet user needs for this information we have included a new field within this release, ‘Unit of measure’. This field details the pharmaceutical form or unit that is used to measure a single unit of quantity of the given drug, appliance, or medical device. For example, tablet, capsule, millilitre (ml), grams (g), dose, unit dose, or vial. This list is not exhaustive, and many more units of measure can be found within the data.
 
 ### 3.2 Geographical breakdowns
 
-We have also included geographic breakdowns within the data for Sustainability and Transformation Partnerships (STPs). STPs are health geographies that are formed by NHS organisations, local councils, and others to set out proposals to improve health and care for the local population. In these statistics the STP given is that of the dispensing contractor and not the prescribing organisation. These geographies are taken from NHSBSA administrative records and relate to the commissioning of services for NHS patients, and not the physical location of a dispensing contractor, or the patient that has received the drug, appliance, or medical device.
-Some dispensing contractors are distance selling pharmacies or ‘online’ pharmacies. These contractors are required by regulation to provide a national service to NHS patients. However, they are only associated with a single STP in NHSBSA administrative records. In these cases, some STPs may have higher than expected dispensing of products or of certain drugs or appliances due to the existence of a distance selling or specialist pharmacy within their boundary.
-In these statistics we have used the STP boundaries as of March 2021 and applied this throughout the year. Therefore, if a dispenser were to change STP throughout the year, the dispenser’s STP as of March 2021 would be used as their STP for the entire period. For data relating to periods before the creation of STPs in April 2020 predecessor organisations such as NHS England Area Teams may appear. This is caused by dispensing contractors that closed prior to April 2020 and were not mapped to the new organisations.
-
+We have also included geographic breakdowns within the data for Integrated Care Boards (ICBs). ICBs are statutory NHS organisations which are responsible for developing a plan for meeting the health needs of the population, managing the NHS budget and arranging for the provision of health services in a geographical area. In these statistics the ICB given is that of the dispensing contractor and not the prescribing organisation. These geographies are taken from NHSBSA administrative records and relate to the commissioning of services for NHS patients, and not the physical location of a dispensing contractor, or the patient that has received the drug, appliance, or medical device.
+Some dispensing contractors are distance selling pharmacies or ‘online’ pharmacies. These contractors are required by regulation to provide a national service to NHS patients. However, they are only associated with a single ICB in NHSBSA administrative records. In these cases, some ICBs may have higher than expected dispensing of products or of certain drugs or appliances due to the existence of a distance selling or specialist pharmacy within their boundary.
+In these statistics we have used the ICB boundaries as of March 2023 and applied this throughout the year. Therefore, if a dispenser were to change ICB throughout the year, the dispenser’s ICN as of March 2023 would be used as their ICB for the entire period. 
 
 ### 3.3 Time periods
 
@@ -344,7 +342,7 @@ Additional data tables have also been supplied as part of the release which enab
 
 #### 4.3.2 PCA cannot be used for:
 
--	Providing breakdowns for more granular geographies than STP. 
+-	Providing breakdowns for more granular geographies than ICB. 
 -	Providing a final figure representative of the total cost to the NHS. The final cost measure used in this publication, net ingredient cost (NIC), does not consider all elements that contribute towards the final cost to the NHS, for example remuneration to contractors, discounts, advance payments, and patient charges. Additionally, the data only includes items prescribed in multiple health care settings including secondary care and subsequently dispensed in the community. Items issued and dispensed in secondary care are not included.
 -	Viewing items dispensed outside of England. The PCA dataset is limited to a view of items dispensed only in the community in England, regardless of whether they were prescribed in England, Scotland, Wales, Northern Ireland, and State authorities such as Guernsey, Jersey, Alderney, and Isle of Man.
 -	Viewing items and trends that have been prescribed. PCA uses a dispensing view, in which only items that English dispensing contractors including personally administered (PADM) claims submitted to the NHSBSA have been reimbursed for will be shown.
@@ -445,7 +443,7 @@ The most granular data released in these statistics are also available via an AP
 
 The PCA publication contains data for all prescriptions that have been dispensed in the community in England. This differs to data provided in the [English Prescribing Dataset (EPD)](https://opendata.nhsbsa.net/dataset/english-prescribing-data-epd) which is also released by the NHSBSA as a monthly management information administrative data feed. EPD details prescription items that have been issued in England in a primary care setting, including those that were subsequently dispensed elsewhere in the UK. EPD is not released as an Official Statistic by the NHSBSA.
 
-PCA and EPD serve different purposes and fulfil different criteria and user need. PCA data is a ‘dispensing’ view of prescription data, showing the STP of the dispensing organisation and drugs that are most likely to have been dispensed. EPD is strictly a ‘prescribing’ view of prescription data, showing the prescribing organisation of items and the product that was written on the prescription form itself.
+PCA and EPD serve different purposes and fulfil different criteria and user need. PCA data is a ‘dispensing’ view of prescription data, showing the ICB of the dispensing organisation and drugs that are most likely to have been dispensed. EPD is strictly a ‘prescribing’ view of prescription data, showing the prescribing organisation of items and the product that was written on the prescription form itself.
 
 The inclusion of SNOMED codes within PCA data as detailed elsewhere in this document have improved the comparability of these statistics between other sources of drug information, such as secondary care.
 
@@ -477,8 +475,8 @@ The term Items refers to the number of times a product appears on a prescription
 A prescription (also referenced as a prescription form) has two incarnations: a paper form, and an electronic prescription available via EPS. A paper prescription can hold up to a maximum of ten items. A single electronic prescription can hold a maximum of four items.
 **Presentation**
 A presentation is the name given to the specific type, strength, and formulation of a drug, or the specific type of an appliance. For example, Paracetamol 500mg tablets. A presentation can be either an actual medicinal product or a virtual medicinal product. For generic presentations, a single presentation can hold a VMP and many AMPs for each generic supplier of that product.
-**Sustainability and transformation partnership (STP)**
-STPs are health geographies that are formed by NHS organisations, local councils, and others to set out proposals to improve health and care for the local population. STPs replaced NHS England Local Offices and Area Teams on 1 April 2020.
+**Integrated Care Board (ICB)**
+ICBs are statutory NHS organisations which are responsible for developing a plan for meeting the health needs of the population, managing the NHS budget and arranging for the provision of health services in a geographical area.
 **Total Quantity**
 This is the total quantity of a drug or appliance that was prescribed. This is calculated by multiplying Quantity by Items. For example, if 2 items of Amoxicillin 500mg capsules with a quantity of 28 were prescribed, total quantity will be 56.
 
