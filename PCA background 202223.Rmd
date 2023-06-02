@@ -1,11 +1,48 @@
+---
+title: "Prescription Cost Analysis"
+pagetitle: "Background Information and methodology"
+always_allow_html: true
+output:
+  html_document:
+    anchor_sections: no
+    css: www/style.css
+    toc: yes
+    toc_depth: 2
+    toc_float:
+      collapsed: no
+  word_document:
+    toc: yes
+    toc_depth: '2'
+---
+
+<script>
+  $(document).ready(function() {
+    $('#TOC').prepend('<div><img src=`r knitr::image_uri("www/national-statistics-logo.svg")` alt=\"National Statistics logo\" style=\"position: relative; width: 50%; margin: 10% auto 10% auto; display: block;\"></div>');
+  });
+  
+  $(document).ready(function() {
+    $('#header').prepend('<img src=`r knitr::image_uri("www/bsa_logo.svg")` alt=\"NHSBSA logo\" style=\"position:absolute; top: 0; right: 0; padding: 10px; width: 25%;\">');
+  });
+</script>
+
+<html lang="en">
+
+```{r setup, include=FALSE}
+
+# set code chunk options to disable echo by default
+knitr::opts_chunk$set(echo = FALSE,
+                      warning = FALSE,
+                      message = FALSE)
+
+
+```
 
 <main>
-  
+
 # Background Information and Methodology {.toc-ignore}
   
 ##  June 2023 {.toc-ignore}
-  
-  
+
 ---
   
 ## 1 Background information
@@ -27,9 +64,10 @@ The NHSBSA has a single drug database  that is used for both the reimbursement a
 
 Drugs are held on CDR at an individual pack level. For example, Paracetamol 500mg tablets 16 pack and Paracetamol 500mg tablets 32 pack have separate entries in the database, along with separate entries for each supplier of the pack and any proprietary versions. This data model uses the concepts of Virtual Medicinal Products/Packs (VMPs/VMPPs) and Actual Medicinal Products/Packs (AMPs/AMPPs). Figure 1 gives the data model used in CDR and DM+D.
 
-figure 1 DM+D data model
-
-------------------------------------------------------------insert image here--------------------------------------
+```{r echo=FALSE, out.width = "100%", fig.alt="Figure 1: DM+D data model"}
+knitr::include_graphics("www/DM+D data model-image.png")
+```
+*Figure 1: DM+D data model*
 
 Definitions of VMPs/AMPs and VMPPs/AMPPs are given in the Glossary of Terms included in this document.
 
@@ -465,4 +503,4 @@ NE15 8NY
 
 
 **END**
-
+</main>
