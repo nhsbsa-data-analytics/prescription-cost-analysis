@@ -164,24 +164,7 @@ Previously, preparation class 2 items were apportioned amongst their proprietary
 ##### 2.1.2.1 Preparation class 2 drug with a single class 3 equivalent – one-to-one mapping
 
 All items and costs that have been prescribed generically will be reported against the proprietary presentation. However, these items and costs will be disaggregated across the preparation class of the prescribed item to allow users to compare ratios of generic and proprietary prescribing. 
-For example, Apixaban 5mg tablets have a preparation class of 2. However, they only have one class 3 equivalent, Eliquis 5mg tablets. This means that although Apixaban 5mg tablets can be prescribed generically, they are only actually available to dispense to patients as their proprietary equivalent. Therefore, all data in these statistics is displayed against the record for Eliquis 5mg tablets, with those items prescribed as Apixaban 5mg tablets displayed against a separate record.
-
-*Table 3: Example data for class 2 drugs with a single class 3 equivalent*
-```{r echo=FALSE}
-# Create a data frame with the given data
-Eliquis_example_data <- data.frame(
-  "BNF Name" = c("Eliquis 5mg tablets", "Eliquis 5mg tablets"),
-  "BNF Code" = c("0208020Z0BBABAB", "0208020Z0BBABAB"),
-  "Preparation Class" = c("03", "03"),
-  "Prescribed Preparation Class" = c("02", "03"),
-  "Total Items" = c("32,000,000", "3,000,000")
-)
-
-# Display the table using kable
-kable(Eliquis_example_data)
-
-```
-
+For example, some medications have a prescribed preparation class of 2, indicating that their generic form was prescribed. However, they may only have one proprietary equivalent in class 3. This means that while the generic version can be prescribed, it is only available to dispense to patients at the proprietary equivalent. Therefore, all data in these statistics is displayed against the record for the proprietary equivalent, and items prescribed as the generic version are displayed separately to those prescribed as the proprietary equivalent.
 
 ##### 2.1.2.2 Preparation class 2 drug with multiple class 3 equivalents – one-to-many mapping
 
@@ -189,7 +172,7 @@ In these cases, we will use the reimbursement price as held within our database 
 
 For example, Beclometasone 100micrograms/dose inhaler CFC free is a preparation class 2 drug with four class 3 equivalents. This means that although Beclometasone 100micrograms/dose inhaler CFC free can be prescribed generically, it is only available to dispense to patients as one of its proprietary equivalents. Each of these class 3 drugs has a different price, and therefore we can use this to help distinguish the actual product that we reimbursed the dispensing contractor for.
 
-*Table 4: Example of reimbursement prices with unique relationship*
+*Table 3: Example of reimbursement prices with unique relationship*
 ```{r echo=FALSE}
 
 # Create a data frame of Example reimbursement data
@@ -205,7 +188,7 @@ kable(Example_reimbursement_data)
 
 ```
 
-*Table 5: Example data for preparation class 2 drug with unique price relationship*
+*Table 4: Example data for preparation class 2 drug with unique price relationship*
 ```{r echo=FALSE}
 
 # Create a data frame with the example preparation class data
@@ -225,7 +208,7 @@ kable(example_preparation_class_data)
 Sometimes a unique relationship between prices cannot be established, where more than one proprietary equivalent has a matching reimbursement price for that month. In these cases, we use the endorsement field present within the EPS message to try to determine which proprietary class 3 drug was dispensed.
 For example, Venlafaxine 37.5mg modified-release capsules is a preparation class 2 drug with three class 3 equivalents. Two of these equivalents have the same price, and therefore we cannot use the price to reliably determine what drug has been dispensed to a patient. 
 
-*Table 6: Example of reimbursement prices with non-unique relationship*
+*Table 5: Example of reimbursement prices with non-unique relationship*
 
 ```{r echo = FALSE}
 
@@ -245,7 +228,7 @@ kable(data)
 
 Here we will use the endorsement field within the EPS message, if it has been completed by the dispensing contractor, to help determine what proprietary drug to attribute the items to. However, where it has not been possible to establish a relationship to a class 3 drug using the endorsement field, or in the case of paper prescriptions an EPS message does not exist, data will be reported against the record for the generic class 2 record.
 
-*Table 7: Example data for preparation class 2 drug with non-unique price relationship*
+*Table 6: Example data for preparation class 2 drug with non-unique price relationship*
 
 ```{r echo = FALSE}
 # Create a data frame with the given Example preparation class 2 data
@@ -268,7 +251,7 @@ We have now changed this so that when a product changes preparation class data i
 
 For example, Melatonin 2mg modified-release tablets changed from a preparation class 2 to a class 1 drug in September 2020. This will cause items prescribed generically in September onwards to be displayed against the class 1 record, whilst items prescribed generically before September will be displayed against the class 3 equivalent.
 
-*Table 8: Example data of a product that has changed preparation class during the period*
+*Table 7: Example data of a product that has changed preparation class during the period*
 
 ```{r echo = FALSE}
 # Create a data frame with the given data
