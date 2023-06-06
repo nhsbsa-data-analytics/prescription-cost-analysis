@@ -59,6 +59,7 @@ req_pkgs <-
     "magrittr",
     "tcltk",
     "DT",
+    "htmltools",
     "nhsbsa-data-analytics/nhsbsaR",
     "nhsbsa-data-analytics/nhsbsaExternalData",
     "nhsbsa-data-analytics/accessibleTables",
@@ -688,15 +689,15 @@ figure_6_data <- data.frame(
     "Total<br>items",
     "Prescribed<br>generically",
     "Prescribed<br>generically",
-    "Prescribed<br>propietory"
+    "Prescribed<br>propietary"
   ),
   to = c(
     "Dressings<br>and appliances",
     "Prescribed<br>generically",
-    "Prescribed<br>propietory",
+    "Prescribed<br>propietary",
     "Dispensed<br>generically",
-    "Dispensed<br>propietory",
-    "Dispensed<br>propietory"
+    "Dispensed<br>propietary",
+    "Dispensed<br>propietary"
   ),
   weight = c(
     figure_6_df$APPLIANCE_ITEMS[1],
@@ -711,22 +712,21 @@ figure_6_data <- data.frame(
 figure_6 <- highchart() |>
   hc_chart(type = "sankey",
            style = list(fontFamily = "Arial")) |>
-  hc_add_series(
-    data = figure_6_data,
-    nodes = unique(c(figure_6_data$from, figure_6_data$to))
-  ) |>
-  hc_plotOptions(sankey = list(
-    dataLabels = list(
-      enabled = T,
-      style = list(
-        fontSize = "12px",
-        color = "black",
-        textOutline = "none"
-      ),
-      backgroundColor = 'rgba(232, 237, 238, 0.5)',
-      borderRadius = 2,
-      formatter = JS(
-        "function() {
+  hc_add_series(data = figure_6_data,
+                nodes = unique(c(figure_6_data$from, figure_6_data$to))) |>
+  hc_plotOptions(
+    sankey = list(
+      dataLabels = list(
+        enabled = T,
+        style = list(
+          fontSize = "12px",
+          color = "black",
+          textOutline = "none"
+        ),
+        backgroundColor = 'rgba(232, 237, 238, 0.5)',
+        borderRadius = 2,
+        formatter = JS(
+          "function() {
         if (this.point.isNode) {
         return this.point.name;
         } else {
@@ -735,19 +735,21 @@ figure_6 <- highchart() |>
     return ynum.toLocaleString('en-GB', options) + 'M';
         }
         }"
-      )
-    ),
+        )
+      ),
     nodeWidth = 15
-  ),
-  series = list(
-    allowPointSelect = FALSE,
-    states = list(
-      hover = list(
-        enabled = FALSE
-      )
-    )
+    ),
+    series = list(allowPointSelect = FALSE,
+                  states = list(hover = list(enabled = FALSE)))
+  ) |>
+  hc_colors(c(
+    "#005EB8",
+             "#ED8B00",
+             "#006747",
+             "#330072",
+             "#009639",
+             "#AE2573"
   )) |>
-  hc_colors(c("#005EB8", "#ED8B00", "#006747", "#330072",  "#009639", "#AE2573")) |>
   hc_tooltip(enabled = F)
 
 
@@ -930,8 +932,7 @@ figure_15_data <- dev_nations_data |>
   select(Country,
          POP,
          TOTAL_ITEMS,
-         ITEMS_PER_CAPITA
-         )
+         ITEMS_PER_CAPITA)
 
 figure_15 <-
   basic_chart_hc(
@@ -950,8 +951,7 @@ figure_16_data <- dev_nations_data |>
   select(Country,
          POP,
          TOTAL_COSTS,
-         COSTS_PER_CAPITA
-  )
+         COSTS_PER_CAPITA)
 
 figure_16 <-
   basic_chart_hc(
