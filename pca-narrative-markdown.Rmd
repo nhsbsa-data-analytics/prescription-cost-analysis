@@ -45,13 +45,13 @@ knitr::opts_chunk$set(echo = FALSE,
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
-`r infoBox_border(header = "Feedback", text = paste0("We are interested in any feedback about the publication or these changes, which you can send by using our ", htmltools::HTML(paste("<a href='",config$stats_survey_link,"'>Official Statistics feedback survey</a>")),"."), width = "100%")` 
+`r infoBox_border(header = "Feedback", text = paste0("We are interested in any feedback about the publication, which you can send by using our ", htmltools::HTML(paste("<a href='",config$stats_survey_link,"'>Official Statistics feedback survey</a>")),"."), width = "100%")` 
 ::: 
 ::::
 
 ## Key findings
 
-::::{.row style="display: flex; padding-bottom: 10px;"} 
+::::{.row style="display: flex; padding-bottom: 10px;"}
 :::{.col-md-6} 
 `r infoBox_no_border(header = "", text = htmltools::HTML("<b>In 2022/23 1.18 billion prescription items were dispensed in the community in England at a cost of £10.4billion.</b>"), width = "100%")` 
 ::: 
@@ -86,7 +86,7 @@ The designation of this publication as a National Statistic was confirmed in May
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
-`r infoBox_border(header = "Item", text = "A single unit of medication listed separately on a prescription form. In this publication, an example of an item would be Paracetamol 500mg x28.", width = "100%")` 
+`r infoBox_border(header = "Item", text = "A single unit of medication listed separately on a prescription form. In this publication, an example of an item would be Paracetamol 500mg tablets x28.", width = "100%")` 
 ::: 
 ::::
 
@@ -131,13 +131,13 @@ Source: [Summary Tables - Prescription Cost Analysis - National](`r config$fy_na
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "Prescription items dispensed in the community in England in 2022/23 cost £10.4 billion.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>Prescription items dispensed in the community in England in 2022/23 cost £10.4 billion.</b>", width = "100%")` 
 ::: 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "There was an 8% increase in costs from 2021/22 to 2022/23.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>There was an 8% increase in costs from 2021/22 to 2022/23.</b>", width = "100%")` 
 :::
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "2022/23 is the fourth consecutive year that costs have increased.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>2022/23 is the fourth consecutive year that costs have increased.</b>", width = "100%")` 
 :::
 ::::
 
@@ -156,13 +156,13 @@ Source: [Summary Tables - Prescription Cost Analysis - National](`r config$fy_na
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "In 2022/23 1.18 billion items were dispensed in the community in England.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>In 2022/23 1.18 billion items were dispensed in the community in England.</b>", width = "100%")` 
 ::: 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "There was a 3% increase in items from 2021/22 to 2022/23.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>There was a 3% increase in items from 2021/22 to 2022/23.</b>", width = "100%")` 
 :::
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "Items dispensed continue to trend upwards.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>Items dispensed continue to trend upwards.</b>", width = "100%")` 
 :::
 ::::
 
@@ -188,13 +188,13 @@ Source: [Summary Tables - Prescription Cost Analysis - Chapter](`r config$fy_nat
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "IBNF chapter 02 - Cardiovascular System accounted for 29% of all items dispensed in 2022/23.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>BNF chapter 02 - Cardiovascular System accounted for 29% of all items dispensed in 2022/23.</b>", width = "100%")` 
 ::: 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "BNF chapter 04 - Central Nervous System accounted for 19% of all items dispensed in 2022/23.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>BNF chapter 04 - Central Nervous System accounted for 19% of all items dispensed in 2022/23.</b>", width = "100%")` 
 :::
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "BNF chapter 06 - Endocrine System accounted for 11% of all items dispensed in 2022/23.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>BNF chapter 06 - Endocrine System accounted for 11% of all items dispensed in 2022/23.</b>", width = "100%")` 
 :::
 ::::
 
@@ -213,13 +213,13 @@ Source: [Summary Tables - Prescription Cost Analysis - Chapter](`r config$fy_nat
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "BNF chapter 06 - Endocrine System accounted for 17% of total costs in 2022/23.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>BNF chapter 06 - Endocrine System accounted for 17% of total costs in 2022/23.</b>", width = "100%")` 
 ::: 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "BNF chapter 02 - Cardiovascular System accounted for 16% of total costs in 2022/23.", width = "100%")`
+`r infoBox_no_border(header = "", text = "<b>BNF chapter 02 - Cardiovascular System accounted for 16% of total costs in 2022/23.</b>", width = "100%")`
 :::
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "BNF chapter 04 - Central Nervous System accounted for 15% of total costs in 2022/23.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>BNF chapter 04 - Central Nervous System accounted for 15% of total costs in 2022/23.</b>", width = "100%")` 
 :::
 ::::
 
@@ -240,13 +240,13 @@ Source: [Additional Tables - Prescription Cost Analysis - table A5](`r config$ad
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "Generic items made up 85% of the total items prescribed in 2022/23.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>Generic items made up 85% of the total items prescribed in 2022/23.</b>", width = "100%")` 
 ::: 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "Rate of generic prescrbing has remained consistent between 2014/15 and 2022/23.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>Rates of generic prescrbing have remained consistent between 2014/15 and 2022/23.</b>", width = "100%")` 
 :::
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "Generic prescribing accounted for 62% of costs in 2022/23.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>Generic prescribing accounted for 62% of costs in 2022/23.</b>", width = "100%")` 
 :::
 ::::
 
@@ -265,16 +265,16 @@ figure_6
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
-`r infoBox_border(header = "", text = "Generically prescribed items are those with a prescribed preparation class of 1, 2, or 5.<br><br>Generically prescribed and dispensed items are those with a prescribed preparation class of 1, 2, or 5 and dispensed as items with a class of 1 or 5.<br><br>Generically prescribed/proprietary dispensed items are those with a prescribed preparation class of 1, 2 or 5 and dispensed as items with a class of 2 or 3.<br><br>Proprietary prescribed and dispensed items are those with a prescribed preparation class of 3 and dispensed as items with a class of 3.<br><br>Dressings and appliances are items which were dispensed as a preparation class of 4<br><br>It is possible that drugs prescribed generically don't have any actual generics available for example those in Drug Tariff category C.", width = "100%")` 
+`r infoBox_border(header = "", text = "Generic prescribing is encouraged and many drugs are now prescribed generically even when they are not available in generic form. For example, drugs that are listed in Category C of the Drug tariff.", width = "100%")` 
 ::: 
 ::::
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "In 2022/23 66 million of the 950 million items prescribed generically were dispensed as a proprietary", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>In 2022/23 66 million of the 950 million items prescribed generically were dispensed as a proprietary.</b>", width = "100%")` 
 ::: 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "In 2022/23 7% of items prescribed generically were dispensed as a propietary.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>In 2022/23 7% of items prescribed generically were dispensed as a propietary.</b>", width = "100%")` 
 :::
 ::::
 
@@ -297,10 +297,10 @@ Source: [Additional Tables - Prescription Cost Analysis - A3](`r config$add_anl_
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "Atorvastatin was the most dispensed chemical susbtance in 2022/23 with 59 million items.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>Atorvastatin was the most dispensed chemical susbtance in 2022/23 with 59 million items.</b>", width = "100%")` 
 ::: 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "Four of the top ten chemical substances by items in 2022/23 belong to BNF chapter 02 - Cardiovascular System.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>Four of the top ten chemical substances by items in 2022/23 belong to BNF chapter 02 - Cardiovascular System.</b>", width = "100%")` 
 :::
 ::::
 
@@ -319,13 +319,13 @@ Source: [Additional Tables - Prescription Cost Analysis - A2](`r config$add_anl_
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "Apixiban had the highest costs in 2022/23 of £430 million.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>Apixiban had the highest costs in 2022/23 of £430 million.</b>", width = "100%")` 
 ::: 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "Three of the top ten chemical substances by costs in 2022/23 are anticoagulants used to help prevent blood clots.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>Three of the top ten chemical substances by costs in 2022/23 are anticoagulants used to help prevent blood clots.</b>", width = "100%")` 
 :::
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "Two of the top ten chemical substances by costs in 2022/23 are used to treat respiratory illnesses.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>Two of the top ten chemical substances by costs in 2022/23 are used to treat respiratory illnesses.</b>", width = "100%")` 
 :::
 ::::
 
@@ -354,13 +354,13 @@ Source: [Summary Tables - Prescription Cost Analysis - ICB National](`r config$f
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "The mean number of items dispensed per capita in England was 21 in 2022/23.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>The mean number of items dispensed per capita in England was 21 in 2022/23.</b>", width = "100%")` 
 ::: 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "NHS West Yorkshire Integrated Care Board had the highest dispensed items per capita with 29.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>NHS West Yorkshire Integrated Care Board had the highest dispensed items per capita with 29.</b>", width = "100%")` 
 :::
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "NHS Surrey Heartlands Integrated Care Board had the lowest with 13.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>NHS Surrey Heartlands Integrated Care Board had the lowest with 13.</b>", width = "100%")` 
 :::
 ::::
 
@@ -379,13 +379,13 @@ Source: [Summary Tables - Prescription Cost Analysis - ICB National](`r config$f
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "The mean cost of items dispensed per capita in England was £184 in 2022/23.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>The mean cost of items dispensed per capita in England was £184 in 2022/23.</b>", width = "100%")` 
 ::: 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "NHS Cambridgeshire and Peterborough Integrated Care Board had the highest cost per capita of £390.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>NHS Cambridgeshire and Peterborough Integrated Care Board had the highest cost per capita of £390.</b>", width = "100%")` 
 :::
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "NHS South East London Integrated Care Board had the lowest of £123.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>NHS South East London Integrated Care Board had the lowest of £123.</b>", width = "100%")` 
 :::
 ::::
 
@@ -411,7 +411,9 @@ Source: [Additional Tables - Prescription Cost Analysis - A11](`r config$add_anl
 
 Chloral hydrate 500mg/5ml oral solution/mixture BP 2000 increased in unit cost the most in 2022/23 by 2,024%.
 
-Aripiprazole 5mg tablets, Aripiprazole 10mg tablets and Aripiprazole 15mg tablets were all granted price concession in May 2022.
+Price concessions can be granted by tghe Department of Health and Social Care (DHSC) for medicines that pharmacists are struggling to obtain at or below the price set out in the Drug Tariff. These concessions can have large impacts on the unit costs of drugs.
+
+Aripiprazole 10mg tablets were granted price concessions between May 2022 and December 2022. Aripiprazole 5mg tablets and Aripiprazole 15mg tablets were both granted price concessions between July 2022 and March 2023. Price concessions are carried out on a monthly basis, including on any existing medications on price concession.
 
 ### `r paste0("Figure 12: Top 10 presentations by percentage decrease in unit cost ",paste0(substr(max_data_fy_minus_1,1,5), substr(max_data_fy_minus_1, 8, 9)), " to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
@@ -469,7 +471,7 @@ Source: [Additional Tables - Prescription Cost Analysis - A14](`r config$add_anl
 ::: 
 ::::
 
-Between 2021/22 and 2022/23 the total costs of Eliquis 5mg tablets decreased by £260 million, the highest absolute decrease of all presentations. Eliquis is a proprietary version of Apixiban which a generic version of was made available to suppliers in May 2022.
+Between 2021/22 and 2022/23 the total costs of Eliquis 5mg tablets decreased by £260 million, the highest absolute decrease of all presentations. Eliquis is a proprietary version of Apixiban which a generic version of was made available in May 2022.
 
 ---
 
@@ -494,13 +496,13 @@ Source: [Additional Tables - Prescription Cost Analysis - A1](`r config$add_anl_
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "There were 20 items per head of population dispensed in England in 2021/22.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>There were 20 items per head of population dispensed in England in 2021/22.</b>", width = "100%")` 
 ::: 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "Scotland who had the fewest items dispensed per capita of 19.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>Scotland had the fewest items dispensed per capita in 2021/22 at 19.</b>", width = "100%")` 
 ::: 
 :::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "There were 26 items per head of population dispensed in Wales in 2021/22.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>There were 26 items per head of population dispensed in Wales in 2021/22.</b>", width = "100%")` 
 ::: 
 ::::
 
@@ -520,10 +522,10 @@ Source: [Additional Tables - Prescription Cost Analysis - A1](`r config$add_anl_
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "England had the lowest prescription item cost per head of population in 2021/22 of £171.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>England had the lowest prescription item cost per head of population in 2021/22 at £171.</b>", width = "100%")` 
 ::: 
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "Northern Ireland had the lowest prescription item cost per head of population in 2021/22 of £247.", width = "100%")` 
+`r infoBox_no_border(header = "", text = "<b>Northern Ireland had the highest prescription item cost per head of population in 2021/22 at £247.</b>", width = "100%")` 
 ::: 
 ::::
 
@@ -562,11 +564,11 @@ For full details of the changes made please refer to the [Background Information
 
 ### 4.4. Timeliness of this publication {.toc-ignore}
 
-This publication has historically been released in the month of April. To accommodate the inclusion of financial year information these statistics will now be released in June, after March data becomes available each year. Calendar year data is released in June in line with the publication, calendar year data is published when December data available, usually in February on the [NHSBSA Open Data Portal](https://opendata.nhsbsa.net/) (ODP).
+This publication is released in June of each year when March data becomes available to allow us to provide a financial year overview. Calendar year data is published in February of each year when December data becomes available on the [NHSBSA Open Data Portal](https://opendata.nhsbsa.net/) (ODP).
 
 ### 4.5. Price concessions {.toc-ignore}
 
-When community pharmacies cannot source a drug at or below the reimbursement price as set out in the Drug Tariff, the Department of Health and Social Care (DHSC) can introduce a [price concession](https://cpe.org.uk/funding-and-reimbursement/reimbursement/price-concessions/) at the request of Community Pharmacy England. A price concession can be requested for any drugs listed in Part VIIIA, Part VIIIB and Part VIIID of the Drug Tariff. For any drugs granted price concessions, contractors are automatically reimbursed at the new prices for that month.
+When community pharmacies cannot source a drug at or below the reimbursement price as set out in the Drug Tariff, the DHSC can introduce a [price concession](https://cpe.org.uk/funding-and-reimbursement/reimbursement/price-concessions/) at the request of Community Pharmacy England. A price concession can be requested for any drugs listed in Part VIIIA, Part VIIIB and Part VIIID of the Drug Tariff. For any drugs granted price concessions, contractors are automatically reimbursed at the new prices for that month.
 
 ### 4.6. Nutritional Borderline Substances (NBS) products {.toc-ignore}
 
