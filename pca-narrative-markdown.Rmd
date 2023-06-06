@@ -574,6 +574,8 @@ The NHSBSA has worked with the DHSC to improve the categorisation of NBS product
 
 A list of the BNF code changes carried out on NBS is available [here](https://www.nhsbsa.nhs.uk/sites/default/files/2023-03/January%202023%20BNF%20Code%20changes.xlsx).
 
+As part of the recategorisation work for NBS some data may appear against historical BNF codes.
+
 ---
 
 ## 5. Rounding
