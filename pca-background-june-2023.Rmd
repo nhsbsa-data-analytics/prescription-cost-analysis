@@ -449,6 +449,7 @@ These statistics use the BNF therapeutic classifications defined in the British 
 ## 8 Glossary of terms used in these statistics
 
 **Actual medicinal product (AMP)**
+
 This is a product that has been made available by a supplier. This is a physical entity but is devoid of pack size information. For example, Panadol Advance 500mg tablets or Paracetamol 500mg tablets (A A H Pharmaceuticals).
 
 **Virtual medicinal product (VMP)**
@@ -458,6 +459,7 @@ A VMP is an abstract concept representing the properties of one or more clinical
 **Chemical substance**
 
 A chemical substance is the name of the main active ingredient in a drug. Appliances do not hold a true chemical substance. It is determined by the British National Formulary (BNF) for drugs, or the NHSBSA for appliances. For example, Amoxicillin.
+
 **Cost**
 
 In British pound sterling (GBP). The amount that would be paid using the basic price of the prescribed drug or appliance and the quantity prescribed, sometimes called 'Net Ingredient Cost' (NIC). The basic price is given either in the Drug Tariff or is determined from prices published by manufacturers, wholesalers, or suppliers. Basic price is set out in Parts VIII and IX of the Drug Tariff. For any drugs or appliances not in Part VIII, the price is usually taken from the manufacturer, wholesaler, or supplier of the product.
