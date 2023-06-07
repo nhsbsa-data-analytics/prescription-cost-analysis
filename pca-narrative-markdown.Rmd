@@ -53,7 +53,7 @@ knitr::opts_chunk$set(echo = FALSE,
 
 ::::{.row style="display: flex; padding-bottom: 10px;"}
 :::{.col-md-6} 
-`r infoBox_no_border(header = "", text = htmltools::HTML("<b>In 2022/23 1.18 billion prescription items were dispensed in the community in England at a cost of £10.4billion.</b>"), width = "100%")` 
+`r infoBox_no_border(header = "", text = htmltools::HTML("<b>In 2022/23 1.18 billion prescription items were dispensed in the community in England at a cost of £10.4 billion.</b>"), width = "100%")` 
 ::: 
 :::{.col-md-6} 
 `r infoBox_no_border(header = "", text = htmltools::HTML("<b>The number of items dispensed in the community in England increased by 3% from 2021/22 while costs increased by 8%.</b>"), width = "100%")` 
@@ -411,7 +411,7 @@ Source: [Additional Tables - Prescription Cost Analysis - A11](`r config$add_anl
 
 Chloral hydrate 500mg/5ml oral solution/mixture BP 2000 increased in unit cost the most in 2022/23 by 2,024%.
 
-Price concessions can be granted by tghe Department of Health and Social Care (DHSC) for medicines that pharmacists are struggling to obtain at or below the price set out in the Drug Tariff. These concessions can have large impacts on the unit costs of drugs.
+Price concessions can be granted by the Department of Health and Social Care (DHSC) for medicines that pharmacists are struggling to obtain at or below the price set out in the Drug Tariff. These concessions can have large impacts on the unit costs of drugs.
 
 Aripiprazole 10mg tablets were granted price concessions between May 2022 and December 2022. Aripiprazole 5mg tablets and Aripiprazole 15mg tablets were both granted price concessions between July 2022 and March 2023. Price concessions are carried out on a monthly basis, including on any existing medications on price concession.
 

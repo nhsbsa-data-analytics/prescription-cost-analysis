@@ -2999,7 +2999,7 @@ accessibleTables::write_sheet(
   ),
   c(
     "Due to rounding, total figures may not match exactly between the different tables. Costs are rounded to the nearest pence.",
-    "Items assigned an exemption category code of '-' have an unknown exemption category, or an exemption category that was not capture during processing."
+    "Items assigned an exemption category code of '-' have an unknown exemption category, or an exemption category that was not captured during processing."
   ),
   pca_exemption_categories,
   13
