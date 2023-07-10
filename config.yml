@@ -9,6 +9,6 @@ wa_pca_link: "https://www.gov.wales/sites/default/files/statistics-and-research/
 fy_nat_link: "https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_summary_tables_2022_23_v001.xlsx"
 fy_icb_link: "https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_icb_summary_tables_2022_23_v001.xlsx"
 add_anl_link: "https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_additional_tables_2022_23_v001.xlsx"
-background_link: "https://www.nhsbsa.nhs.uk/sites/default/files/2022-06/pca_background_info_methodology_v001.html"
+background_link: "https://nhsbsa-opendata.s3.eu-west-2.amazonaws.com/pca/pca_background_info_methodology_v001.html"
 nhsbsa_pca_link: "https://www.nhsbsa.nhs.uk/prescription-data/dispensing-data/prescription-cost-analysis-pca-data"
 stats_survey_link: "https://online1.snapsurveys.com/Official_Statistics_Feedback"
