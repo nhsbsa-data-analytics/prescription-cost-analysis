@@ -11,6 +11,7 @@ extract_nat_data <- function(con, year_type = c("financial", "calendar"), year =
     raw_data <- fact_db |>
       dplyr::filter(MONTH_TYPE == "FY") |>
       dplyr::filter(YEAR_DESC == year) |>
+      dplyr::mutate(DISP_PRESEN_SNOMED_CODE = as.character(DISP_PRESEN_SNOMED_CODE)) |>
       dplyr::select("MONTH_TYPE", "YEAR_DESC", "DISP_PRESEN_BNF", "DISP_PRESEN_BNF_DESCR", "DISP_PRESEN_SNOMED_CODE",
                     "DISP_SUPPLIER_NAME", "VMPP_UOM", "GENERIC_BNF_CODE", "GEN_PRESENTATION_BNF_DESCR",
                     "BNF_CHEMICAL_SUBSTANCE", "CHEMICAL_SUBSTANCE_BNF_DESCR", "BNF_PARAGRAPH",
@@ -39,6 +40,7 @@ extract_nat_data <- function(con, year_type = c("financial", "calendar"), year =
     raw_data <- fact_db |>
       dplyr::filter(MONTH_TYPE == "CY") |>
       dplyr::filter(YEAR_DESC == year) |>
+      dplyr::mutate(DISP_PRESEN_SNOMED_CODE = as.character(DISP_PRESEN_SNOMED_CODE)) |>
       dplyr::select("MONTH_TYPE", "YEAR_DESC", "DISP_PRESEN_BNF", "DISP_PRESEN_BNF_DESCR", "DISP_PRESEN_SNOMED_CODE",
                     "DISP_SUPPLIER_NAME", "VMPP_UOM", "GENERIC_BNF_CODE", "GEN_PRESENTATION_BNF_DESCR",
                     "BNF_CHEMICAL_SUBSTANCE", "CHEMICAL_SUBSTANCE_BNF_DESCR", "BNF_PARAGRAPH",
