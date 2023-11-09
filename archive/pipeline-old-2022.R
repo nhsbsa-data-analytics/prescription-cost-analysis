@@ -16,7 +16,10 @@ req_pkgs <-
     "lubridate",
     "vroom",
     "tidyverse",
-    "kableExtra"
+    "kableExtra",
+    "devtools",
+    "yaml",
+    "DT"
   )
 
 # uncomment if package installs are needed
@@ -25,12 +28,14 @@ req_pkgs <-
 #devtools::install_github("nhsbsa-data-analytics/pcaR",
 #                         auth_token = Sys.getenv("GITHUB_PAT"))
 #
-# devtools::install_github("nhsbsa-data-analytics/nhsbsaR")
+#devtools::install_github("nhsbsa-data-analytics/nhsbsashinyR")
 #
 
 invisible(lapply(c(req_pkgs, "pca", "nhsbsaR"), library, character.only = TRUE))
 
-# 2. set options ----------------------------------------------------------
+# 2. load config file ----------------------------------------------------------
+
+config <- yaml::yaml.load_file("config.yml")
 
 # prevent scientific notation
 options(scipen = 999)
@@ -49,9 +54,7 @@ options(highcharter.lang = hcoptslang)
 con <- con_nhsbsa(
   dsn = "FBS_8192k",
   driver = "Oracle in OraClient19Home1",
-  "DWCP",
-  username = rstudioapi::showPrompt(title = "Username", message = "Username"),
-  password = rstudioapi::askForPassword()
+  "DWCP"
 )
 
 #get max fy from pca table
@@ -142,13 +145,11 @@ stp_pop <- readxl::read_xlsx(
   skip = 8
 )
 
-
 #join population data to ods lookup
 stp_pop_df <- stp_pop %>%
   dplyr::group_by(STP21_NM, STP21_CD) %>%
   dplyr::summarise(POP = sum(POP)) %>%
   ungroup()
-
 
 ref_data$stp_pop <- stp_pop_df
 
