@@ -39,9 +39,11 @@ install.packages("devtools")
 library(devtools)
 
 #install nhsbsaUtils package first as need check_and_install_packages()
-devtools::install_github("nhsbsa-data-analytics/nhsbsaUtils",
-                         auth_token = Sys.getenv("GITHUB_PAT"),
-                         dependencies = TRUE)
+devtools::install_github(
+  "nhsbsa-data-analytics/nhsbsaUtils",
+  auth_token = Sys.getenv("GITHUB_PAT"),
+  dependencies = TRUE
+)
 
 library(nhsbsaUtils)
 
@@ -103,53 +105,20 @@ con <- nhsbsaR::con_nhsbsa(dsn = "FBS_8192k",
                            "DWCP")
 
 #get max fy from pca table
-max_dw_fy <- dplyr::tbl(con,
-                        from = dbplyr::in_schema("AML", "PCA_MY_FY_CY_FACT")) |>
-  dplyr::filter(MONTH_TYPE %in% c("FY")) |>
-  dplyr::select(YEAR_DESC) |>
-  dplyr::filter(YEAR_DESC == max(YEAR_DESC, na.rm = TRUE)) |>
-  distinct() |>
-  collect() |>
-  pull()
-
+max_dw_fy <- get_max_dw_fy(con)
 log_print("Max DWH FY pulled", hide_notes = TRUE)
 log_print(max_dw_fy, hide_notes = TRUE)
 
-
 #get max cy from pca table
-max_dw_cy <- dplyr::tbl(con,
-                        from = dbplyr::in_schema("AML", "PCA_MY_FY_CY_FACT")) |>
-  dplyr::filter(MONTH_TYPE %in% c("CY")) |>
-  dplyr::select(YEAR_DESC) |>
-  dplyr::filter(YEAR_DESC == max(YEAR_DESC, na.rm = TRUE)) |>
-  distinct() |>
-  collect() |>
-  pull()
+max_dw_cy <- get_max_dw_cy(con)
 
 log_print("Max DWH CY pulled", hide_notes = TRUE)
 log_print(max_dw_cy, hide_notes = TRUE)
 
 # 3. load latest data  ---------
 #load latest available data
-#get most recent monthly file
-recent_file_nat_fy <- rownames(file.info(
-  list.files(
-    "Y:/Official Stats/PCA/data",
-    full.names = T,
-    pattern = "nat_data_fy"
-  )
-))[which.max(file.info(
-  list.files(
-    "Y:/Official Stats/PCA/data",
-    full.names = T,
-    pattern = "nat_data_fy"
-  )
-)$mtime)]
-
-#read recent data
-recent_file_nat_fy <- vroom::vroom(recent_file_nat_fy,
-                                   #read snomed code as character
-                                   col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))
+#read most recent monthly file
+recent_file_nat_fy <- get_recent_file_nat_fy()
 
 log_print("Latest saved data loaded", hide_notes = TRUE)
 log_print(head(recent_file_nat_fy), hide_notes = TRUE)
@@ -160,7 +129,7 @@ log_print(head(recent_file_nat_fy), hide_notes = TRUE)
 icb_geo_data <- nhsbsaExternalData::icb_geo_data()
 log_print("Geo data loaded", hide_notes = TRUE)
 
-#lookups
+#look ups
 icb_lsoa_lookup <- nhsbsaExternalData::icb_lsoa_lookup()
 log_print("Lookup data loaded", hide_notes = TRUE)
 
@@ -177,7 +146,7 @@ ni_ons_national_pop <-
 wa_ons_national_pop <-
   nhsbsaExternalData::ons_national_pop(year = (2014:as.numeric(max_dw_cy)), area = "WAPOP")
 
-# build ibc population lookup
+# build icb population look up
 icb_pop <- icb_lsoa_lookup |>
   dplyr::left_join(lsoa_population_overall,
                    by = c("LSOA_CODE" = "LSOA_CODE")) |>
@@ -195,7 +164,6 @@ ni_pca <-
 wa_pca <-
   nhsbsaExternalData::wales_pca_extraction(file_path = config$wa_pca)
 log_print("Dev nation PCA data loaded", hide_notes = TRUE)
-
 
 # 5. pull data from warehouse if more recent data is available ------
 #check max DWH fy against max data fy and pull data if different
@@ -455,7 +423,7 @@ log_print("ICB CY data aggregated", hide_notes = TRUE)
 # 8. Pull data for additional analysis ------------
 #dev_nations_data (requires add_anl_1)
 add_anl_1 <-
- pca_item_cost_per_capita(con = con) |>
+  pca_item_cost_per_capita(con = con) |>
   dplyr::left_join(
     select(en_ons_national_pop, YEAR, ENPOP),
     by = c("JOIN_YEAR" = "YEAR"),
@@ -528,32 +496,30 @@ dev_nations_data <- data.frame(
     COSTS_PER_CAPITA = round(TOTAL_COSTS / POP, 2)
   )
 
-add_anl_2 <-pca_top_drug_cost(con = con)
-add_anl_3 <-pca_top_item_cost(con = con)
-add_anl_4 <-pca_top_items_status(con = con)
-add_anl_5 <-pca_item_cost_class(con = con)
-add_anl_6 <-pca_item_generic_bnf(con = con)
-add_anl_7 <-pca_item_cost_BNF(con = con)
-add_anl_8 <-pca_item_cost_BNF_sect(con = con)
+add_anl_2 <- pca_top_drug_cost(con = con)
+add_anl_3 <- pca_top_item_cost(con = con)
+add_anl_4 <- pca_top_items_status(con = con)
+add_anl_5 <- pca_item_cost_class(con = con)
+add_anl_6 <- pca_item_generic_bnf(con = con)
+add_anl_7 <- pca_item_cost_BNF(con = con)
+add_anl_8 <- pca_item_cost_BNF_sect(con = con)
 add_anl_9 <-
- pca_item_cost_BNF_sect_increase(con = con)
+  pca_item_cost_BNF_sect_increase(con = con)
 add_anl_10 <-
- pca_item_cost_BNF_sect_decrease(con = con)
+  pca_item_cost_BNF_sect_decrease(con = con)
 add_anl_11 <-
- pca_top_percentage_change(con = con)
+  pca_top_percentage_change(con = con)
 add_anl_12 <-
- pca_bottom_percentage_change(con = con)
+  pca_bottom_percentage_change(con = con)
 add_anl_13 <-
- pca_top_total_cost_change(con = con)
+  pca_top_total_cost_change(con = con)
 add_anl_14 <-
- pca_bottom_total_cost_change(con = con)
+  pca_bottom_total_cost_change(con = con)
 
 log_print("Data pulled for additional analysis", hide_notes = TRUE)
 
 pca_exemption_categories <- pca_exemption_categories(con = con)
 log_print("Data pulled for exemption categories", hide_notes = TRUE)
-
-
 
 # 9. create chart and data for them ----------
 
@@ -753,11 +719,11 @@ figure_6 <- highchart() |>
   ) |>
   hc_colors(c(
     "#005EB8",
-             "#ED8B00",
-             "#006747",
-             "#330072",
-             "#009639",
-             "#AE2573"
+    "#ED8B00",
+    "#006747",
+    "#330072",
+    "#009639",
+    "#AE2573"
   )) |>
   hc_tooltip(enabled = F)
 
