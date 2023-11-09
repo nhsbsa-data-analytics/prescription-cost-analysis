@@ -3,8 +3,13 @@
 rm(list = ls())
 
 # source functions
-# this is only a temporary step until all functions are built into packages
-source("./functions/functions.R")
+# get all .R files in the functions sub-folder
+function_files <- list.files(path = "functions", pattern = "\\.R$")
+
+# loop over function_files to source them all
+for (file in function_files) {
+  source(file.path("functions", file))
+}
 
 # 1. Setup --------------------------------------------
 # load GITHUB_KEY if available in environment or enter if not
@@ -29,9 +34,14 @@ if (Sys.getenv("DB_DWCP_USERNAME") == "") {
 makeSheet <- menu(c("Yes", "No"),
                   title = "Do you wish to generate the Excel outputs?")
 
+# install and library devtools
+install.packages("devtools")
+library(devtools)
+
 #install nhsbsaUtils package first as need check_and_install_packages()
 devtools::install_github("nhsbsa-data-analytics/nhsbsaUtils",
-                         auth_token = Sys.getenv("GITHUB_PAT"))
+                         auth_token = Sys.getenv("GITHUB_PAT"),
+                         dependencies = TRUE)
 
 library(nhsbsaUtils)
 
@@ -63,7 +73,6 @@ req_pkgs <-
     "nhsbsa-data-analytics/nhsbsaR",
     "nhsbsa-data-analytics/nhsbsaExternalData",
     "nhsbsa-data-analytics/accessibleTables",
-    "nhsbsa-data-analytics/nhsbsaDataExtract",
     "nhsbsa-data-analytics/nhsbsaVis"
   )
 
@@ -446,7 +455,7 @@ log_print("ICB CY data aggregated", hide_notes = TRUE)
 # 8. Pull data for additional analysis ------------
 #dev_nations_data (requires add_anl_1)
 add_anl_1 <-
-  nhsbsaDataExtract::pca_item_cost_per_capita(con = con) |>
+ pca_item_cost_per_capita(con = con) |>
   dplyr::left_join(
     select(en_ons_national_pop, YEAR, ENPOP),
     by = c("JOIN_YEAR" = "YEAR"),
@@ -466,78 +475,78 @@ dev_nations_data <- data.frame(
                 "Scotland",
                 "Northern Ireland"),
   "TOTAL_ITEMS" = c(
-    add_anl_1 %>%
-      filter(YEAR_DESC == max_data_fy_minus_1) %>%
-      select(TOTAL_ITEMS) %>%
+    add_anl_1 |>
+      filter(YEAR_DESC == max_data_fy_minus_1) |>
+      select(TOTAL_ITEMS) |>
       pull(),
-    wa_pca %>%
-      select(TOTAL_ITEMS) %>%
+    wa_pca |>
+      select(TOTAL_ITEMS) |>
       pull(),
-    sc_pca %>%
-      select(TOTAL_ITEMS) %>%
+    sc_pca |>
+      select(TOTAL_ITEMS) |>
       pull(),
-    ni_pca %>%
-      select(TOTAL_ITEMS) %>%
+    ni_pca |>
+      select(TOTAL_ITEMS) |>
       pull()
   ),
   "TOTAL_COSTS" = c(
-    add_anl_1 %>%
-      filter(YEAR_DESC == max_data_fy_minus_1) %>%
-      select(TOTAL_NIC) %>%
+    add_anl_1 |>
+      filter(YEAR_DESC == max_data_fy_minus_1) |>
+      select(TOTAL_NIC) |>
       pull(),
-    wa_pca %>%
-      select(TOTAL_COST) %>%
+    wa_pca |>
+      select(TOTAL_COST) |>
       pull(),
-    sc_pca %>%
-      select(TOTAL_COST) %>%
+    sc_pca |>
+      select(TOTAL_COST) |>
       pull(),
-    ni_pca %>%
-      select(TOTAL_COST) %>%
+    ni_pca |>
+      select(TOTAL_COST) |>
       pull()
   ),
   "POP" = c(
-    en_ons_national_pop %>%
-      filter(YEAR == max(YEAR)) %>%
-      select(ENPOP) %>%
+    en_ons_national_pop |>
+      filter(YEAR == max(YEAR)) |>
+      select(ENPOP) |>
       pull(),
-    wa_ons_national_pop %>%
-      filter(YEAR == max(YEAR)) %>%
-      select(WAPOP) %>%
+    wa_ons_national_pop |>
+      filter(YEAR == max(YEAR)) |>
+      select(WAPOP) |>
       pull(),
-    sc_ons_national_pop %>%
-      filter(YEAR == max(YEAR)) %>%
-      select(SCPOP) %>%
+    sc_ons_national_pop |>
+      filter(YEAR == max(YEAR)) |>
+      select(SCPOP) |>
       pull(),
-    ni_ons_national_pop %>%
-      filter(YEAR == max(YEAR)) %>%
-      select(NIPOP) %>%
+    ni_ons_national_pop |>
+      filter(YEAR == max(YEAR)) |>
+      select(NIPOP) |>
       pull()
   )
-) %>%
+) |>
   mutate(
     ITEMS_PER_CAPITA = round(TOTAL_ITEMS / POP, 1),
     COSTS_PER_CAPITA = round(TOTAL_COSTS / POP, 2)
   )
 
-add_anl_2 <- nhsbsaDataExtract::pca_top_drug_cost(con = con)
-add_anl_3 <- nhsbsaDataExtract::pca_top_item_cost(con = con)
-add_anl_4 <- nhsbsaDataExtract::pca_top_items_status(con = con)
-add_anl_5 <- nhsbsaDataExtract::pca_item_cost_class(con = con)
-add_anl_6 <- nhsbsaDataExtract::pca_item_generic_bnf(con = con)
-add_anl_7 <- nhsbsaDataExtract::pca_item_cost_BNF(con = con)
-add_anl_8 <- nhsbsaDataExtract::pca_item_cost_BNF_sect(con = con)
+add_anl_2 <-pca_top_drug_cost(con = con)
+add_anl_3 <-pca_top_item_cost(con = con)
+add_anl_4 <-pca_top_items_status(con = con)
+add_anl_5 <-pca_item_cost_class(con = con)
+add_anl_6 <-pca_item_generic_bnf(con = con)
+add_anl_7 <-pca_item_cost_BNF(con = con)
+add_anl_8 <-pca_item_cost_BNF_sect(con = con)
 add_anl_9 <-
-  nhsbsaDataExtract::pca_item_cost_BNF_sect_increase(con = con)
+ pca_item_cost_BNF_sect_increase(con = con)
 add_anl_10 <-
-  nhsbsaDataExtract::pca_item_cost_BNF_sect_decrease(con = con)
+ pca_item_cost_BNF_sect_decrease(con = con)
 add_anl_11 <-
-  nhsbsaDataExtract::pca_top_percentage_change(con = con)
+ pca_top_percentage_change(con = con)
 add_anl_12 <-
-  nhsbsaDataExtract::pca_bottom_percentage_change(con = con)
+ pca_bottom_percentage_change(con = con)
 add_anl_13 <-
-  nhsbsaDataExtract::pca_top_total_cost_change(con = con)
+ pca_top_total_cost_change(con = con)
 add_anl_14 <-
-  nhsbsaDataExtract::pca_bottom_total_cost_change(con = con)
+ pca_bottom_total_cost_change(con = con)
 
 log_print("Data pulled for additional analysis", hide_notes = TRUE)
 
@@ -970,7 +979,7 @@ log_print("Charts and chart data created", hide_notes = TRUE)
 # 10. create Excel outputs if required ------
 if (makeSheet == 1) {
   print("Generating Excel outputs")
-  source("./functions/excelOutputs.R")
+  source("./excel_outputs/excel_outputs.R")
   log_print("Excel outputs generated", hide_notes = TRUE)
 } else {
   print("Excel outputs will not be generated")
