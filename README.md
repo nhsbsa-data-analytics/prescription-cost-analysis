@@ -18,7 +18,7 @@ You can clone the repository containing the RAP through [GitHub](https://github.
 
 In RStudio, click on "New project", then click "Version Control" and select the "Git" option.
 
-Click "Clone Git Repository" then enter the URL of the gphs-annual-rap GitHub repository (https://github.com/nhsbsa-data-analytics/prescription-cost-analysis). You can click "Browse" to control where you want the cloned repository to be saved in your computer.
+Click "Clone Git Repository" then enter the URL of the prescription-cost-analysis GitHub repository (https://github.com/nhsbsa-data-analytics/prescription-cost-analysis). You can click "Browse" to control where you want the cloned repository to be saved in your computer.
 
 You will also need to create a [PAT key](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
 
@@ -48,4 +48,4 @@ Contributions are not currently being accepted for this RAP. If this changes, a 
 
 # License
 
-The `gphs-annual-rap` RAP, including associated documentation, is released under the MIT license. Details can be found in the `LICENSE` file.
+The `prescription-cost-analysis` RAP, including associated documentation, is released under the MIT license. Details can be found in the `LICENSE` file.
