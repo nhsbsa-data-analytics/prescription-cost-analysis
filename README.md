@@ -24,6 +24,10 @@ You will also need to create a [PAT key](https://docs.github.com/en/authenticati
 
 You can view the [source code for the PCA RAP](https://github.com/nhsbsa-data-analytics/prescription-cost-analysis) on GitHub.
 
+## Config
+
+This RAP includes a `config.yml` file. Before running this pipeline you should ensure all variables in this file are set as required.
+
 ## Running this RAP
 
 Users outside of the Official Statistics team may not have the required access permissions to run all parts of this RAP. The following information is included to document how this pipeline is run by members of the Official Statistics team during production.
