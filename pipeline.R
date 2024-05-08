@@ -102,7 +102,7 @@ log_print("Options loaded", hide_notes = TRUE)
 #build connection to warehouse
 con <- nhsbsaR::con_nhsbsa(dsn = "FBS_8192k",
                            driver = "Oracle in OraClient19Home1",
-                           "DWCP")
+                           database = "DWCP")
 
 #get max fy from pca table
 max_dw_fy <- get_max_dw_fy(con)
@@ -160,7 +160,7 @@ log_print("Population data loaded", hide_notes = TRUE)
 sc_pca <-
   nhsbsaExternalData::scottish_pca_extraction(link = config$scotland_pca)
 ni_pca <-
-  nhsbsaExternalData::northern_irish_pca_extraction(link = config$ni_pca)
+  nhsbsaExternalData::northern_irish_pca_extraction(file_path = "Y:\\Official Stats\\PCA\\data\\NI_PCA_2022.xlsx")
 wa_pca <-
   nhsbsaExternalData::wales_pca_extraction(file_path = config$wa_pca)
 log_print("Dev nation PCA data loaded", hide_notes = TRUE)
@@ -527,18 +527,40 @@ log_print("Data pulled for exemption categories", hide_notes = TRUE)
 figure_1_data <- add_anl_1 |>
   select(YEAR_DESC, TOTAL_NIC)
 
-figure_1 <- nhsbsaVis::basic_chart_hc(
+figure_1 <- basic_chart_hc_new(
   figure_1_data,
   x = YEAR_DESC,
   y = TOTAL_NIC,
   type = "line",
   xLab = "Financial year",
-  yLab = "Total cost (GBP)",
+  yLab = "Total cost (GBP Billions)",
   title = "",
   currency = TRUE
 )
 
 figure_1$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
+
+figure_1$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+  "function formatCurrency() {
+    var ynum = this.point.TOTAL_NIC;
+
+    if (ynum >= 1000000000) {
+        var result = ynum / 1000000000;
+        if (result >= 1000) { // If the number is >= 1000 billion, keep only one significant digit
+            result = result.toPrecision(1);
+        } else { // For numbers < 1000 billion, keep three significant digits
+            result = result.toPrecision(3);
+        }
+        result = '£' + result + 'B';
+    } else {
+        result = ynum / 1000000;
+        result = '£' + result.toFixed(2) + 'M';
+    }
+
+    return result;
+}
+"
+)
 
 # figure 2
 figure_2_data <- add_anl_1 |>
