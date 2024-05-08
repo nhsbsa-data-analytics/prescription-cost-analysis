@@ -56,9 +56,9 @@ Prescription data is a long-standing administrative source of data that has been
 Data is collected from the submission of prescriptions by dispensing contractors to the NHSBSA. These prescriptions can be issued by GPs and other authorised prescribers such as nurses, dentists, and allied health professionals. Prescriptions that are issued by hospitals can also be dispensed in the community and submitted for reimbursement. Prescriptions that are issued in hospitals and fulfilled by the hospital pharmacy or dispensary are not included in this data.
 Prescriptions can be issued as either a paper form or as an electronic message using the Electronic Prescription Service (EPS). EPS prescriptions make up most of prescribing and dispensing activity carried out in England, accounting for 88%<sup>1</sup>   of all prescriptions dispensed in England during 2021. EPS messages are submitted by the dispensing contractor once the prescription has been fulfilled and issued to the patient. The message is initially sent to the [NHS Spine](https://digital.nhs.uk/services/spine), maintained by NHS Digital, and then sent to the NHSBSA for processing. Paper prescriptions are compiled by the dispensing contractor and sent to the NHSBSA at the end of each month by secure courier. These paper prescriptions are then scanned and transformed into digital images, which are passed through intelligent character recognition (ICR) to extract the relevant data from them. Most paper forms go through ICR without any manual intervention. However, there are cases where operator intervention is required to accurately capture information from the prescription form. This manual intervention can be required for many reasons, such as if a form is handwritten or information is obscured by a pharmacy stamp.
 
-<small><sup>1</sup> Source – NHSBSA Enterprise Data Warehouse.</small>aaa
-
 After this processing for the reimbursement and remuneration of dispensing contractors, data is extracted from the NHSBSA transactional systems alongside data from the NHSBSA drug and organisational databases and loaded in to the NHSBSA Enterprise Data Warehouse (EDW). During this extract, load and transform (ELT) process a series of business logic is applied to the data to make it easier to use and more useful than if it were to be kept in its raw form. The EDW is the source used by many of our reporting systems and data extracts, including ePACT2, eDEN, eOPS, the English Prescribing Dataset (EPD), and Official Statistics publications.
+
+<small><sup>1</sup> Source – NHSBSA Enterprise Data Warehouse.</small>
 
 ### 1.2 Drug data held by the NHSBSA
 
@@ -161,7 +161,7 @@ knitr::kable(example2_data) |> kableExtra::kable_styling()
 
 Previously, preparation class 2 items were apportioned amongst their proprietary equivalents based on the volume of prescribing that these proprietary drugs had. This was done as way to reflect real world dispensing more accurately, as the NHSBSA does not capture the actual product that was dispensed to a patient. We now use further data already captured as part of normal prescription processing to determine the proprietary product that data should be displayed against. Please note, this methodology is still an approximation of the product that has been dispensed.
 
-##### **2.1.2.1 Preparation class 2 drug with a single class 3 equivalent – one-to-one mapping**
+##### 2.1.2.1 **Preparation class 2 drug with a single class 3 equivalent – one-to-one mapping**
 
 All items and costs that have been prescribed generically will be reported against the proprietary presentation. However, these items and costs will be disaggregated across the preparation class of the prescribed item to allow users to compare ratios of generic and proprietary prescribing. 
 For example, some medications have a prescribed preparation class of 2, indicating that their generic form was prescribed. However, they may only have one proprietary equivalent in class 3. This means that while the generic version can be prescribed, it is only available to dispense to patients at the proprietary equivalent. Therefore, all data in these statistics is displayed against the record for the proprietary equivalent, and items prescribed as the generic version are displayed separately to those prescribed as the proprietary equivalent.
@@ -361,7 +361,7 @@ NHSBSA releases Prescription Cost Analysis (PCA) – England, a publication with
 
 ### 6.1 UK Statistics
 
-The versions of PCA released by the other devolved administrations of the UK can be found on their respective websites of the [Business Services Organisation](http://www.hscbusiness.hscni.net/services/3177.htm) in Northern Ireland, [Public Health Scotland](https://beta.isdscotland.org/find-publications-and-data/health-services/pharmacy-and-prescribing/dispenser-payments-and-prescription-cost-analysis/) in Scotland, and the [NHS Wales Shared Services Partnership](https://nwssp.nhs.wales/ourservices/primary-care-services/general-information/data-and-publications/prescription-cost-analysis/) in Wales.
+The versions of PCA released by the other devolved administrations of the UK can be found on their respective websites of the [Business Services Organisation](https://bso.hscni.net/directorates/operations/family-practitioner-services/directorates-operations-family-practitioner-services-information-unit/general-pharmaceutical-services-and-prescribing-statistics/prescription-cost-analysis/) in Northern Ireland, [Public Health Scotland](https://beta.isdscotland.org/find-publications-and-data/health-services/pharmacy-and-prescribing/dispenser-payments-and-prescription-cost-analysis/) in Scotland, and the [NHS Wales Shared Services Partnership](https://nwssp.nhs.wales/ourservices/primary-care-services/general-information/data-and-publications/prescription-cost-analysis/) in Wales.
 
 ### 6.2 Comparisons over time
 
@@ -384,8 +384,11 @@ These statistics have been produced in compliance with the Code of Practice for 
 We aim to provide users of this publication with an evidence-based assessment of its quality and the quality of the data from which it is produced. We do so to demonstrate our commitment to comply with the UK Statistics Authority’s (UKSA) Code of Practice for Statistics, particularly the pillar of Quality and its principles.
 
 **Q1 Suitable data sources** – Statistics should be based on the most appropriate data to meet intended uses. The impact of any data limitations for use should be assessed, minimised, and explained.
+
 **Q2 Sound methods** – Producers of statistics and data should use the best available methods and recognised standards and be open about their decisions.
+
 **Q3 Assured quality** – Producers of statistics and data should explain clearly how they assure themselves that statistics and data are accurate, reliable, coherent, and timely.
+
 This is an assessment of the quality of these statistics against the European standard for quality reporting and its dimensions specific to statistical outputs, particularly:
 
 -	Relevance
@@ -393,6 +396,7 @@ This is an assessment of the quality of these statistics against the European st
 -	Timeliness and punctuality
 -	Accessibility
 -	Coherence and comparability
+
 These principles guide us and are complimented by the UKSA’s regulatory standard for the Quality Assurance of Administrative Data (QAAD). You can view our QAAD assessment of prescription data [on our website.](https://www.nhsbsa.nhs.uk/statistical-collections)
 
 ### 7.1 Relevance
@@ -502,7 +506,7 @@ A [continuous feedback survey](`r config$stats_survey_link`) is available on the
 
 You can contact us by:
 
-**Email**: nhsbsa.statistics@nhs.net
+**Email**: statistics@nhsbsa.nhs.uk
 
 **You can write to us at:**
 
