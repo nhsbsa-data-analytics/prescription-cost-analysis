@@ -612,13 +612,15 @@ If you need information on this website in a different format like accessible PD
 
 **Email**: accessibility@nhsbsa.nhs.uk
 
-**Phone**: 0191 203 5318
+**Telephone**: 0191 203 5318
 
 [Find out about call charges](https://www.nhsbsa.nhs.uk/contact-us/call-charges-and-phone-numbers)
 
 We’ll consider your request and get back to you in 5 working days.
 
-These contact details are only for accessibility queries. This inbox is not for technical queries or IT problems. If you have a query that is not about accessibility, go to the ‘Contact us’ section of this page.
+These contact details are only for accessibility queries. This email address is not for technical queries or IT problems. If you have a query that is not about accessibility, go to the ‘Feedback and contact us’ section of this page.
+
+Read our [Accessibility statement for Official Statistics Narratives](https://www.nhsbsa.nhs.uk/accessibility-statement-official-statistics-narratives).
 
 ---
 
