@@ -17,7 +17,7 @@ output:
 
 <script>
   $(document).ready(function() {
-    $('#TOC').prepend('<div><img src=`r knitr::image_uri("www/national-statistics-logo.svg")` alt=\"National Statistics logo\" style=\"position: relative; width: 50%; margin: 10% auto 10% auto; display: block;\"></div>');
+    $('#TOC').prepend('<div><img src=`r knitr::image_uri("www/Accredited Official Statistics Logo English.svg")` alt=\"National Statistics logo\" style=\"position: relative; width: 75%; margin: 10% auto 10% auto; display: block;\"></div>');
   });
   
   $(document).ready(function() {
@@ -118,14 +118,29 @@ The designation of this publication as a National Statistic was confirmed in May
 
 ## 2. Results and commentary
 
-### `r paste0("Figure 1: Cost of prescription items dispensed in England 2014/15 to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+### `r paste0("Cost of prescription items dispensed in England 2014/15 to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))` {.tabset}
 
-```{r total_nic, out.width = "100%"}
+#### Chart
+
+Note: The y-axis does not start at zero to emphasise relative changes rather than absolute values. Please consider the scale when interpreting the data.
+
+```{r total_nic_chart, out.width = "100%"}
 
 figure_1
+get_download_button(title = "Download chart data", data = figure_1_data, filename = "figure_1")
 
 ```
-`r get_download_button(title = "Download chart data", data = figure_1_data, filename = "figure_1")`
+
+#### Table
+
+```{r total_nic_table, out.width = "100%"}
+knitr::kable(figure_1_table, align = "lr")
+
+get_download_button(title = "Download table data", data = figure_1_data, filename = "table_1")
+
+```
+
+## {-}
 
 Source: [Summary Tables - Prescription Cost Analysis - National](`r config$fy_nat_link`)
 
@@ -145,12 +160,13 @@ In England, the cost of prescription items in 2022/23 was £10.4 billion, which 
 
 ### `r paste0("Figure 2: Number of prescription items dispensed in England 2014/15 to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
+Note: The y-axis does not start at zero to emphasise relative changes rather than absolute values. Please consider the scale when interpreting the data.
+
 ```{r total_items, out.width = "100%"}
 
 figure_2
-
+get_download_button(title = "Download chart data", data = figure_2_data, filename = "figure_2")
 ```
-`r get_download_button(title = "Download chart data", data = figure_2_data, filename = "figure_2")`
 
 Source: [Summary Tables - Prescription Cost Analysis - National](`r config$fy_nat_link`)
 
@@ -168,48 +184,21 @@ Source: [Summary Tables - Prescription Cost Analysis - National](`r config$fy_na
 
 In England, there were 1.18 billion items dispensed in 2022/23, which is 3% more than the previous year's 1.14 billion items. Compared to 2014/15, the number of items has increased by 10%.
 
-### `r paste0("Figure 3: Distribution of items dispensed in England amongst BNF chapters ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+### `r paste0("Figure 3: Distribution of cost of items dispensed in England amongst BNF chapters ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
 ```{r bnf_chapters_items, out.width = "100%"}
 
 figure_3
-
+get_download_button(title = "Download chart data", data = figure_3_data, filename = "figure_3")
 ```
-`r get_download_button(title = "Download chart data", data = figure_3_data, filename = "figure_3")`
 
 Source: [Summary Tables - Prescription Cost Analysis - Chapter](`r config$fy_nat_link`)
-
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
 `r infoBox_border(header = "", text = "These statistics use the British National Formulary (BNF) to group medicines togther based on their primary theraputic indication. The BNF has multiple levels, starting with the largest grouping called chapters, follwed by sections, paragraphs, sub-paragraphs, chemical substances, products, and individual presentations.<br><br>The NHSBSA uses the BNF classification system implemented prior to the release of edition 70, which includes 6 additional chapters (18 to 23) created by NHS Prescription Services. These chapters are used to classify products that fall outside chapters 1 to 15, and mainly include dressings, appliances and medical devices.<br><br>However, presentations in chapters 20 to 23 do not have assigned BNF paragraphs, sub-paragraphs, chemical substances, or products.", width = "100%")` 
 ::: 
 ::::
-
-::::{.row style="display: flex; padding-bottom: 10px;"} 
-:::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "<b>BNF chapter 02 - Cardiovascular System accounted for 29% of all items dispensed in 2022/23.</b>", width = "100%")` 
-::: 
-:::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "<b>BNF chapter 04 - Central Nervous System accounted for 19% of all items dispensed in 2022/23.</b>", width = "100%")` 
-:::
-:::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "<b>BNF chapter 06 - Endocrine System accounted for 11% of all items dispensed in 2022/23.</b>", width = "100%")` 
-:::
-::::
-
-In 2022/23, chapter 02 of the BNF, which groups together medicines primarily used to treat the cardiovascular system, had the highest number of prescription items dispensed in England, with a total of 340 million items. This accounted for 29% of all items dispensed. Chapter 04 - Central Nervous System followed with 230 million items, representing 19% of items. Chapter 06 - Endocrine System had 130 million items, accounting for 11% of items.
-
-### `r paste0("Figure 4: Distribution of cost of items dispensed in England amongst BNF chapters ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
-
-```{r bnf_chapters_costs, out.width = "100%"}
-
-figure_4
-
-```
-`r get_download_button(title = "Download chart data", data = figure_4_data, filename = "figure_4")`
-
-Source: [Summary Tables - Prescription Cost Analysis - Chapter](`r config$fy_nat_link`)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
@@ -227,14 +216,37 @@ In 2022/23, BNF chapter 06 - Endocrine System had the highest costs, totaling £
 
 Despite having 63% fewer items, chapter 06 - Endocrine System had costs that were 6% higher than chapter 02 - Cardiovascular System during 2022/23.
 
+### `r paste0("Figure 4: Distribution of items dispensed in England amongst BNF chapters ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+
+```{r bnf_chapters_costs, out.width = "100%"}
+
+figure_4
+get_download_button(title = "Download chart data", data = figure_4_data, filename = "figure_4")
+```
+
+Source: [Summary Tables - Prescription Cost Analysis - Chapter](`r config$fy_nat_link`)
+
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "<b>BNF chapter 02 - Cardiovascular System accounted for 29% of all items dispensed in 2022/23.</b>", width = "100%")` 
+::: 
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "<b>BNF chapter 04 - Central Nervous System accounted for 19% of all items dispensed in 2022/23.</b>", width = "100%")` 
+:::
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "<b>BNF chapter 06 - Endocrine System accounted for 11% of all items dispensed in 2022/23.</b>", width = "100%")` 
+:::
+::::
+
+In 2022/23, chapter 02 of the BNF, which groups together medicines primarily used to treat the cardiovascular system, had the highest number of prescription items dispensed in England, with a total of 340 million items. This accounted for 29% of all items dispensed. Chapter 04 - Central Nervous System followed with 230 million items, representing 19% of items. Chapter 06 - Endocrine System had 130 million items, accounting for 11% of items.
+
 ### `r paste0("Figure 5: Proportion of items prescribed generically and proportion of costs excluding appliances England ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
 ```{r generic_presc, out.width = "100%"}
 
 figure_5
-
+get_download_button(title = "Download chart data", data = figure_5_data, filename = "figure_5")
 ```
-`r get_download_button(title = "Download chart data", data = figure_5_data, filename = "figure_5")`
 
 Source: [Additional Tables - Prescription Cost Analysis - table A5](`r config$add_anl_link`)
 
@@ -259,9 +271,8 @@ Regarding the cost of reimbursement, in 2022/23, generic prescribing accounted f
 ```{r presc_sankey, out.width = "100%", out.height=400}
 
 figure_6
-
+get_download_button(title = "Download chart data", data = figure_6_data, filename = "figure_6")
 ```
-`r get_download_button(title = "Download chart data", data = figure_6_data, filename = "figure_6")`
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
@@ -278,44 +289,21 @@ figure_6
 :::
 ::::
 
-### `r paste0("Figure 7: The 10 most dispensed chemical substances by total items in ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+### `r paste0("Figure 7: The 10 most dispensed chemical substances by cost in ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
-```{r top_10_items, out.width = "100%"}
+```{r top_10_costs, out.width = "100%"}
 
 figure_7
-
+get_download_button(title = "Download chart data", data = figure_7_data, filename = "figure_7")
 ```
-`r get_download_button(title = "Download chart data", data = figure_7_data, filename = "figure_7")`
 
-Source: [Additional Tables - Prescription Cost Analysis - A3](`r config$add_anl_link`)
+Source: [Additional Tables - Prescription Cost Analysis - A2](`r config$add_anl_link`)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
 `r infoBox_border(header = "", text = "A chemical substance is the registered name for the active ingredient in a medicine, such as Omeparzole. Different presentations of the same active ingredient, including branded versions, are grouped together under the chemical substance name. For instance, Omeprazole 20mg and Omeprazole 40mg capsules both contain the same active ingredient. Products like dressing and appliances in BNF chapters 20 to 23 do not have a chemical substance assigned to them", width = "100%")` 
 ::: 
 ::::
-
-::::{.row style="display: flex; padding-bottom: 10px;"} 
-:::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "<b>Atorvastatin was the most dispensed chemical susbtance in 2022/23 with 59 million items.</b>", width = "100%")` 
-::: 
-:::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "<b>Four of the top ten chemical substances by items in 2022/23 belong to BNF chapter 02 - Cardiovascular System.</b>", width = "100%")` 
-:::
-::::
-
-[Atorvastatin](https://www.nhs.uk/medicines/atorvastatin/) was the most dispensed chemical substance in 2022/23, with 59 million items. This medication is a type of statin that is commonly used to lower cholesterol and help prevent heart disease. Four of the top ten dispensed chemical substances belong to BNF chapter 02 - Cardiovascular System. These substances are Atorvastatin, Amlodipine, Ramipril, and Bisoprolol fumarate.
-
-### `r paste0("Figure 8: The 10 most dispensed chemical substances by cost in ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
-
-```{r top_10_costs, out.width = "100%"}
-
-figure_8
-
-```
-`r get_download_button(title = "Download chart data", data = figure_8_data, filename = "figure_8")`
-
-Source: [Additional Tables - Prescription Cost Analysis - A2](`r config$add_anl_link`)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
@@ -335,14 +323,34 @@ The top ten chemical substances by cost included three drugs that are commonly u
 
 The top ten chemical substances by cost included two drugs that are commonly used to treat respiratory illnesses. These are Beclometasone dipropionate and Budesonide.
 
-### `r paste0("Figure ",9,": Dispensed items per capita by Integrated Care Board (ICB) ",year_tidy)`
+### `r paste0("Figure 8: The 10 most dispensed chemical substances by total items in ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
-```{r items_per_pop, out.width = "100%"}
+```{r top_10_items, out.width = "100%"}
+
+figure_8
+get_download_button(title = "Download chart data", data = figure_8_data, filename = "figure_8")
+```
+
+Source: [Additional Tables - Prescription Cost Analysis - A3](`r config$add_anl_link`)
+
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-6} 
+`r infoBox_no_border(header = "", text = "<b>Atorvastatin was the most dispensed chemical susbtance in 2022/23 with 59 million items.</b>", width = "100%")` 
+::: 
+:::{.col-md-6} 
+`r infoBox_no_border(header = "", text = "<b>Four of the top ten chemical substances by items in 2022/23 belong to BNF chapter 02 - Cardiovascular System.</b>", width = "100%")` 
+:::
+::::
+
+[Atorvastatin](https://www.nhs.uk/medicines/atorvastatin/) was the most dispensed chemical substance in 2022/23, with 59 million items. This medication is a type of statin that is commonly used to lower cholesterol and help prevent heart disease. Four of the top ten dispensed chemical substances belong to BNF chapter 02 - Cardiovascular System. These substances are Atorvastatin, Amlodipine, Ramipril, and Bisoprolol fumarate.
+
+### `r paste0("Figure ",9,": Cost per capita (£) by Integrated Care Board (ICB) ",year_tidy)`
+
+```{r nic_per_pop, out.width = "100%"}
 
 figure_9
-    
+get_download_button(title = "Download chart data", data = figure_9_data, filename = "figure_9")
 ```
-`r get_download_button(title = "Download chart data", data = figure_9_data, filename = "figure_9")`
 
 Source: [Summary Tables - Prescription Cost Analysis - ICB National](`r config$fy_icb_link`) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/clinicalcommissioninggroupmidyearpopulationestimates)
 
@@ -351,31 +359,6 @@ Source: [Summary Tables - Prescription Cost Analysis - ICB National](`r config$f
 `r infoBox_border(header = "", text = paste("Integrated care boards (ICB) are statutory NHS organisations which are responsible for developing a plan for meeting the health needs of the population, managing the NHS budget and arranging for the provision of health services in a geographical area. <br><br>However, it's important to note that the ICB listed in these statistics refers to the dispensing contractor as listed in the NHSBSA administrative records, rather than the prescribing organisation of an item.<br><br>Prescribing and dispensing trends can vary regionally, and there are many factors that can influence these decisions. Some of the factors that can affect prescribing and dispensing trends include population demographics, prevalence of chronic disease, and the presence of specialist dispensing contractors within a given area.<br><br>If you're interested in learning more about ICBs and how they were used in these statistics, please refer to the [Background Information and Methodology note](",config$background_link,") that accompanies this release."), width = "100%")` 
 ::: 
 ::::
-
-::::{.row style="display: flex; padding-bottom: 10px;"} 
-:::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "<b>The mean number of items dispensed per capita in England was 21 in 2022/23.</b>", width = "100%")` 
-::: 
-:::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "<b>NHS West Yorkshire Integrated Care Board had the highest dispensed items per capita with 29.</b>", width = "100%")` 
-:::
-:::{.col-md-4} 
-`r infoBox_no_border(header = "", text = "<b>NHS Surrey Heartlands Integrated Care Board had the lowest with 13.</b>", width = "100%")` 
-:::
-::::
-
-The mean number of items dispensed per capita in England was 21 in 2021/22. NHS West Yorkshire Integrated Care Board had the highest dispensed items per capita with 29 while NHS Surrey Heartlands Integrated Care Board had the lowest with 13.
-
-### `r paste0("Figure ",10,": Cost per capita (£) by Integrated Care Board (ICB) ",year_tidy)`
-
-```{r nic_per_pop, out.width = "100%"}
-
-figure_10
-
-```
-`r get_download_button(title = "Download chart data", data = figure_10_data, filename = "figure_10")`
-
-Source: [Summary Tables - Prescription Cost Analysis - ICB National](`r config$fy_icb_link`) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/clinicalcommissioninggroupmidyearpopulationestimates)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 
@@ -391,15 +374,37 @@ Source: [Summary Tables - Prescription Cost Analysis - ICB National](`r config$f
 
 The ICB listed in these statistics refers to the dispensing contractor as listed in the NHSBSA administrative records. There are specialist dispensing contractors within a certain areas. NHS Cambridgeshire and Peterborough Integrated Care Board offer specialist stoma care, 34% of their total costs of £340 million in 2022/23 were in BNF chapter 23 (Stoma Appliances).
 
+### `r paste0("Figure ",10,": Dispensed items per capita by Integrated Care Board (ICB) ",year_tidy)`
+
+```{r items_per_pop, out.width = "100%"}
+
+figure_10
+get_download_button(title = "Download chart data", data = figure_10_data, filename = "figure_10")  
+```
+
+Source: [Summary Tables - Prescription Cost Analysis - ICB National](`r config$fy_icb_link`) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/clinicalcommissioninggroupmidyearpopulationestimates)
+
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "<b>The mean number of items dispensed per capita in England was 21 in 2022/23.</b>", width = "100%")` 
+::: 
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "<b>NHS West Yorkshire Integrated Care Board had the highest dispensed items per capita with 29.</b>", width = "100%")` 
+:::
+:::{.col-md-4} 
+`r infoBox_no_border(header = "", text = "<b>NHS Surrey Heartlands Integrated Care Board had the lowest with 13.</b>", width = "100%")` 
+:::
+::::
+
+The mean number of items dispensed per capita in England was 21 in 2021/22. NHS West Yorkshire Integrated Care Board had the highest dispensed items per capita with 29 while NHS Surrey Heartlands Integrated Care Board had the lowest with 13.
+
 ### `r paste0("Figure 11: Top 10 presentations by percentage increase in unit cost ",paste0(substr(max_data_fy_minus_1,1,5), substr(max_data_fy_minus_1, 8, 9)), " to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
 ```{r unit_cost_increase, out.width = "100%"}
 
 figure_11
-
+get_download_button(title = "Download chart data", data = figure_11_data, filename = "figure_11")
 ```
-`r get_download_button(title = "Download chart data", data = figure_11_data, filename = "figure_11")`
-
 
 Source: [Additional Tables - Prescription Cost Analysis - A11](`r config$add_anl_link`)
 
@@ -420,10 +425,8 @@ Aripiprazole 10mg tablets were granted price concessions between May 2022 and De
 ```{r unit_cost_decrease, out.width = "100%"}
 
 figure_12
-
+get_download_button(title = "Download chart data", data = figure_12_data, filename = "figure_12")
 ```
-`r get_download_button(title = "Download chart data", data = figure_12_data, filename = "figure_12")`
-
 
 Source: [Additional Tables - Prescription Cost Analysis - A12](`r config$add_anl_link`)
 
@@ -440,9 +443,8 @@ Salofalk 1g/application foam enema decreased in unit cost the most in 2022/23 by
 ```{r abs_cost_increase, out.width = "100%"}
 
 figure_13
-
+get_download_button(title = "Download chart data", data = figure_13_data, filename = "figure_13")
 ```
-`r get_download_button(title = "Download chart data", data = figure_13_data, filename = "figure_13")`
 
 Source: [Additional Tables - Prescription Cost Analysis - A13](`r config$add_anl_link`)
 
@@ -459,9 +461,8 @@ Between 2021/22 and 2022/23 the total costs of Apixaban 5mg tablets increased by
 ```{r abs_cost_decrease, out.width = "100%"}
 
 figure_14
-
+get_download_button(title = "Download chart data", data = figure_14_data, filename = "figure_14")
 ```
-`r get_download_button(title = "Download chart data", data = figure_14_data, filename = "figure_14")`
 
 Source: [Additional Tables - Prescription Cost Analysis - A14](`r config$add_anl_link`)
 
@@ -483,14 +484,35 @@ Between 2021/22 and 2022/23 the total costs of Eliquis 5mg tablets decreased by 
 ::: 
 ::::
 
-### `r paste0("Figure 15: Items per capita for the UK nations ", max_data_fy_minus_1)`
+### `r paste0("Figure 15: Cost per capita for the UK nations ", max_data_fy_minus_1)`
+
+```{r uk_comparisons_costs, out.width = "100%"}
+
+figure_15
+get_download_button(title = "Download chart data", data = figure_15_data, filename = "figure_15")
+
+```
+
+Source: [Additional Tables - Prescription Cost Analysis - A1](`r config$add_anl_link`) | [Public Health Scotland - Dispenser payments and prescription cost analysis](`r config$scotland_pca`) | [Welsh Government - Prescriptions in Wales](`r config$wa_pca_link`) | [HSC Business Services Organisation - General pharmaceutical services and prescribing statistics](`r config$ni_pca`) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatestimeseriesdataset)
+
+::::{.row style="display: flex; padding-bottom: 10px;"} 
+:::{.col-md-6} 
+`r infoBox_no_border(header = "", text = "<b>England had the lowest prescription item cost per head of population in 2021/22 at £171.</b>", width = "100%")` 
+::: 
+:::{.col-md-6} 
+`r infoBox_no_border(header = "", text = "<b>Northern Ireland had the highest prescription item cost per head of population in 2021/22 at £247.</b>", width = "100%")` 
+::: 
+::::
+
+England had the lowest prescription item cost per head of population in 2021/22 of £171. This was £76 less than Northern Ireland, £42 less than Scotland, and £30 less than Wales.
+
+### `r paste0("Figure 16: Items per capita for the UK nations ", max_data_fy_minus_1)`
 
 ```{r uk_comparisons_items, out.width = "100%"}
 
-figure_15
-
+figure_16
+get_download_button(title = "Download chart data", data = figure_16_data, filename = "figure_16")
 ```
-`r get_download_button(title = "Download chart data", data = figure_15_data, filename = "figure_15")`
 
 Source: [Additional Tables - Prescription Cost Analysis - A1](`r config$add_anl_link`) | [Public Health Scotland - Dispenser payments and prescription cost analysis](`r config$scotland_pca`) | [Welsh Government - Prescriptions in Wales](`r config$wa_pca_link`) | [HSC Business Services Organisation - General pharmaceutical services and prescribing statistics](`r config$ni_pca`) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatestimeseriesdataset)
 
@@ -507,29 +529,6 @@ Source: [Additional Tables - Prescription Cost Analysis - A1](`r config$add_anl_
 ::::
 
 In 2021/22, England dispensed 20 items per head of population. This was 1 item more than Scotland who had the fewest items dispensed per capita of 19, 3 fewer than Northern Ireland at 23 items, and 6 items fewer than Wales who had 26 items dispensed per capita.
-
-### `r paste0("Figure 16: Cost per capita for the UK nations ", max_data_fy_minus_1)`
-
-```{r uk_comparisons_costs, out.width = "100%"}
-
-figure_16
-
-
-```
-`r get_download_button(title = "Download chart data", data = figure_16_data, filename = "figure_16")`
-
-Source: [Additional Tables - Prescription Cost Analysis - A1](`r config$add_anl_link`) | [Public Health Scotland - Dispenser payments and prescription cost analysis](`r config$scotland_pca`) | [Welsh Government - Prescriptions in Wales](`r config$wa_pca_link`) | [HSC Business Services Organisation - General pharmaceutical services and prescribing statistics](`r config$ni_pca`) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatestimeseriesdataset)
-
-::::{.row style="display: flex; padding-bottom: 10px;"} 
-:::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "<b>England had the lowest prescription item cost per head of population in 2021/22 at £171.</b>", width = "100%")` 
-::: 
-:::{.col-md-6} 
-`r infoBox_no_border(header = "", text = "<b>Northern Ireland had the highest prescription item cost per head of population in 2021/22 at £247.</b>", width = "100%")` 
-::: 
-::::
-
-England had the lowest prescription item cost per head of population in 2021/22 of £171. This was £76 less than Northern Ireland, £42 less than Scotland, and £30 less than Wales.
 
 ---
 

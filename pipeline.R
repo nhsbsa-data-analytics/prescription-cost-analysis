@@ -527,16 +527,27 @@ log_print("Data pulled for exemption categories", hide_notes = TRUE)
 figure_1_data <- add_anl_1 |>
   select(YEAR_DESC, TOTAL_NIC)
 
+figure_1_table <- figure_1_data |>
+  mutate(
+    TOTAL_NIC = format(signif(TOTAL_NIC, 3), big.mark = ",")
+  ) |>
+  rename(
+    "Financial year" = 1,
+    "Net ingredient cost (GBP)" = 2
+  )
+
 figure_1 <- basic_chart_hc_new(
   figure_1_data,
   x = YEAR_DESC,
   y = TOTAL_NIC,
   type = "line",
   xLab = "Financial year",
-  yLab = "Total cost (GBP Billions)",
+  yLab = "Total cost (GBP)",
   title = "",
   currency = TRUE
-)
+) |>
+  hc_subtitle(text = "B = Billions",
+              align = "left") 
 
 figure_1$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 
@@ -562,60 +573,72 @@ figure_1$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
 "
 )
 
+figure_1$x$hc_opts$yAxis$tickPositioner <- JS("function() {
+                         var positions = [],
+                         tick = Math.floor(this.dataMin / 1000000000) * 1000000000;
+                         for (; tick - 1000000000 <= this.dataMax; tick += 1000000000) {
+                         positions.push(tick);
+                         }
+                         return positions;
+                         }")
+
+figure_1$x$hc_opts$yAxis$labels <- list(
+  formatter = JS("function() {
+                    return this.value / 1000000000 + 'B';
+                    }")
+)
+
 # figure 2
 figure_2_data <- add_anl_1 |>
   select(YEAR_DESC, TOTAL_ITEMS)
 
-figure_2 <- nhsbsaVis::basic_chart_hc(
+figure_2 <- basic_chart_hc_new(
   figure_2_data,
   x = YEAR_DESC,
   y = TOTAL_ITEMS,
   type = "line",
   xLab = "Financial year",
   yLab = "Number of items dispensed",
-  title = ""
-)
+  title = "",
+  color = "#330072"
+)|>
+  hc_subtitle(text = "M = Millions",
+              align = "left")
 
 figure_2$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
+
+figure_2$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+  "function formatCurrency() {
+    var ynum = this.point.y/1000000;
+    var options = { maximumSignificantDigits: 4, minimumSignificantDigits: 4 };
+    return ynum.toLocaleString('en-GB', options) + 'M';
+}
+"
+)
+
+figure_2$x$hc_opts$yAxis$tickPositioner <- JS("function() {
+                         var positions = [],
+                         tick = Math.floor(this.dataMin / 20000000) * 20000000;
+                         for (; tick - 20000000 <= this.dataMax; tick += 20000000) {
+                         positions.push(tick);
+                         }
+                         return positions;
+                         }")
+
+figure_2$x$hc_opts$yAxis$labels <- list(
+  formatter = JS("function() {
+                    return Highcharts.numberFormat(this.value / 1000000, 0, '.', ',') + 'M';
+                    }")
+)
 
 # figure 3
 figure_3_data <- nat_data_fy |>
   group_by(BNF_CHAPTER, CHAPTER_DESCR) |>
-  summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS)) |>
-  ungroup()
-
-
-figure_3 <-  nhsbsaVis::basic_chart_hc(
-  figure_3_data,
-  x = BNF_CHAPTER,
-  y = TOTAL_ITEMS,
-  type = "column",
-  xLab = "BNF chapter",
-  yLab = "Number of items dispensed",
-  title = ""
-)
-
-figure_3$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
-  "function(){
-                                                       var ynum = this.point.TOTAL_ITEMS ;
-                                                       if(ynum >= 1000000) {
-                                                       result = ynum/1000000
-                                                       result = result.toPrecision(3) + 'M'
-                                                       } else {
-                                                       result = ynum.toLocaleString('en-GB', {maximumSignificantDigits: 3});
-                                                       }
-                                                       return result
-}"
-)
-
-# figure 4
-figure_4_data <- nat_data_fy |>
-  group_by(BNF_CHAPTER, CHAPTER_DESCR) |>
   summarise(TOTAL_NIC = sum(TOTAL_NIC)) |>
   ungroup()
 
-figure_4 <- nhsbsaVis::basic_chart_hc(
-  figure_4_data,
+figure_3 <- nhsbsaVis::basic_chart_hc(
+  figure_3_data,
   x = BNF_CHAPTER,
   y = TOTAL_NIC,
   type = "column",
@@ -624,7 +647,7 @@ figure_4 <- nhsbsaVis::basic_chart_hc(
   title = ""
 )
 
-figure_4$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+figure_3$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
   "function(){
                                                        var ynum = this.point.TOTAL_NIC ;
 
@@ -642,7 +665,42 @@ figure_4$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
 }"
 )
 
+figure_3$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
+
+# figure 4
+figure_4_data <- nat_data_fy |>
+  group_by(BNF_CHAPTER, CHAPTER_DESCR) |>
+  summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS)) |>
+  ungroup()
+
+
+figure_4 <-  nhsbsaVis::basic_chart_hc(
+  figure_4_data,
+  x = BNF_CHAPTER,
+  y = TOTAL_ITEMS,
+  type = "column",
+  xLab = "BNF chapter",
+  yLab = "Number of items dispensed",
+  title = "",
+  color = "#330072"
+)
+
+figure_4$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+  "function(){
+                                                       var ynum = this.point.TOTAL_ITEMS ;
+                                                       if(ynum >= 1000000) {
+                                                       result = ynum/1000000
+                                                       result = result.toPrecision(3) + 'M'
+                                                       } else {
+                                                       result = ynum.toLocaleString('en-GB', {maximumSignificantDigits: 3});
+                                                       }
+                                                       return result
+}"
+)
+
 figure_4$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
+
+
 
 # figure 5
 figure_5_data <- add_anl_5 |>
@@ -749,29 +807,8 @@ figure_6 <- highchart() |>
   )) |>
   hc_tooltip(enabled = F)
 
-
 # figure 7
-figure_7_data <- add_anl_3 |>
-  group_by(CHEMICAL_SUBSTANCE_BNF_DESCR, BNF_CHEMICAL_SUBSTANCE) |>
-  rename(TOTAL_ITEMS = 5) |>
-  summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS)) |>
-  ungroup() |>
-  mutate(RANK = row_number(desc(TOTAL_ITEMS))) |>
-  filter(RANK <= 10) |>
-  arrange(RANK)
-
-figure_7 <- nhsbsaVis::basic_chart_hc(
-  figure_7_data,
-  x = CHEMICAL_SUBSTANCE_BNF_DESCR,
-  y = TOTAL_ITEMS,
-  type = "bar",
-  xLab = "Chemical substance",
-  yLab = "Number of items dispensed",
-  title = ""
-)
-
-# figure 8
-figure_8_data <- add_anl_2 |>
+figure_7_data <- add_anl_2 |>
   group_by(CHEMICAL_SUBSTANCE_BNF_DESCR, BNF_CHEMICAL_SUBSTANCE) |>
   rename(TOTAL_NIC = 5) |>
   summarise(TOTAL_NIC = sum(TOTAL_NIC)) |>
@@ -780,8 +817,8 @@ figure_8_data <- add_anl_2 |>
   filter(RANK <= 10) |>
   arrange(RANK)
 
-figure_8 <- nhsbsaVis::basic_chart_hc(
-  figure_8_data,
+figure_7 <- nhsbsaVis::basic_chart_hc(
+  figure_7_data,
   x = CHEMICAL_SUBSTANCE_BNF_DESCR,
   y = TOTAL_NIC,
   type = "bar",
@@ -791,32 +828,29 @@ figure_8 <- nhsbsaVis::basic_chart_hc(
   currency = TRUE
 )
 
-# figure 9
-figure_9_data <-  stp_data_fy_agg$National |>
-  dplyr::select(`ICB Code`,
-                `Total Items`) |>
-  dplyr::rename(ICB_CODE = 1,
-                TOTAL_ITEMS = 2) |>
-  dplyr::group_by(ICB_CODE) |>
-  dplyr::summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS, na.rm = T),
-                   .groups = "drop") |>
-  dplyr::left_join(icb_pop,
-                   by = c("ICB_CODE" = "ICB_CODE")) |>
-  dplyr::mutate("TOTAL_ITEMS_PER_POP" = TOTAL_ITEMS / POP)
+# figure 8
+figure_8_data <- add_anl_3 |>
+  group_by(CHEMICAL_SUBSTANCE_BNF_DESCR, BNF_CHEMICAL_SUBSTANCE) |>
+  rename(TOTAL_ITEMS = 5) |>
+  summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS)) |>
+  ungroup() |>
+  mutate(RANK = row_number(desc(TOTAL_ITEMS))) |>
+  filter(RANK <= 10) |>
+  arrange(RANK)
 
-figure_9 <- nhsbsaVis::icb_map(
-  data = stp_data_fy_agg$National,
-  icb_code_column = "ICB Code",
-  value_column = "Total Items",
-  geo_data = icb_geo_data,
-  icb_lsoa_lookup = icb_lsoa_lookup,
-  lsoa_population = lsoa_population_overall,
-  currency = FALSE,
-  scale_rounding = 10
+figure_8 <- nhsbsaVis::basic_chart_hc(
+  figure_8_data,
+  x = CHEMICAL_SUBSTANCE_BNF_DESCR,
+  y = TOTAL_ITEMS,
+  type = "bar",
+  xLab = "Chemical substance",
+  yLab = "Number of items dispensed",
+  title = "",
+  color = "#330072"
 )
 
-# figure 10
-figure_10_data <-  stp_data_fy_agg$National |>
+# figure 9
+figure_9_data <-  stp_data_fy_agg$National |>
   dplyr::select(`ICB Code`,
                 `Total Cost (GBP)`) |>
   dplyr::rename(ICB_CODE = 1,
@@ -828,7 +862,7 @@ figure_10_data <-  stp_data_fy_agg$National |>
                    by = c("ICB_CODE" = "ICB_CODE")) |>
   dplyr::mutate("TOTAL_NIC_PER_POP" = TOTAL_NIC / POP)
 
-figure_10 <- nhsbsaVis::icb_map(
+figure_9 <- nhsbsaVis::icb_map(
   data = stp_data_fy_agg$National,
   icb_code_column = "ICB Code",
   value_column = "Total Cost (GBP)",
@@ -837,6 +871,30 @@ figure_10 <- nhsbsaVis::icb_map(
   lsoa_population = lsoa_population_overall,
   currency = TRUE,
   scale_rounding = 100
+)
+
+# figure 10
+figure_10_data <-  stp_data_fy_agg$National |>
+  dplyr::select(`ICB Code`,
+                `Total Items`) |>
+  dplyr::rename(ICB_CODE = 1,
+                TOTAL_ITEMS = 2) |>
+  dplyr::group_by(ICB_CODE) |>
+  dplyr::summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS, na.rm = T),
+                   .groups = "drop") |>
+  dplyr::left_join(icb_pop,
+                   by = c("ICB_CODE" = "ICB_CODE")) |>
+  dplyr::mutate("TOTAL_ITEMS_PER_POP" = TOTAL_ITEMS / POP)
+
+figure_10 <- icb_map_new(
+  data = stp_data_fy_agg$National,
+  icb_code_column = "ICB Code",
+  value_column = "Total Items",
+  geo_data = icb_geo_data,
+  icb_lsoa_lookup = icb_lsoa_lookup,
+  lsoa_population = lsoa_population_overall,
+  currency = FALSE,
+  scale_rounding = 10
 )
 
 # figure 11
@@ -925,34 +983,15 @@ figure_14 <- figure_14_data |>
 
 # figure 15
 figure_15_data <- dev_nations_data |>
-  arrange(desc(ITEMS_PER_CAPITA)) |>
-  select(Country,
-         POP,
-         TOTAL_ITEMS,
-         ITEMS_PER_CAPITA)
-
-figure_15 <-
-  basic_chart_hc(
-    figure_15_data,
-    x = Country,
-    y = ITEMS_PER_CAPITA,
-    type = "column",
-    xLab = "Country",
-    yLab = "Items per capita",
-    title = ""
-  )
-
-# figure 16
-figure_16_data <- dev_nations_data |>
   arrange(desc(COSTS_PER_CAPITA)) |>
   select(Country,
          POP,
          TOTAL_COSTS,
          COSTS_PER_CAPITA)
 
-figure_16 <-
+figure_15 <-
   basic_chart_hc(
-    figure_16_data,
+    figure_15_data,
     x = Country,
     y = COSTS_PER_CAPITA,
     type = "column",
@@ -961,6 +1000,26 @@ figure_16 <-
     title = ""
   )
 
+
+# figure 16
+figure_16_data <- dev_nations_data |>
+  arrange(desc(ITEMS_PER_CAPITA)) |>
+  select(Country,
+         POP,
+         TOTAL_ITEMS,
+         ITEMS_PER_CAPITA)
+
+figure_16 <-
+  basic_chart_hc(
+    figure_16_data,
+    x = Country,
+    y = ITEMS_PER_CAPITA,
+    type = "column",
+    xLab = "Country",
+    yLab = "Items per capita",
+    title = "",
+    color = "#330072"
+  )
 
 log_print("Charts and chart data created", hide_notes = TRUE)
 

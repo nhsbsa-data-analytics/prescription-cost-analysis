@@ -59,22 +59,21 @@ basic_chart_hc_new <- function(
                                                  style = list(textOutline = "none"))) |> 
     highcharter::hc_xAxis(type = "category",
                           title = list(text = xLab),
-                          gridLineWidth = 1,
-                          gridLineColor = gridlineColor,
-                          tickmarkPlacement = "on") |> 
+                          tickmarkPlacement = "on",
+                          tickWidth = 1,
+                          tickColor = gridlineColor) |> 
     # turn off y axis and grid lines
     highcharter::hc_yAxis(title = list(text = yLab),
                           labels = list(enabled = yLabels),
                           gridLineColor = gridlineColor,
-                          min = 0) |> 
+                          lineWidth = 1,
+                          lineColor = gridlineColor) |> 
     highcharter::hc_title(text = title,
                           style = list(fontSize = "16px",
                                        fontWeight = "bold")) |> 
     highcharter::hc_legend(enabled = FALSE) |> 
     highcharter::hc_tooltip(enabled = FALSE) |> 
-    highcharter::hc_credits(enabled = TRUE) |> 
-    highcharter::hc_caption(text = alt_text)
-  
+    highcharter::hc_credits(enabled = TRUE) 
   return(chart)
   
 }
