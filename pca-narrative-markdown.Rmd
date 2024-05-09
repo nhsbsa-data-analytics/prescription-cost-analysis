@@ -160,7 +160,7 @@ Source: [Summary Tables - Prescription Cost Analysis - National](`r config$fy_na
 :::
 ::::
 
-In England, the cost of prescription items in 2022/23 was £10.4 billion, which is 8% more than the previous year's cost of £9.69 billion. Compared to 2014/15, the cost has increased by 17% or £1.48 billion. This marks the fourth year in a row where the cost of items dispensed has increased, after seeing a decrease in the previous three years from 2015/16 to 2018/19.
+In England, the cost of prescription items in 2022/23 was £10.4 billion, which is 8% more than the previous year's cost of £9.69 billion. Compared to 2014/15, the cost has increased by 17% or £1.48 billion. This marks the fourth year in a row where the cost of items dispensed has increased, after seeing a decrease in the previous 3 years from 2015/16 to 2018/19.
 
 ### `r paste0("Figure 2: Number of prescription items dispensed in England 2014/15 to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
@@ -323,9 +323,9 @@ Source: [Additional Tables - Prescription Cost Analysis - A2](`r config$add_anl_
 
 [Apixaban](https://www.nhs.uk/medicines/apixaban/) had the highest cost for items dispensed in the community in England, with a total cost of £400 million. Apixaban is an anticoagulant that is primarily used to treat individuals who have had a health problem caused by a blood clot or to prevent future blood clots.
 
-The top ten chemical substances by cost included three drugs that are commonly used to help prevent blood clots. These are Apixaban, Rivaroxaban, and Edoxaban.
+The top ten chemical substances by cost included 3 drugs that are commonly used to help prevent blood clots. These are Apixaban, Rivaroxaban, and Edoxaban.
 
-The top ten chemical substances by cost included two drugs that are commonly used to treat respiratory illnesses. These are Beclometasone dipropionate and Budesonide.
+The top ten chemical substances by cost included 2 drugs that are commonly used to treat respiratory illnesses. These are Beclometasone dipropionate and Budesonide.
 
 ### `r paste0("Figure 8: The 10 most dispensed chemical substances by total items in ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
