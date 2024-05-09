@@ -122,6 +122,8 @@ The designation of this publication as a National Statistic was confirmed in May
 
 #### Chart
 
+##### Figure 1: The cost of prescription items dispensed in England has been increasing since 2018/19
+
 Note: The y-axis does not start at zero to emphasise relative changes rather than absolute values. Please consider the scale when interpreting the data.
 
 ```{r total_nic_chart, out.width = "100%"}
@@ -133,6 +135,8 @@ get_download_button(title = "Download chart data", data = figure_1_data, filenam
 
 #### Table
 
+##### Table 1: The cost of prescription items dispensed in England has been increasing since 2018/19
+
 ```{r total_nic_table, out.width = "100%"}
 knitr::kable(figure_1_table, align = "lr")
 
@@ -140,7 +144,7 @@ get_download_button(title = "Download table data", data = figure_1_data, filenam
 
 ```
 
-## {-}
+## {- .toc-ignore}
 
 Source: [Summary Tables - Prescription Cost Analysis - National](`r config$fy_nat_link`)
 
@@ -606,7 +610,7 @@ The summary tables released with this publication allow users to investigate thi
 
 If you need information on this website in a different format like accessible PDF, large print, easy read, audio recording or braille, you can contact us by:
 
-**Email**: nhsbsa.accessibility@nhs.net
+**Email**: accessibility@nhsbsa.nhs.uk
 
 **Phone**: 0191 203 5318
 
@@ -628,7 +632,7 @@ You can view our [privacy policy](https://www.nhsbsa.nhs.uk/our-policies/privacy
 
 You can contact us by:
 
-**Email:** nhsbsa.statistics@nhs.net
+**Email:** statistics@nhsbsa.nhs.uk
 
 **You can also write to us at:**
 
