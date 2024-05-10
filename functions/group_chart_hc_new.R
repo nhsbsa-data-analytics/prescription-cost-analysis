@@ -73,16 +73,20 @@ group_chart_hc_new <- function(data,
   # ifelse(is.na(str_extract(!!y, "(?<=\\().*(?=,)")),!!y,str_extract(!!y, "(?<=\\().*(?=,)")),
   
   # check chart type to set grid lines
-  gridlineColor <- if (type == "line")
-    "#e6e6e6"
-  else
-    "transparent"
+  # gridlineColor <- if (type == "line")
+  #   "#e6e6e6"
+  # else
+  #   "transparent"
   
   # check chart type to turn on y axis labels
   yLabels <- if (type == "line")
     TRUE
   else
     FALSE
+  
+  tickColor <- ifelse(type == "line", "#768692", "transparent")
+  
+  gridlineColor <- "#E8EDEE"
   
   # highchart creation
   chart <- highcharter::highchart() |>
@@ -110,7 +114,9 @@ group_chart_hc_new <- function(data,
                           title = list(text = xLab),
                           tickmarkPlacement = "on",
                           tickWidth = 1,
-                          tickColor = gridlineColor) |>
+                          tickColor = tickColor,
+                          lineWidth = 1,
+                          lineColor = tickColor) |>
     # turn off y axis and grid lines
     highcharter::hc_yAxis(
       title = list(text = yLab),
@@ -118,7 +124,7 @@ group_chart_hc_new <- function(data,
       gridLineColor = gridlineColor,
       min = 0,
       lineWidth = 1,
-      lineColor = gridlineColor
+      lineColor = tickColor
     ) |>
     highcharter::hc_title(text = title,
                           style = list(fontSize = "16px",

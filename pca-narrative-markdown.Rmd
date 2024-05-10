@@ -168,7 +168,7 @@ In England, the cost of prescription items in 2022/23 was £10.4 billion, which 
 
 Note: The y-axis does not start at zero to emphasise relative changes rather than absolute values. Please consider the scale when interpreting the data.
 
-##### Figure 2:
+##### Figure 2: The number of prescription items dispensed in England has been increasing since 2020/21
 
 ```{r total_items, out.width = "100%"}
 
@@ -178,7 +178,7 @@ get_download_button(title = "Download chart data", data = figure_2_data, filenam
 
 #### Table
 
-##### Table 2:
+##### Table 2: The number of prescription items dispensed in England has been increasing since 2020/21
 
 ```{r total_items_table, out.width = "100%"}
 knitr::kable(figure_2_table, align = "lr")
@@ -205,13 +205,30 @@ Source: [Summary Tables - Prescription Cost Analysis - National](`r config$fy_na
 
 In England, there were 1.18 billion items dispensed in 2022/23, which is 3% more than the previous year's 1.14 billion items. Compared to 2014/15, the number of items has increased by 10%.
 
-### `r paste0("Figure 3: Distribution of cost of items dispensed in England amongst BNF chapters ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+### `r paste0("Cost of items dispensed in England amongst BNF chapters")`{.tabset}
+
+#### Chart
+
+##### Figure 3: In 2022/23 BNF chapter 06 - Endocrine System had the highest costs
 
 ```{r bnf_chapters_items, out.width = "100%"}
 
 figure_3
 get_download_button(title = "Download chart data", data = figure_3_data, filename = "figure_3")
 ```
+
+#### Table
+
+##### Table 3: In 2022/23 BNF chapter 06 - Endocrine System had the highest costs
+
+```{r bnf_chapters_items_table, out.width = "100%"}
+knitr::kable(figure_3_table, align = "llr")
+
+get_download_button(title = "Download table data", data = figure_3_data, filename = "table_3")
+
+```
+
+## {- .toc-ignore}
 
 Source: [Summary Tables - Prescription Cost Analysis - Chapter](`r config$fy_nat_link`)
 
@@ -261,7 +278,7 @@ Source: [Summary Tables - Prescription Cost Analysis - Chapter](`r config$fy_nat
 
 In 2022/23, chapter 02 of the BNF, which groups together medicines primarily used to treat the cardiovascular system, had the highest number of prescription items dispensed in England, with a total of 340 million items. This accounted for 29% of all items dispensed. Chapter 04 - Central Nervous System followed with 230 million items, representing 19% of items. Chapter 06 - Endocrine System had 130 million items, accounting for 11% of items.
 
-### `r paste0("Figure 5: Proportion of items prescribed generically and proportion of costs excluding appliances England ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+### `r paste0("Figure 5: Percentage of items prescribed generically and percentage costs excluding appliances England ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
 ```{r generic_presc, out.width = "100%"}
 
@@ -611,8 +628,7 @@ rounding_table <- data.table(
   "Round to nearest" = c("1", "100", "1,000", "10,000", "100,000", "1,000,000", "10,000,000")
 )
 
-knitr::kable(rounding_table, align = "rrr")%>%
-  kable_styling(bootstrap_options = c("striped"))
+knitr::kable(rounding_table, align = "rrr")
 ```
 
 All changes and totals are calculated prior to rounding. Percentage changes are calculated prior to rounding and then are rounded to the nearest whole number. As all figures within this statistical summary have been rounded, they may not match totals elsewhere when aggregated.

@@ -594,7 +594,7 @@ figure_2_data <- add_anl_1 |>
 
 figure_2_table <- figure_2_data |>
   mutate(
-    TOTAL_ITEMS = format(signif(TOTAL_ITEMS, 3), big.mark = ",")
+    TOTAL_ITEMS = format(signif(TOTAL_ITEMS, 4), big.mark = ",")
   ) |>
   rename(
     "Financial year" = 1,
@@ -646,7 +646,19 @@ figure_3_data <- nat_data_fy |>
   summarise(TOTAL_NIC = sum(TOTAL_NIC)) |>
   ungroup()
 
-figure_3 <- nhsbsaVis::basic_chart_hc(
+
+figure_3_table <- figure_3_data |>
+  mutate(
+    TOTAL_NIC = format(signif(TOTAL_NIC, 3), big.mark = ",")
+  ) |>
+  rename(
+    "BNF Chapter Code" = 1,
+    "BNF Chapter Name" = 2,
+    "Net ingredient cost (GBP)" = 3
+  )
+
+
+figure_3 <- basic_chart_hc_new(
   figure_3_data,
   x = BNF_CHAPTER,
   y = TOTAL_NIC,
@@ -654,7 +666,9 @@ figure_3 <- nhsbsaVis::basic_chart_hc(
   xLab = "BNF chapter",
   yLab = "Cost of items dispensed (GBP)",
   title = ""
-)
+) |>
+  hc_subtitle(text = "M = Millions",
+              align = "left")
 
 figure_3$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
   "function(){
@@ -683,7 +697,7 @@ figure_4_data <- nat_data_fy |>
   ungroup()
 
 
-figure_4 <-  nhsbsaVis::basic_chart_hc(
+figure_4 <-  basic_chart_hc_new(
   figure_4_data,
   x = BNF_CHAPTER,
   y = TOTAL_ITEMS,
@@ -692,7 +706,9 @@ figure_4 <-  nhsbsaVis::basic_chart_hc(
   yLab = "Number of items dispensed",
   title = "",
   color = "#330072"
-)
+)|>
+  hc_subtitle(text = "M = Millions",
+              align = "left")
 
 figure_4$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
   "function(){
@@ -730,14 +746,14 @@ figure_5_data <- add_anl_5 |>
   select(YEAR_DESC, MEASURE, VALUE)
 
 
-figure_5 <- nhsbsaVis::group_chart_hc(
+figure_5 <- group_chart_hc_new(
   figure_5_data,
   x = YEAR_DESC,
   y = VALUE,
   group = MEASURE,
   type = "line",
   xLab = "Financial year",
-  yLab = "Proportion (%)",
+  yLab = "Percentage (%)",
   title = ""
 )
 
@@ -826,7 +842,7 @@ figure_7_data <- add_anl_2 |>
   filter(RANK <= 10) |>
   arrange(RANK)
 
-figure_7 <- nhsbsaVis::basic_chart_hc(
+figure_7 <- basic_chart_hc_new(
   figure_7_data,
   x = CHEMICAL_SUBSTANCE_BNF_DESCR,
   y = TOTAL_NIC,
@@ -835,7 +851,21 @@ figure_7 <- nhsbsaVis::basic_chart_hc(
   yLab = "Cost of items dispensed (GBP)",
   title = "",
   currency = TRUE
+) |>
+  hc_subtitle(text = "M = Millions",
+              align = "left")
+
+figure_7$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
+
+figure_7$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+  "function formatCurrency() {
+    var ynum = this.point.y/1000000;
+    var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
+    return '£' + ynum.toLocaleString('en-GB', options) + 'M';
+}
+"
 )
+
 
 # figure 8
 figure_8_data <- add_anl_3 |>
@@ -847,7 +877,7 @@ figure_8_data <- add_anl_3 |>
   filter(RANK <= 10) |>
   arrange(RANK)
 
-figure_8 <- nhsbsaVis::basic_chart_hc(
+figure_8 <- basic_chart_hc_new(
   figure_8_data,
   x = CHEMICAL_SUBSTANCE_BNF_DESCR,
   y = TOTAL_ITEMS,
@@ -856,6 +886,19 @@ figure_8 <- nhsbsaVis::basic_chart_hc(
   yLab = "Number of items dispensed",
   title = "",
   color = "#330072"
+)|>
+  hc_subtitle(text = "M = Millions",
+              align = "left")
+
+figure_8$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
+
+figure_8$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+  "function formatCurrency() {
+    var ynum = this.point.y/1000000;
+    var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
+    return ynum.toLocaleString('en-GB', options) + 'M';
+}
+"
 )
 
 # figure 9
@@ -916,7 +959,7 @@ figure_11_data <- add_anl_11 |>
          VMPP_UOM,
          UNIT_COST_CHANGE)
 
-figure_11 <- nhsbsaVis::basic_chart_hc(
+figure_11 <- basic_chart_hc_new(
   figure_11_data,
   x = DISP_PRESEN_BNF_DESCR,
   y = UNIT_COST_CHANGE,
@@ -938,7 +981,7 @@ figure_12_data <- add_anl_12 |>
 
 figure_12 <- figure_12_data |>
   mutate(UNIT_COST_CHANGE = UNIT_COST_CHANGE * -1) |>
-  nhsbsaVis::basic_chart_hc(
+  basic_chart_hc_new(
     x = DISP_PRESEN_BNF_DESCR,
     y = UNIT_COST_CHANGE,
     type = "bar",
@@ -957,7 +1000,7 @@ figure_13_data <- add_anl_13 |>
          VMPP_UOM,
          NIC_CHANGE)
 
-figure_13 <- nhsbsaVis::basic_chart_hc(
+figure_13 <- basic_chart_hc_new(
   figure_13_data,
   x = DISP_PRESEN_BNF_DESCR,
   y = NIC_CHANGE,
@@ -966,7 +1009,21 @@ figure_13 <- nhsbsaVis::basic_chart_hc(
   yLab = "Total cost absolute increase (GBP)",
   title = "",
   currency = TRUE
+)|>
+  hc_subtitle(text = "M = Millions",
+              align = "left")
+
+figure_13$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
+
+figure_13$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+  "function formatCurrency() {
+    var ynum = this.point.y/1000000;
+    var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
+    return '£' + ynum.toLocaleString('en-GB', options) + 'M';
+}
+"
 )
+
 
 # figure 14
 figure_14_data <- add_anl_14 |>
@@ -980,7 +1037,7 @@ figure_14_data <- add_anl_14 |>
 
 figure_14 <- figure_14_data |>
   mutate(NIC_CHANGE = NIC_CHANGE * -1) |>
-  nhsbsaVis::basic_chart_hc(
+  basic_chart_hc_new(
     x = DISP_PRESEN_BNF_DESCR,
     y = NIC_CHANGE,
     type = "bar",
@@ -988,7 +1045,21 @@ figure_14 <- figure_14_data |>
     yLab = "Total cost absolute decrease (GBP)",
     title = "",
     currency = TRUE
-  )
+  )|>
+  hc_subtitle(text = "M = Millions",
+              align = "left")
+
+figure_14$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
+
+figure_14$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+  "function formatCurrency() {
+    var ynum = this.point.y/1000000;
+    var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
+    return '£' + ynum.toLocaleString('en-GB', options) + 'M';
+}
+"
+)
+
 
 # figure 15
 figure_15_data <- dev_nations_data |>
@@ -999,14 +1070,15 @@ figure_15_data <- dev_nations_data |>
          COSTS_PER_CAPITA)
 
 figure_15 <-
-  basic_chart_hc(
+  basic_chart_hc_new(
     figure_15_data,
     x = Country,
     y = COSTS_PER_CAPITA,
     type = "column",
     xLab = "Country",
     yLab = "Cost per capita (GBP)",
-    title = ""
+    title = "",
+    currency = TRUE
   )
 
 
@@ -1019,7 +1091,7 @@ figure_16_data <- dev_nations_data |>
          ITEMS_PER_CAPITA)
 
 figure_16 <-
-  basic_chart_hc(
+  basic_chart_hc_new(
     figure_16_data,
     x = Country,
     y = ITEMS_PER_CAPITA,
