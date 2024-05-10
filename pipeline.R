@@ -592,6 +592,15 @@ figure_1$x$hc_opts$yAxis$labels <- list(
 figure_2_data <- add_anl_1 |>
   select(YEAR_DESC, TOTAL_ITEMS)
 
+figure_2_table <- figure_2_data |>
+  mutate(
+    TOTAL_ITEMS = format(signif(TOTAL_ITEMS, 3), big.mark = ",")
+  ) |>
+  rename(
+    "Financial year" = 1,
+    "Items" = 2
+  )
+
 figure_2 <- basic_chart_hc_new(
   figure_2_data,
   x = YEAR_DESC,

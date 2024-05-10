@@ -162,15 +162,32 @@ Source: [Summary Tables - Prescription Cost Analysis - National](`r config$fy_na
 
 In England, the cost of prescription items in 2022/23 was £10.4 billion, which is 8% more than the previous year's cost of £9.69 billion. Compared to 2014/15, the cost has increased by 17% or £1.48 billion. This marks the fourth year in a row where the cost of items dispensed has increased, after seeing a decrease in the previous 3 years from 2015/16 to 2018/19.
 
-### `r paste0("Figure 2: Number of prescription items dispensed in England 2014/15 to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+### `r paste0("Number of prescription items dispensed in England 2014/15 to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))` {.tabset}
+
+#### Chart
 
 Note: The y-axis does not start at zero to emphasise relative changes rather than absolute values. Please consider the scale when interpreting the data.
+
+##### Figure 2:
 
 ```{r total_items, out.width = "100%"}
 
 figure_2
 get_download_button(title = "Download chart data", data = figure_2_data, filename = "figure_2")
 ```
+
+#### Table
+
+##### Table 2:
+
+```{r total_items_table, out.width = "100%"}
+knitr::kable(figure_2_table, align = "lr")
+
+get_download_button(title = "Download table data", data = figure_2_data, filename = "table_2")
+
+```
+
+## {- .toc-ignore}
 
 Source: [Summary Tables - Prescription Cost Analysis - National](`r config$fy_nat_link`)
 
