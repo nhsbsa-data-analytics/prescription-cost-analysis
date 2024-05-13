@@ -211,7 +211,7 @@ In England, there were 1.18 billion items dispensed in 2022/23, which is 3% more
 
 ##### Figure 3: In 2022/23 BNF chapter 06 - Endocrine System had the highest costs
 
-```{r bnf_chapters_items, out.width = "100%"}
+```{r bnf_chapters_costs, out.width = "100%"}
 
 figure_3
 get_download_button(title = "Download chart data", data = figure_3_data, filename = "figure_3")
@@ -221,7 +221,7 @@ get_download_button(title = "Download chart data", data = figure_3_data, filenam
 
 ##### Table 3: In 2022/23 BNF chapter 06 - Endocrine System had the highest costs
 
-```{r bnf_chapters_items_table, out.width = "100%"}
+```{r bnf_chapters_costs_table, out.width = "100%"}
 knitr::kable(figure_3_table, align = "llr")
 
 get_download_button(title = "Download table data", data = figure_3_data, filename = "table_3")
@@ -258,7 +258,7 @@ Despite having 63% fewer items, chapter 06 - Endocrine System had costs that wer
 
 #### Chart
 
-##### Figure 4: 
+##### Figure 4: BNF chapter 02 - Cardiovascular System has shown the greatest percentage increase in costs from 2014/15 to 2022/23
 
 ```{r bnf_chapters_costs_index, out.width = "100%"}
 figure_4
@@ -268,9 +268,10 @@ get_download_button(title = "Download chart data", data = figure_4_data, filenam
 
 #### Table
 
-##### Table 4: 
+##### Table 4: BNF chapter 02 - Cardiovascular System has shown the greatest percentage increase in costs from 2014/15 to 2022/23
+
 ```{r bnf_chapters_costs_index_table, out.width = "100%"}
-knitr::kable(figure_4_table, align = "llr")
+knitr::kable(figure_4_table, align = "lrr")
 
 get_download_button(title = "Download table data", data = figure_4_data, filename = "table_4")
 
@@ -280,13 +281,32 @@ get_download_button(title = "Download table data", data = figure_4_data, filenam
 
 Source: [Summary Tables - Prescription Cost Analysis - Chapter](`r config$fy_nat_link`)
 
-### `r paste0("Figure 5: Distribution of items dispensed in England amongst BNF chapters ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+***** PLACEHOLDER --- INDEX CHART NARRATIVE AND INFOBOXES *****
 
-```{r bnf_chapters_costs, out.width = "100%"}
+### `r paste0("Items dispensed in England amongst BNF chapters")` {.tabset}
+
+#### Chart
+
+##### Figure 5: In 2022/23 BNF chapter 02 - Cardiovascular System	 had the highest number of items
+
+```{r bnf_chapters_items, out.width = "100%"}
 
 figure_5
 get_download_button(title = "Download chart data", data = figure_5_data, filename = "figure_5")
 ```
+
+#### Table
+
+##### Table 5: In 2022/23 BNF chapter 02 - Cardiovascular System	 had the highest number of items
+
+```{r bnf_chapters_items_table, out.width = "100%"}
+knitr::kable(figure_5_table, align = "lrr")
+
+get_download_button(title = "Download table data", data = figure_5_data, filename = "table_5")
+
+```
+
+## {- .toc-ignore}
 
 Source: [Summary Tables - Prescription Cost Analysis - Chapter](`r config$fy_nat_link`)
 
@@ -303,6 +323,35 @@ Source: [Summary Tables - Prescription Cost Analysis - Chapter](`r config$fy_nat
 ::::
 
 In 2022/23, chapter 02 of the BNF, which groups together medicines primarily used to treat the cardiovascular system, had the highest number of prescription items dispensed in England, with a total of 340 million items. This accounted for 29% of all items dispensed. Chapter 04 - Central Nervous System followed with 230 million items, representing 19% of items. Chapter 06 - Endocrine System had 130 million items, accounting for 11% of items.
+
+### {- .tabset}
+
+#### Chart
+
+##### Figure 6: BNF chapter 06 - Endocrine System has shown the greatest percentage increase in items from 2014/15 to 2022/23
+
+```{r bnf_chapters_items_index, out.width = "100%"}
+figure_6
+get_download_button(title = "Download chart data", data = figure_6_data, filename = "figure_6")
+
+```
+
+#### Table
+
+##### Table 6: BNF chapter 06 - Endocrine System has shown the greatest percentage increase in items from 2014/15 to 2022/23
+
+```{r bnf_chapters_items_index_table, out.width = "100%"}
+knitr::kable(figure_6_table, align = "lrr")
+
+get_download_button(title = "Download table data", data = figure_6_data, filename = "table_6")
+
+```
+
+## {- .toc-ignore}
+
+Source: [Summary Tables - Prescription Cost Analysis - Chapter](`r config$fy_nat_link`)
+
+***** PLACEHOLDER --- INDEX CHART NARRATIVE AND INFOBOXES *****
 
 ### `r paste0("Figure 7: Percentage of items prescribed generically and percentage costs excluding appliances England ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 

@@ -693,7 +693,10 @@ figure_3$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 # figure 4
 figure_4_data <- pca_bnf_costs_index(con = con)
 
-figure_4_table <- figure_4_data |> 
+figure_4_table <- figure_4_data |>
+  mutate(
+    VALUE = format(signif(VALUE, 3), big.mark = ",")
+  ) |>
   select(-CHAPTER_DESCR) |>
   pivot_wider(names_from = BNF_CHAPTER,
               values_from = VALUE) |>
@@ -713,12 +716,23 @@ figure_4 <- group_chart_hc_new(
   hc_subtitle(text = "2014/2015 = 100",
               align = "left")
 
+figure_4$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
+
 # figure 5
 figure_5_data <- nat_data_fy |>
   group_by(BNF_CHAPTER, CHAPTER_DESCR) |>
   summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS)) |>
   ungroup()
 
+figure_5_table <- figure_5_data |>
+  mutate(
+    TOTAL_ITEMS = format(signif(TOTAL_ITEMS, 3), big.mark = ",")
+  ) |>
+  rename(
+    "BNF Chapter Code" = 1,
+    "BNF Chapter Name" = 2,
+    "Items" = 3
+  )
 
 figure_5 <-  basic_chart_hc_new(
   figure_5_data,
@@ -748,7 +762,33 @@ figure_5$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
 
 figure_5$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 
+# figure 6
+figure_6_data <- pca_bnf_items_index(con = con)
 
+figure_6_table <- figure_6_data |>
+  mutate(
+    VALUE = format(signif(VALUE, 3), big.mark = ",")
+  ) |>
+  select(-CHAPTER_DESCR) |>
+  pivot_wider(names_from = BNF_CHAPTER,
+              values_from = VALUE) |>
+  rename("Financial year" = 1)
+
+
+figure_6 <- group_chart_hc_new(
+  figure_6_data,
+  x = YEAR_DESC,
+  y = VALUE,
+  group = BNF_CHAPTER,
+  type = "line",
+  xLab = "Financial year",
+  yLab = "Index",
+  title = ""
+) |>
+  hc_subtitle(text = "2014/2015 = 100",
+              align = "left")
+
+figure_6$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 
 # figure 7
 figure_7_data <- add_anl_5 |>
