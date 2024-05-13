@@ -808,6 +808,16 @@ figure_7_data <- add_anl_5 |>
   ) |>
   select(YEAR_DESC, MEASURE, VALUE)
 
+figure_7_table <- figure_7_data |>
+  mutate(
+    VALUE = format(signif(VALUE, 3), big.mark = ",")
+  ) |>
+  pivot_wider(names_from = MEASURE,
+              values_from = VALUE) |>
+  rename("Financial year" = 1,
+         "Items (%)" = 2,
+         "Net ingredient cost (%)" = 3)
+
 
 figure_7 <- group_chart_hc_new(
   figure_7_data,
@@ -851,6 +861,18 @@ figure_8_data <- data.frame(
     figure_8_df$PRESC_DISP_PROP_ITEMS[1]
   )
 )
+
+figure_8_table <- figure_8_data |>
+  rename(
+    "From" = 1,
+    "To" = 2, 
+    "Items" = 3
+  ) |>
+  mutate(
+    Items = format(signif(Items, 3), big.mark = ","),
+    From = str_replace_all(From, "<br>", " "),
+    To = str_replace_all(To, "<br>", " ")
+  )
 
 figure_8 <- highchart() |>
   hc_chart(type = "sankey",

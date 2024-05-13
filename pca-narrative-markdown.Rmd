@@ -279,8 +279,6 @@ get_download_button(title = "Download table data", data = figure_4_data, filenam
 
 ## {- .toc-ignore}
 
-Source: [Summary Tables - Prescription Cost Analysis - Chapter](`r config$fy_nat_link`)
-
 ***** PLACEHOLDER --- INDEX CHART NARRATIVE AND INFOBOXES *****
 
 ### `r paste0("Items dispensed in England amongst BNF chapters")` {.tabset}
@@ -349,17 +347,32 @@ get_download_button(title = "Download table data", data = figure_6_data, filenam
 
 ## {- .toc-ignore}
 
-Source: [Summary Tables - Prescription Cost Analysis - Chapter](`r config$fy_nat_link`)
-
 ***** PLACEHOLDER --- INDEX CHART NARRATIVE AND INFOBOXES *****
 
-### `r paste0("Figure 7: Percentage of items prescribed generically and percentage costs excluding appliances England ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+### `r paste0("Percentage of items prescribed generically and percentage costs excluding appliances England ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))` {- .tabset}
+
+#### Chart
+
+##### Figure 7: Between 2014/15 and 2022/23 the percentage of items precribed generically has remained constant 
 
 ```{r generic_presc, out.width = "100%"}
 
 figure_7
 get_download_button(title = "Download chart data", data = figure_7_data, filename = "figure_7")
 ```
+
+#### Table
+
+##### Table 7: Between 2014/15 and 2022/23 the percentage of items precribed generically has remained constant 
+
+```{r generic_presc_table, out.width = "100%"}
+knitr::kable(figure_7_table, align = "lrr")
+
+get_download_button(title = "Download table data", data = figure_7_data, filename = "table_7")
+
+```
+
+## {- .toc-ignore}
 
 Source: [Additional Tables - Prescription Cost Analysis - table A5](`r config$add_anl_link`)
 
@@ -379,13 +392,30 @@ In 2022/23, 85% of prescription items were prescribed generically, which is slig
 
 Regarding the cost of reimbursement, in 2022/23, generic prescribing accounted for 62% of the total cost. This is a increase of 1 percentage point from the previous year. The proportion of costs attributed to generic prescribing has shown greater variation, with a range of 7 percentage points in the period 2014/15 to 2022/23. 
 
-### `r paste0("Figure 8: Sankey chart to show the flow of prescribing and dispensing volumes England ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+### `r paste0("Flow of prescribing and dispensing volumes England ")` {- .tabset}
+
+#### Chart
+
+##### Figure 8: In 2022/23 the majority of items were both prescribed and dispensed generically
 
 ```{r presc_sankey, out.width = "100%", out.height=400}
 
 figure_8
 get_download_button(title = "Download chart data", data = figure_8_data, filename = "figure_8")
 ```
+
+#### Table
+
+##### Table 8: In 2022/23 the majority of items were both prescribed and dispensed generically
+
+```{r presc_sankey_table, out.width = "100%"}
+knitr::kable(figure_8_table, align = "llr")
+
+get_download_button(title = "Download table data", data = figure_8_data, filename = "table_8")
+
+```
+
+## {- .toc-ignore}
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-12} 
@@ -402,7 +432,7 @@ get_download_button(title = "Download chart data", data = figure_8_data, filenam
 :::
 ::::
 
-### `r paste0("Figure 9: The 10 most dispensed chemical substances by cost in ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+### `r paste0("The 10 most dispensed chemical substances by costs and items in ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))` {- .tabset}
 
 ```{r top_10_costs, out.width = "100%"}
 
@@ -435,8 +465,6 @@ Source: [Additional Tables - Prescription Cost Analysis - A2](`r config$add_anl_
 The top ten chemical substances by cost included 3 drugs that are commonly used to help prevent blood clots. These are Apixaban, Rivaroxaban, and Edoxaban.
 
 The top ten chemical substances by cost included 2 drugs that are commonly used to treat respiratory illnesses. These are Beclometasone dipropionate and Budesonide.
-
-### `r paste0("Figure 10: The 10 most dispensed chemical substances by total items in ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
 ```{r top_10_items, out.width = "100%"}
 
