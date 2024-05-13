@@ -691,14 +691,37 @@ figure_3$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
 figure_3$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 
 # figure 4
-figure_4_data <- nat_data_fy |>
+figure_4_data <- pca_bnf_costs_index(con = con)
+
+figure_4_table <- figure_4_data |> 
+  select(-CHAPTER_DESCR) |>
+  pivot_wider(names_from = BNF_CHAPTER,
+              values_from = VALUE) |>
+  rename("Financial year" = 1)
+  
+
+figure_4 <- group_chart_hc_new(
+  figure_4_data,
+  x = YEAR_DESC,
+  y = VALUE,
+  group = BNF_CHAPTER,
+  type = "line",
+  xLab = "Financial year",
+  yLab = "Index",
+  title = ""
+) |>
+  hc_subtitle(text = "2014/2015 = 100",
+              align = "left")
+
+# figure 5
+figure_5_data <- nat_data_fy |>
   group_by(BNF_CHAPTER, CHAPTER_DESCR) |>
   summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS)) |>
   ungroup()
 
 
-figure_4 <-  basic_chart_hc_new(
-  figure_4_data,
+figure_5 <-  basic_chart_hc_new(
+  figure_5_data,
   x = BNF_CHAPTER,
   y = TOTAL_ITEMS,
   type = "column",
@@ -710,7 +733,7 @@ figure_4 <-  basic_chart_hc_new(
   hc_subtitle(text = "M = Millions",
               align = "left")
 
-figure_4$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+figure_5$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
   "function(){
                                                        var ynum = this.point.TOTAL_ITEMS ;
                                                        if(ynum >= 1000000) {
@@ -723,12 +746,12 @@ figure_4$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
 }"
 )
 
-figure_4$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
+figure_5$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 
 
 
-# figure 5
-figure_5_data <- add_anl_5 |>
+# figure 7
+figure_7_data <- add_anl_5 |>
   mutate(
     GEN_ITEMS = PRESC_GEN_ITEMS,
     TOTAL_ITEMS = TOTAL_ITEMS - APPLIANCE_ITEMS,
@@ -746,8 +769,8 @@ figure_5_data <- add_anl_5 |>
   select(YEAR_DESC, MEASURE, VALUE)
 
 
-figure_5 <- group_chart_hc_new(
-  figure_5_data,
+figure_7 <- group_chart_hc_new(
+  figure_7_data,
   x = YEAR_DESC,
   y = VALUE,
   group = MEASURE,
@@ -757,12 +780,12 @@ figure_5 <- group_chart_hc_new(
   title = ""
 )
 
-# figure 6
-figure_6_df <- add_anl_5 |>
+# figure 8
+figure_8_df <- add_anl_5 |>
   filter(YEAR_DESC == max(YEAR_DESC))
 
 
-figure_6_data <- data.frame(
+figure_8_data <- data.frame(
   from = c(
     "Total<br>items",
     "Total<br>items",
@@ -780,20 +803,20 @@ figure_6_data <- data.frame(
     "Dispensed<br>propietary"
   ),
   weight = c(
-    figure_6_df$APPLIANCE_ITEMS[1],
-    figure_6_df$PRESC_GEN_ITEMS[1],
-    figure_6_df$PRESC_DISP_PROP_ITEMS[1],
-    figure_6_df$PRESC_DISP_GEN_ITEMS[1],
-    figure_6_df$PRESC_GEN_DISP_PROP_ITEMS[1],
-    figure_6_df$PRESC_DISP_PROP_ITEMS[1]
+    figure_8_df$APPLIANCE_ITEMS[1],
+    figure_8_df$PRESC_GEN_ITEMS[1],
+    figure_8_df$PRESC_DISP_PROP_ITEMS[1],
+    figure_8_df$PRESC_DISP_GEN_ITEMS[1],
+    figure_8_df$PRESC_GEN_DISP_PROP_ITEMS[1],
+    figure_8_df$PRESC_DISP_PROP_ITEMS[1]
   )
 )
 
-figure_6 <- highchart() |>
+figure_8 <- highchart() |>
   hc_chart(type = "sankey",
            style = list(fontFamily = "Arial")) |>
   hc_add_series(data = figure_6_data,
-                nodes = unique(c(figure_6_data$from, figure_6_data$to))) |>
+                nodes = unique(c(figure_8_data$from, figure_8_data$to))) |>
   hc_plotOptions(
     sankey = list(
       dataLabels = list(
@@ -832,8 +855,8 @@ figure_6 <- highchart() |>
   )) |>
   hc_tooltip(enabled = F)
 
-# figure 7
-figure_7_data <- add_anl_2 |>
+# figure 9
+figure_9_data <- add_anl_2 |>
   group_by(CHEMICAL_SUBSTANCE_BNF_DESCR, BNF_CHEMICAL_SUBSTANCE) |>
   rename(TOTAL_NIC = 5) |>
   summarise(TOTAL_NIC = sum(TOTAL_NIC)) |>
@@ -842,8 +865,8 @@ figure_7_data <- add_anl_2 |>
   filter(RANK <= 10) |>
   arrange(RANK)
 
-figure_7 <- basic_chart_hc_new(
-  figure_7_data,
+figure_9 <- basic_chart_hc_new(
+  figure_9_data,
   x = CHEMICAL_SUBSTANCE_BNF_DESCR,
   y = TOTAL_NIC,
   type = "bar",
@@ -855,9 +878,9 @@ figure_7 <- basic_chart_hc_new(
   hc_subtitle(text = "M = Millions",
               align = "left")
 
-figure_7$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
+figure_9$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 
-figure_7$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+figure_9$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
   "function formatCurrency() {
     var ynum = this.point.y/1000000;
     var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
@@ -867,8 +890,8 @@ figure_7$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
 )
 
 
-# figure 8
-figure_8_data <- add_anl_3 |>
+# figure 10
+figure_10_data <- add_anl_3 |>
   group_by(CHEMICAL_SUBSTANCE_BNF_DESCR, BNF_CHEMICAL_SUBSTANCE) |>
   rename(TOTAL_ITEMS = 5) |>
   summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS)) |>
@@ -877,8 +900,8 @@ figure_8_data <- add_anl_3 |>
   filter(RANK <= 10) |>
   arrange(RANK)
 
-figure_8 <- basic_chart_hc_new(
-  figure_8_data,
+figure_10 <- basic_chart_hc_new(
+  figure_10_data,
   x = CHEMICAL_SUBSTANCE_BNF_DESCR,
   y = TOTAL_ITEMS,
   type = "bar",
@@ -890,9 +913,9 @@ figure_8 <- basic_chart_hc_new(
   hc_subtitle(text = "M = Millions",
               align = "left")
 
-figure_8$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
+figure_10$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 
-figure_8$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+figure_10$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
   "function formatCurrency() {
     var ynum = this.point.y/1000000;
     var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
@@ -901,8 +924,8 @@ figure_8$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
 "
 )
 
-# figure 9
-figure_9_data <-  stp_data_fy_agg$National |>
+# figure 11
+figure_11_data <-  stp_data_fy_agg$National |>
   dplyr::select(`ICB Code`,
                 `Total Cost (GBP)`) |>
   dplyr::rename(ICB_CODE = 1,
@@ -914,7 +937,7 @@ figure_9_data <-  stp_data_fy_agg$National |>
                    by = c("ICB_CODE" = "ICB_CODE")) |>
   dplyr::mutate("TOTAL_NIC_PER_POP" = TOTAL_NIC / POP)
 
-figure_9 <- nhsbsaVis::icb_map(
+figure_11 <- nhsbsaVis::icb_map(
   data = stp_data_fy_agg$National,
   icb_code_column = "ICB Code",
   value_column = "Total Cost (GBP)",
@@ -925,8 +948,8 @@ figure_9 <- nhsbsaVis::icb_map(
   scale_rounding = 100
 )
 
-# figure 10
-figure_10_data <-  stp_data_fy_agg$National |>
+# figure 12
+figure_12_data <-  stp_data_fy_agg$National |>
   dplyr::select(`ICB Code`,
                 `Total Items`) |>
   dplyr::rename(ICB_CODE = 1,
@@ -938,7 +961,7 @@ figure_10_data <-  stp_data_fy_agg$National |>
                    by = c("ICB_CODE" = "ICB_CODE")) |>
   dplyr::mutate("TOTAL_ITEMS_PER_POP" = TOTAL_ITEMS / POP)
 
-figure_10 <- icb_map_new(
+figure_12 <- icb_map_new(
   data = stp_data_fy_agg$National,
   icb_code_column = "ICB Code",
   value_column = "Total Items",
@@ -949,8 +972,8 @@ figure_10 <- icb_map_new(
   scale_rounding = 10
 )
 
-# figure 11
-figure_11_data <- add_anl_11 |>
+# figure 13
+figure_13_data <- add_anl_11 |>
   rename(UNIT_COST_CHANGE = 24,
          DISP_PRESEN_BNF_DESCR = 2) |>
   slice_max(UNIT_COST_CHANGE, n = 10) |>
@@ -959,8 +982,8 @@ figure_11_data <- add_anl_11 |>
          VMPP_UOM,
          UNIT_COST_CHANGE)
 
-figure_11 <- basic_chart_hc_new(
-  figure_11_data,
+figure_13 <- basic_chart_hc_new(
+  figure_13_data,
   x = DISP_PRESEN_BNF_DESCR,
   y = UNIT_COST_CHANGE,
   type = "bar",
@@ -969,8 +992,8 @@ figure_11 <- basic_chart_hc_new(
   title = ""
 )
 
-# figure 12
-figure_12_data <- add_anl_12 |>
+# figure 14
+figure_14_data <- add_anl_12 |>
   rename(UNIT_COST_CHANGE = 24,
          DISP_PRESEN_BNF_DESCR = 2) |>
   slice_min(UNIT_COST_CHANGE, n = 10) |>
@@ -979,7 +1002,7 @@ figure_12_data <- add_anl_12 |>
          VMPP_UOM,
          UNIT_COST_CHANGE)
 
-figure_12 <- figure_12_data |>
+figure_14 <- figure_14_data |>
   mutate(UNIT_COST_CHANGE = UNIT_COST_CHANGE * -1) |>
   basic_chart_hc_new(
     x = DISP_PRESEN_BNF_DESCR,
@@ -990,8 +1013,8 @@ figure_12 <- figure_12_data |>
     title = ""
   )
 
-# figure 13
-figure_13_data <- add_anl_13 |>
+# figure 15
+figure_15_data <- add_anl_13 |>
   rename(NIC_CHANGE = 18,
          DISP_PRESEN_BNF_DESCR = 2) |>
   slice_max(NIC_CHANGE, n = 10) |>
@@ -1000,8 +1023,8 @@ figure_13_data <- add_anl_13 |>
          VMPP_UOM,
          NIC_CHANGE)
 
-figure_13 <- basic_chart_hc_new(
-  figure_13_data,
+figure_15 <- basic_chart_hc_new(
+  figure_15_data,
   x = DISP_PRESEN_BNF_DESCR,
   y = NIC_CHANGE,
   type = "bar",
@@ -1013,9 +1036,9 @@ figure_13 <- basic_chart_hc_new(
   hc_subtitle(text = "M = Millions",
               align = "left")
 
-figure_13$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
+figure_15$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 
-figure_13$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+figure_15$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
   "function formatCurrency() {
     var ynum = this.point.y/1000000;
     var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
@@ -1026,7 +1049,7 @@ figure_13$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
 
 
 # figure 14
-figure_14_data <- add_anl_14 |>
+figure_16_data <- add_anl_14 |>
   rename(NIC_CHANGE = 18,
          DISP_PRESEN_BNF_DESCR = 2) |>
   slice_min(NIC_CHANGE, n = 10) |>
@@ -1035,7 +1058,7 @@ figure_14_data <- add_anl_14 |>
          VMPP_UOM,
          NIC_CHANGE)
 
-figure_14 <- figure_14_data |>
+figure_16 <- figure_16_data |>
   mutate(NIC_CHANGE = NIC_CHANGE * -1) |>
   basic_chart_hc_new(
     x = DISP_PRESEN_BNF_DESCR,
@@ -1049,9 +1072,9 @@ figure_14 <- figure_14_data |>
   hc_subtitle(text = "M = Millions",
               align = "left")
 
-figure_14$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
+figure_16$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 
-figure_14$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
+figure_16$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
   "function formatCurrency() {
     var ynum = this.point.y/1000000;
     var options = { maximumSignificantDigits: 3, minimumSignificantDigits: 3 };
@@ -1061,17 +1084,17 @@ figure_14$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
 )
 
 
-# figure 15
-figure_15_data <- dev_nations_data |>
+# figure 17
+figure_17_data <- dev_nations_data |>
   arrange(desc(COSTS_PER_CAPITA)) |>
   select(Country,
          POP,
          TOTAL_COSTS,
          COSTS_PER_CAPITA)
 
-figure_15 <-
+figure_17 <-
   basic_chart_hc_new(
-    figure_15_data,
+    figure_17_data,
     x = Country,
     y = COSTS_PER_CAPITA,
     type = "column",
@@ -1083,16 +1106,16 @@ figure_15 <-
 
 
 # figure 16
-figure_16_data <- dev_nations_data |>
+figure_18_data <- dev_nations_data |>
   arrange(desc(ITEMS_PER_CAPITA)) |>
   select(Country,
          POP,
          TOTAL_ITEMS,
          ITEMS_PER_CAPITA)
 
-figure_16 <-
+figure_18 <-
   basic_chart_hc_new(
-    figure_16_data,
+    figure_18_data,
     x = Country,
     y = ITEMS_PER_CAPITA,
     type = "column",
@@ -1129,9 +1152,13 @@ rmarkdown::render("pca-narrative-markdown.Rmd",
                   output_format = "html_document",
                   output_file = "outputs/pca_summary_narrative_2022_23_v001.html")
 
-rmarkdown::render("pca-narrative-markdown.Rmd",
-                  output_format = "word_document",
-                  output_file = "outputs/pca_summary_narrative_2022_23_v001.docx")
+
+
+# NOTE: need to look into this a out.width is causing issue --------
+
+# rmarkdown::render("pca-narrative-markdown.Rmd",
+#                   output_format = "word_document",
+#                   output_file = "outputs/pca_summary_narrative_2022_23_v001.docx")
 
 log_print("Narrative markdown generated", hide_notes = TRUE)
 
@@ -1147,7 +1174,7 @@ log_print("Background markdown generated", hide_notes = TRUE)
 
 
 # 13. disconnect from DWH  ---------
-DBI::dbDisconnect(con)
+#DBI::dbDisconnect(con)
 log_print("Disconnected from DWH", hide_notes = TRUE)
 
 #close log
