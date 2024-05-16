@@ -20,6 +20,7 @@ pca_aggregations <- function(data, area = c("national", "ICB")) {
                   `BNF Chapter Name` = CHAPTER_DESCR,
                   `Preparation Class` = DISP_PREP_CLASS,
                   `Prescribed Preparation Class` = PRESC_PREP_CLASS,
+                  `Advanced Service Type` = MYS_SERVICE_TYPE, 
                   `Total Items` = TOTAL_ITEMS,
                   `Total Quantity` = TOTAL_QTY,
                   `Total Cost (GBP)` = TOTAL_NIC)
@@ -115,7 +116,8 @@ pca_aggregations <- function(data, area = c("national", "ICB")) {
         `BNF Chapter Code`,
         `BNF Chapter Name`,
         `Preparation Class`,
-        `Prescribed Preparation Class`
+        `Prescribed Preparation Class`,
+        `Advanced Service Type`
       ) %>%
       dplyr::summarise(
         `Total Items` = sum(`Total Items`),
@@ -149,7 +151,8 @@ pca_aggregations <- function(data, area = c("national", "ICB")) {
         `BNF Chapter Code`,
         `BNF Chapter Name`,
         `Preparation Class`,
-        `Prescribed Preparation Class`
+        `Prescribed Preparation Class`,
+        `Advanced Service Type`
       ) %>%
       dplyr::summarise(
         `Total Items` = sum(`Total Items`),
@@ -293,7 +296,8 @@ pca_aggregations <- function(data, area = c("national", "ICB")) {
         `BNF Chapter Code`,
         `BNF Chapter Name`,
         `Preparation Class`,
-        `Prescribed Preparation Class`
+        `Prescribed Preparation Class`,
+        `Advanced Service Type`
       ) %>%
       dplyr::summarise(
         `Total Items` = sum(`Total Items`),
@@ -333,6 +337,7 @@ pca_aggregations <- function(data, area = c("national", "ICB")) {
         `BNF Chapter Name`,
         `Preparation Class`,
         `Prescribed Preparation Class`,
+        `Advanced Service Type`,
         `Total Items`,
         `Total Quantity`,
         `Total Cost (GBP)`

@@ -196,7 +196,11 @@ if (max_dw_fy <= max_data_fy) {
   #read recent data
   nat_data_fy <- vroom::vroom(nat_data_fy,
                               #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
+    dplyr::mutate(MYS_SERVICE_TYPE = case_when(
+      MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
+      MYS_SERVICE_TYPE == "N" ~ "None" 
+    ))
   
   #national data by cy
   nat_data_cy <- rownames(file.info(
@@ -216,7 +220,11 @@ if (max_dw_fy <= max_data_fy) {
   #read recent data
   nat_data_cy <- vroom::vroom(nat_data_cy,
                               #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))|>
+    dplyr::mutate(MYS_SERVICE_TYPE = case_when(
+      MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
+      MYS_SERVICE_TYPE == "N" ~ "None" 
+    ))
   
   #stp data by fy
   stp_data_fy <- rownames(file.info(
@@ -236,7 +244,11 @@ if (max_dw_fy <= max_data_fy) {
   #read recent data
   stp_data_fy <- vroom::vroom(stp_data_fy,
                               #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))|>
+    dplyr::mutate(MYS_SERVICE_TYPE = case_when(
+      MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
+      MYS_SERVICE_TYPE == "N" ~ "None" 
+    ))
   
   #stp data by cy
   stp_data_cy <- rownames(file.info(
@@ -256,7 +268,11 @@ if (max_dw_fy <= max_data_fy) {
   #read recent data
   stp_data_cy <- vroom::vroom(stp_data_cy,
                               #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))|>
+    dplyr::mutate(MYS_SERVICE_TYPE = case_when(
+      MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
+      MYS_SERVICE_TYPE == "N" ~ "None" 
+    ))
   
   log_print("Data pulled from most recent saved data", hide_notes = TRUE)
 } else {
@@ -310,7 +326,11 @@ if (max_dw_fy <= max_data_fy) {
   #read recent data
   nat_data_fy <- vroom::vroom(nat_data_fy,
                               #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))|>
+    dplyr::mutate(MYS_SERVICE_TYPE = case_when(
+      MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
+      MYS_SERVICE_TYPE == "N" ~ "None" 
+    ))
   
   #national data by cy
   nat_data_cy <- rownames(file.info(
@@ -330,7 +350,11 @@ if (max_dw_fy <= max_data_fy) {
   #read recent data
   nat_data_cy <- vroom::vroom(nat_data_cy,
                               #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))|>
+    dplyr::mutate(MYS_SERVICE_TYPE = case_when(
+      MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
+      MYS_SERVICE_TYPE == "N" ~ "None" 
+    ))
   
   #stp data by fy
   stp_data_fy <- rownames(file.info(
@@ -350,7 +374,11 @@ if (max_dw_fy <= max_data_fy) {
   #read recent data
   stp_data_fy <- vroom::vroom(stp_data_fy,
                               #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))|>
+    dplyr::mutate(MYS_SERVICE_TYPE = case_when(
+      MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
+      MYS_SERVICE_TYPE == "N" ~ "None" 
+    ))
   
   #stp data by cy
   stp_data_cy <- rownames(file.info(
@@ -370,7 +398,11 @@ if (max_dw_fy <= max_data_fy) {
   #read recent data
   stp_data_cy <- vroom::vroom(stp_data_cy,
                               #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))|>
+    dplyr::mutate(MYS_SERVICE_TYPE = case_when(
+      MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
+      MYS_SERVICE_TYPE == "N" ~ "None" 
+    ))
   
   log_print("New data pulled from warehouse and saved to Y drive", hide_notes = TRUE)
 }

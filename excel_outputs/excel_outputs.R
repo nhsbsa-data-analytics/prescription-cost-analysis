@@ -11,6 +11,7 @@ sheetNames_main <-
 
 #create metadata tab (will need to open file and auto row heights once ran)
 meta_fields <- c(
+  "Advanced Service Type",
   "BNF Chapter Code",
   "BNF Chapter Name",
   "BNF Chemical Substance Code",
@@ -39,6 +40,7 @@ meta_fields <- c(
 
 meta_descs <-
   c(
+    "The type of advanced serivice an item has been issued through.",
     "The unique code used to refer to the British National Formulary (BNF) chapter.",
     "The name given to a British National Formulary (BNF) chapter. This is the broadest grouping of the BNF therapeutical classification system.",
     "The unique code used to refer to the British National Formulary (BNF) chemical substance.",
@@ -308,7 +310,8 @@ accessibleTables::format_data(
     "M",
     "N",
     "O",
-    "P"
+    "P", 
+    "Q"
   ),
   "left",
   ""
@@ -317,14 +320,14 @@ accessibleTables::format_data(
 #right align column B and format number
 accessibleTables::format_data(fy_nat_wb,
                               "Presentations",
-                              c("Q", "R"),
+                              c("R", "S"),
                               "right",
                               "#,##0")
 
 #right align column C and D and format numbers
 accessibleTables::format_data(fy_nat_wb,
                               "Presentations",
-                              c("S", "T", "U", "V"),
+                              c("T", "U", "V", "W"),
                               "right",
                               "#,##0.00")
 
@@ -367,7 +370,8 @@ accessibleTables::format_data(
     "O",
     "P",
     "Q",
-    "R"
+    "R",
+    "S"
   ),
   "left",
   ""
@@ -376,16 +380,35 @@ accessibleTables::format_data(
 #right align column B and format number
 accessibleTables::format_data(fy_nat_wb,
                               "SNOMED_Codes",
-                              c("S", "T"),
+                              c("T", "U"),
                               "right",
                               "#,##0")
 
 #right align column C and D and format numbers
 accessibleTables::format_data(fy_nat_wb,
                               "SNOMED_Codes",
-                              c("U", "V", "W", "X"),
+                              c("V", "W", "X", "Y"),
                               "right",
                               "#,##0.00")
+
+accessibleTables::makeCoverSheet(
+  paste0("Prescription Cost Analysis - England ", max_data_fy),
+  paste0("Statistical Summary Tables - Financial Year ",max_data_fy ," - National level"),
+  paste0("Publication date: ", config$publication_date),
+  wb,
+  sheetNames_main,
+  c(
+    "Metadata",
+    "Table 1: National level data",
+    "Table 2: BNF chapter level data",
+    "Table 3: BNF section level data",
+    "Table 4: BNF paragraph level data",
+    "Table 5: BNF chemical substance level data",
+    "Table 6: BNF presentation level data",
+    "Table 7: SNOMED level data"
+  ),
+  c("Metadata", sheetNames_main)
+)
 
 
 #save file into outputs folder
@@ -640,7 +663,8 @@ accessibleTables::format_data(
     "M",
     "N",
     "O",
-    "P"
+    "P",
+    "Q"
   ),
   "left",
   ""
@@ -649,14 +673,14 @@ accessibleTables::format_data(
 #right align column B and format number
 accessibleTables::format_data(cy_nat_wb,
                               "Presentations",
-                              c("Q", "R"),
+                              c("R", "S"),
                               "right",
                               "#,##0")
 
 #right align column C and D and format numbers
 accessibleTables::format_data(cy_nat_wb,
                               "Presentations",
-                              c("S", "T", "U", "V"),
+                              c("T", "U", "V", "W"),
                               "right",
                               "#,##0.00")
 
@@ -699,7 +723,8 @@ accessibleTables::format_data(
     "O",
     "P",
     "Q",
-    "R"
+    "R",
+    "S"
   ),
   "left",
   ""
@@ -708,14 +733,14 @@ accessibleTables::format_data(
 #right align column B and format number
 accessibleTables::format_data(cy_nat_wb,
                               "SNOMED_Codes",
-                              c("S", "T"),
+                              c("T", "U"),
                               "right",
                               "#,##0")
 
 #right align column C and D and format numbers
 accessibleTables::format_data(cy_nat_wb,
                               "SNOMED_Codes",
-                              c("U", "V", "W", "X"),
+                              c("V", "W", "X", "Y"),
                               "right",
                               "#,##0.00")
 
