@@ -199,7 +199,8 @@ if (max_dw_fy <= max_data_fy) {
                               col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
     dplyr::mutate(MYS_SERVICE_TYPE = case_when(
       MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-      MYS_SERVICE_TYPE == "N" ~ "None" 
+      MYS_SERVICE_TYPE == "N" ~ "None",
+      TRUE ~ "None" 
     ))
   
   #national data by cy
@@ -223,7 +224,8 @@ if (max_dw_fy <= max_data_fy) {
                               col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))|>
     dplyr::mutate(MYS_SERVICE_TYPE = case_when(
       MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-      MYS_SERVICE_TYPE == "N" ~ "None" 
+      MYS_SERVICE_TYPE == "N" ~ "None",
+      TRUE ~ "None" 
     ))
   
   #stp data by fy
@@ -247,7 +249,8 @@ if (max_dw_fy <= max_data_fy) {
                               col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))|>
     dplyr::mutate(MYS_SERVICE_TYPE = case_when(
       MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-      MYS_SERVICE_TYPE == "N" ~ "None" 
+      MYS_SERVICE_TYPE == "N" ~ "None",
+      TRUE ~ "None" 
     ))
   
   #stp data by cy
@@ -271,7 +274,8 @@ if (max_dw_fy <= max_data_fy) {
                               col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))|>
     dplyr::mutate(MYS_SERVICE_TYPE = case_when(
       MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-      MYS_SERVICE_TYPE == "N" ~ "None" 
+      MYS_SERVICE_TYPE == "N" ~ "None",
+      TRUE ~ "None" 
     ))
   
   log_print("Data pulled from most recent saved data", hide_notes = TRUE)
@@ -329,7 +333,8 @@ if (max_dw_fy <= max_data_fy) {
                               col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))|>
     dplyr::mutate(MYS_SERVICE_TYPE = case_when(
       MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-      MYS_SERVICE_TYPE == "N" ~ "None" 
+      MYS_SERVICE_TYPE == "N" ~ "None",
+      TRUE ~ "None"
     ))
   
   #national data by cy
@@ -353,7 +358,8 @@ if (max_dw_fy <= max_data_fy) {
                               col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))|>
     dplyr::mutate(MYS_SERVICE_TYPE = case_when(
       MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-      MYS_SERVICE_TYPE == "N" ~ "None" 
+      MYS_SERVICE_TYPE == "N" ~ "None",
+      TRUE ~ "None"
     ))
   
   #stp data by fy
@@ -377,7 +383,8 @@ if (max_dw_fy <= max_data_fy) {
                               col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))|>
     dplyr::mutate(MYS_SERVICE_TYPE = case_when(
       MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-      MYS_SERVICE_TYPE == "N" ~ "None" 
+      MYS_SERVICE_TYPE == "N" ~ "None",
+      TRUE ~ "None" 
     ))
   
   #stp data by cy
@@ -401,7 +408,8 @@ if (max_dw_fy <= max_data_fy) {
                               col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))|>
     dplyr::mutate(MYS_SERVICE_TYPE = case_when(
       MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-      MYS_SERVICE_TYPE == "N" ~ "None" 
+      MYS_SERVICE_TYPE == "N" ~ "None",
+      TRUE ~ "None" 
     ))
   
   log_print("New data pulled from warehouse and saved to Y drive", hide_notes = TRUE)

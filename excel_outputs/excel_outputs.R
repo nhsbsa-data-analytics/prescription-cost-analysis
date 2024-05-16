@@ -1145,89 +1145,8 @@ openxlsx::saveWorkbook(
   overwrite = TRUE
 )
 
-#### SNOMED tab
-# write data to sheet
-accessibleTables::write_sheet(
-  cy_stp_wb,
-  "SNOMED_Codes",
-  paste0(
-    "Prescription Cost Analysis - England ",
-    max_data_cy,
-    " totals by SNOMED code"
-  ),
-  c(
-    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
-    "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
-  ),
-  stp_data_cy_agg$SNOMED_Code,
-  13
-)
 
-#left align column A
-accessibleTables::format_data(
-  cy_stp_wb,
-  "SNOMED_Codes",
-  c(
-    "A",
-    "B",
-    "C",
-    "D",
-    "E",
-    "F",
-    "G",
-    "H",
-    "I",
-    "J",
-    "K",
-    "L",
-    "M",
-    "N",
-    "O",
-    "P",
-    "Q",
-    "R",
-    "S",
-    "T",
-    "U",
-    "V", 
-    "W"
-  ),
-  "left",
-  ""
-)
-
-#right align column B and format number
-accessibleTables::format_data(cy_stp_wb,
-                              "SNOMED_Codes",
-                              c("X", "Y"),
-                              "right",
-                              "#,##0")
-
-#right align column C and D and format numbers
-accessibleTables::format_data(cy_stp_wb,
-                              "SNOMED_Codes",
-                              c("Z", "AA", "AB", "AC"),
-                              "right",
-                              "#,##0.00")
-
-accessibleTables::makeCoverSheet(
-  paste0("Prescription Cost Analysis - England ", max_data_fy),
-  paste0("Statistical Summary Tables - Financial Year ",max_data_cy ," - ICB level"),
-  paste0("Publication date: ", config$publication_date),
-  cy_stp_wb,
-  sheetNames_main,
-  c(
-    "Metadata",
-    "Table 1: National level data",
-    "Table 2: BNF chapter level data",
-    "Table 3: BNF section level data",
-    "Table 4: BNF paragraph level data",
-    "Table 5: BNF chemical substance level data",
-    "Table 6: BNF presentation level data",
-    "Table 7: SNOMED level data"
-  ),
-  c("Metadata", sheetNames_main)
-)# 4. create stp excel for cy ------
+# 4. create stp excel for cy ------
 
 #create workbook and meta data
 cy_stp_wb <- create_wb(sheetNames_main)
@@ -1479,6 +1398,73 @@ accessibleTables::format_data(
   ""
 )
 
+#### SNOMED tab
+# write data to sheet
+accessibleTables::write_sheet(
+  cy_stp_wb,
+  "SNOMED_Codes",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_cy,
+    " totals by SNOMED code"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
+    "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
+  ),
+  stp_data_cy_agg$SNOMED_Code,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(
+  cy_stp_wb,
+  "SNOMED_Codes",
+  c(
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T",
+    "U",
+    "V", 
+    "W"
+  ),
+  "left",
+  ""
+)
+
+#right align column B and format number
+accessibleTables::format_data(cy_stp_wb,
+                              "SNOMED_Codes",
+                              c("X", "Y"),
+                              "right",
+                              "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(cy_stp_wb,
+                              "SNOMED_Codes",
+                              c("Z", "AA", "AB", "AC"),
+                              "right",
+                              "#,##0.00")
+
+
+
 #right align column B and format number
 accessibleTables::format_data(cy_stp_wb,
                               "Presentations",
@@ -1492,6 +1478,25 @@ accessibleTables::format_data(cy_stp_wb,
                               c("X", "Y", "Z","AA"),
                               "right",
                               "#,##0.00")
+
+accessibleTables::makeCoverSheet(
+  paste0("Prescription Cost Analysis - England ", max_data_fy),
+  paste0("Statistical Summary Tables - Financial Year ",max_data_cy ," - ICB level"),
+  paste0("Publication date: ", config$publication_date),
+  cy_stp_wb,
+  sheetNames_main,
+  c(
+    "Metadata",
+    "Table 1: National level data",
+    "Table 2: BNF chapter level data",
+    "Table 3: BNF section level data",
+    "Table 4: BNF paragraph level data",
+    "Table 5: BNF chemical substance level data",
+    "Table 6: BNF presentation level data",
+    "Table 7: SNOMED level data"
+  ),
+  c("Metadata", sheetNames_main)
+)
 
 #save file into outputs folder
 openxlsx::saveWorkbook(
@@ -2096,10 +2101,10 @@ names(add_anl_7) <- c(
   "Total Cost 2014/2015 (GBP)",
   paste0("Total Cost ",
          max_data_fy_minus_1,
-         "(GBP)"),
+         " (GBP)"),
   paste0("Total Cost ",
          max_data_fy,
-         "(GBP)"),
+         " (GBP)"),
   "Cost Per Item 2014/2015 (GBP)",
   paste0("Cost Per Item ",
          max_data_fy_minus_1,
@@ -2232,10 +2237,10 @@ names(add_anl_8) <- c(
  "Total Cost 2014/2015 (GBP)",
  paste0("Total Cost ",
         max_data_fy_minus_1,
-        "(GBP)"),
+        " (GBP)"),
  paste0("Total Cost ",
         max_data_fy,
-        "(GBP)"),
+        " (GBP)"),
  "Cost Per Item 2014/2015 (GBP)",
  paste0("Cost Per Item ",
         max_data_fy_minus_1,
@@ -2365,10 +2370,10 @@ names(add_anl_9) <- c(
   "Total Cost 2014/2015 (GBP)",
   paste0("Total Cost ",
          max_data_fy_minus_1,
-         "(GBP)"),
+         " (GBP)"),
   paste0("Total Cost ",
          max_data_fy,
-         "(GBP)"),
+         " (GBP)"),
   "Cost Per Item 2014/2015 (GBP)",
   paste0("Cost Per Item ",
          max_data_fy_minus_1,
@@ -2497,10 +2502,10 @@ names(add_anl_10) <- c(
   "Total Cost 2014/2015 (GBP)",
   paste0("Total Cost ",
          max_data_fy_minus_1,
-         "(GBP)"),
+         " (GBP)"),
   paste0("Total Cost ",
          max_data_fy,
-         "(GBP)"),
+         " (GBP)"),
   "Cost Per Item 2014/2015 (GBP)",
   paste0("Cost Per Item ",
          max_data_fy_minus_1,
@@ -3157,6 +3162,34 @@ format_data(
   "#,##0.00"
 )
 
+accessibleTables::makeCoverSheet(
+  paste0("Prescription Cost Analysis - England ", max_data_fy),
+  "Additional analysis data tables",
+  paste0("Publication date: ", config$publication_date),
+  add_anl_wb,
+  sheetNames_add_anl,
+  c(
+    "Metadata",
+    paste0("Table A1: Total items, cost, number of items and cost per capita, 2014/2015 to ", max_data_fy),
+    paste0("Table A2: Top 20 drugs by cost, ", max_data_fy),
+    paste0("Table A3: Top 20 drugs by items dispensed, ", max_data_fy),
+    paste0("Table A4: Total items and cost by charge status, 2014/15 to ", max_data_fy),
+    paste0("Table A5: Generic Prescribing and dispensing by preparation class, 2014/2015 to ", max_data_fy),
+    paste0("Table A6: Generic prescribing and dispensing by BNF Chapters, 2014/15 to ", max_data_fy),
+    paste0("Table A7: Number, cost and cost per item by BNF Chapters, 2014/2015, ", max_data_fy_minus_1, " and", max_data_fy),
+    paste0("Table A8: Top 20 BNF Sections by cost, 2014/2015, ", max_data_fy_minus_1, " and", max_data_fy),
+    paste0("Table A9: Top 20 BNF Sections by increase in cost, 2014/2015, ", max_data_fy_minus_1, " and", max_data_fy),
+    paste0("Table A10: Top 20 BNF Sections by decrease in cost, 2014/2015, ", max_data_fy_minus_1, " and", max_data_fy),
+    paste0("Table A11: Top 20 BNF Presentations by increase in Unit Cost, 2014/2015, ", max_data_fy_minus_1, " and", max_data_fy),
+    paste0("Table A12: Top 20 BNF Presentations by decrease in Unit Cost, 2014/2015, ", max_data_fy_minus_1, " and", max_data_fy),
+    paste0("Table A13: Top 20 BNF Presentations by increase in Costs, 2014/2015, ", max_data_fy_minus_1, " and", max_data_fy),
+    paste0("Table A14: Top 20 BNF Presentations by decrease in Costs, 2014/2015, ", max_data_fy_minus_1, " and", max_data_fy)
+    
+  ),
+  c("Metadata", sheetNames_add_anl)
+)
+
+
 #save file into outputs folder
 openxlsx::saveWorkbook(
   add_anl_wb,
@@ -3245,6 +3278,19 @@ accessibleTables::format_data(ex_cat_wb,
                               c("D", "E"),
                               "right",
                               "#,##0.00")
+
+accessibleTables::makeCoverSheet(
+  paste0("Prescription Cost Analysis - England ", max_data_fy),
+  "Management Information Tables - Exemption Categories",
+  paste0("Publication date: ", config$publication_date),
+  ex_cat_wb,
+  sheetNames_ex_cat,
+  c(
+    "Metadata",
+    paste0("Table 1: Total items and cost by exemption category, 2014/15 to ", max_data_fy)
+  ),
+  c("Metadata", sheetNames_ex_cat)
+)
 
 #save file into outputs folder
 openxlsx::saveWorkbook(
