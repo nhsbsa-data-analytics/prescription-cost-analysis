@@ -66,14 +66,15 @@ basic_chart_hc_new <- function(
                           tickmarkPlacement = "on",
                           tickWidth = 1,
                           tickColor = tickColor,
-                          lineWidth = 1,
+                          lineWidth = 1.5,
                           lineColor = "#768692") |> 
     # turn off y axis and grid lines
     highcharter::hc_yAxis(title = list(text = yLab),
                           labels = list(enabled = TRUE),
-                          gridLineColor = gridlineColor,
-                          lineWidth = 1,
-                          lineColor = "#768692") |> 
+                          gridLineColor = gridlineColor#,
+                          #lineWidth = 1,
+                          #lineColor = "#768692"
+                          ) |> 
     highcharter::hc_title(text = title,
                           style = list(fontSize = "16px",
                                        fontWeight = "bold")) |> 

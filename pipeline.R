@@ -588,6 +588,9 @@ figure_1$x$hc_opts$yAxis$labels <- list(
                     }")
 )
 
+figure_1$x$hc_opts$xAxis$lineWidth <- 1
+figure_1$x$hc_opts$xAxis$lineColor <- "#E8EDEE"
+
 # figure 2
 figure_2_data <- add_anl_1 |>
   select(YEAR_DESC, TOTAL_ITEMS)
@@ -639,6 +642,9 @@ figure_2$x$hc_opts$yAxis$labels <- list(
                     return Highcharts.numberFormat(this.value / 1000000, 0, '.', ',') + 'M';
                     }")
 )
+
+figure_2$x$hc_opts$xAxis$lineWidth <- 1
+figure_2$x$hc_opts$xAxis$lineColor <- "#E8EDEE"
 
 # figure 3
 figure_3_data <- nat_data_fy |>
@@ -714,7 +720,15 @@ figure_4 <- group_chart_hc_new(
   title = ""
 ) |>
   hc_subtitle(text = "2014/2015 = 100",
-              align = "left")
+              align = "left") |>
+  hc_yAxis(
+    plotLines = list(list(
+      color = "#768692",
+      width = 1.5,
+      value = 100,
+      zIndex = 100
+    ))
+  )
 
 figure_4$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 
@@ -786,7 +800,15 @@ figure_6 <- group_chart_hc_new(
   title = ""
 ) |>
   hc_subtitle(text = "2014/2015 = 100",
-              align = "left")
+              align = "left")|>
+  hc_yAxis(
+    plotLines = list(list(
+      color = "#768692",
+      width = 1.5,
+      value = 100,
+      zIndex = 100
+    ))
+  )
 
 figure_6$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 
@@ -877,7 +899,7 @@ figure_8_table <- figure_8_data |>
 figure_8 <- highchart() |>
   hc_chart(type = "sankey",
            style = list(fontFamily = "Arial")) |>
-  hc_add_series(data = figure_6_data,
+  hc_add_series(data = figure_8_data,
                 nodes = unique(c(figure_8_data$from, figure_8_data$to))) |>
   hc_plotOptions(
     sankey = list(

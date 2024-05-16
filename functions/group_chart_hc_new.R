@@ -115,16 +115,16 @@ group_chart_hc_new <- function(data,
                           tickmarkPlacement = "on",
                           tickWidth = 1,
                           tickColor = tickColor,
-                          lineWidth = 1,
+                          lineWidth = 1.5,
                           lineColor = tickColor) |>
     # turn off y axis and grid lines
     highcharter::hc_yAxis(
       title = list(text = yLab),
       labels = list(enabled = yLabels),
       gridLineColor = gridlineColor,
-      min = 0,
-      lineWidth = 1,
-      lineColor = tickColor
+      min = 0#,
+      #lineWidth = 1,
+      #lineColor = tickColor
     ) |>
     highcharter::hc_title(text = title,
                           style = list(fontSize = "16px",
