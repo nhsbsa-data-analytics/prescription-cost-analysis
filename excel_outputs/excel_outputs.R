@@ -40,7 +40,7 @@ meta_fields <- c(
 
 meta_descs <-
   c(
-    "The type of advanced serivice an item has been issued through.",
+    "The type of advanced service an item has been issued through.",
     "The unique code used to refer to the British National Formulary (BNF) chapter.",
     "The name given to a British National Formulary (BNF) chapter. This is the broadest grouping of the BNF therapeutical classification system.",
     "The unique code used to refer to the British National Formulary (BNF) chemical substance.",
@@ -284,7 +284,8 @@ accessibleTables::write_sheet(
     " totals by BNF presentation"
   ),
   c(
-    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
+    "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
   ),
   nat_data_fy_agg$Presentations,
   13
@@ -342,7 +343,8 @@ accessibleTables::write_sheet(
     " totals by SNOMED code"
   ),
   c(
-    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
+    "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
   ),
   nat_data_fy_agg$SNOMED_Code,
   13
@@ -395,7 +397,7 @@ accessibleTables::makeCoverSheet(
   paste0("Prescription Cost Analysis - England ", max_data_fy),
   paste0("Statistical Summary Tables - Financial Year ",max_data_fy ," - National level"),
   paste0("Publication date: ", config$publication_date),
-  wb,
+  fy_nat_wb,
   sheetNames_main,
   c(
     "Metadata",
@@ -637,7 +639,8 @@ accessibleTables::write_sheet(
     " totals by BNF presentation"
   ),
   c(
-    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
+    "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
   ),
   nat_data_cy_agg$Presentations,
   13
@@ -695,7 +698,8 @@ accessibleTables::write_sheet(
     " totals by BNF presentation"
   ),
   c(
-    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
+    "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
   ),
   nat_data_cy_agg$SNOMED_Code,
   13
@@ -743,6 +747,25 @@ accessibleTables::format_data(cy_nat_wb,
                               c("V", "W", "X", "Y"),
                               "right",
                               "#,##0.00")
+
+accessibleTables::makeCoverSheet(
+  paste0("Prescription Cost Analysis - England ", max_data_fy),
+  paste0("Statistical Summary Tables - Calendar Year ",max_data_cy ," - National level"),
+  paste0("Publication date: ", config$publication_date),
+  cy_nat_wb,
+  sheetNames_main,
+  c(
+    "Metadata",
+    "Table 1: National level data",
+    "Table 2: BNF chapter level data",
+    "Table 3: BNF section level data",
+    "Table 4: BNF paragraph level data",
+    "Table 5: BNF chemical substance level data",
+    "Table 6: BNF presentation level data",
+    "Table 7: SNOMED level data"
+  ),
+  c("Metadata", sheetNames_main)
+)
 
 #save file into outputs folder
 openxlsx::saveWorkbook(
@@ -970,7 +993,8 @@ accessibleTables::write_sheet(
     " totals by BNF presentation"
   ),
   c(
-    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
+    "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
   ),
   stp_data_fy_agg$Presentations,
   13
@@ -1248,7 +1272,8 @@ accessibleTables::write_sheet(
     " totals by BNF presentation"
   ),
   c(
-    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
+    "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
   ),
   stp_data_cy_agg$Presentations,
   13
