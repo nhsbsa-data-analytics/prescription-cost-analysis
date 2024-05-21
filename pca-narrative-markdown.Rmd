@@ -118,11 +118,13 @@ The designation of this publication as a National Statistic was confirmed in May
 
 ## 2. Results and commentary
 
-### `r paste0("Cost of prescription items dispensed in England 2014/15 to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))` {.tabset}
+### Cost of prescription items dispensed in England {.tabset}
 
 #### Chart
 
 ##### Figure 1: The cost of prescription items dispensed in England has been increasing since 2018/19
+
+###### `r paste0("Cost of prescription items dispensed in England 2014/15 to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
 Note: The y-axis does not start at zero to emphasise relative changes rather than absolute values. Please consider the scale when interpreting the data.
 
@@ -162,7 +164,7 @@ Source: [Summary Tables - Prescription Cost Analysis - National](`r config$fy_na
 
 In England, the cost of prescription items in 2022/23 was £10.4 billion, which is 8% more than the previous year's cost of £9.69 billion. Compared to 2014/15, the cost has increased by 17% or £1.48 billion. This marks the fourth year in a row where the cost of items dispensed has increased, after seeing a decrease in the previous 3 years from 2015/16 to 2018/19.
 
-### `r paste0("Number of prescription items dispensed in England 2014/15 to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))` {.tabset}
+### Number of prescription items dispensed in England {.tabset}
 
 #### Chart
 
@@ -634,7 +636,7 @@ get_download_button(title = "Download chart data", data = figure_17_data, filena
 
 ```
 
-Source: [Additional Tables - Prescription Cost Analysis - A1](`r config$add_anl_link`) | [Public Health Scotland - Dispenser payments and prescription cost analysis](`r config$scotland_pca`) | [Welsh Government - Prescriptions in Wales](`r config$wa_pca_link`) | [HSC Business Services Organisation - General pharmaceutical services and prescribing statistics](`r config$ni_pca`) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatestimeseriesdataset)
+Source: [Additional Tables - Prescription Cost Analysis - A1](`r config$add_anl_link`) | [Public Health Scotland - Dispenser payments and prescription cost analysis](`r config$scotland_pca`) | [Welsh Government - Prescriptions in Wales](`r config$wa_pca_link`) | [HSC Business Services Organisation - General pharmaceutical services and prescribing statistics](`r config$ni_pca_link`) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatestimeseriesdataset)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-6} 
@@ -655,7 +657,7 @@ figure_18
 get_download_button(title = "Download chart data", data = figure_18_data, filename = "figure_18")
 ```
 
-Source: [Additional Tables - Prescription Cost Analysis - A1](`r config$add_anl_link`) | [Public Health Scotland - Dispenser payments and prescription cost analysis](`r config$scotland_pca`) | [Welsh Government - Prescriptions in Wales](`r config$wa_pca_link`) | [HSC Business Services Organisation - General pharmaceutical services and prescribing statistics](`r config$ni_pca`) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatestimeseriesdataset)
+Source: [Additional Tables - Prescription Cost Analysis - A1](`r config$add_anl_link`) | [Public Health Scotland - Dispenser payments and prescription cost analysis](`r config$scotland_pca`) | [Welsh Government - Prescriptions in Wales](`r config$wa_pca_link`) | [HSC Business Services Organisation - General pharmaceutical services and prescribing statistics](`r config$ni_pca_link`) | [Office for National Statistics - Mid-year population estimates](https://www.ons.gov.uk/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/populationestimatestimeseriesdataset)
 
 ::::{.row style="display: flex; padding-bottom: 10px;"} 
 :::{.col-md-4} 

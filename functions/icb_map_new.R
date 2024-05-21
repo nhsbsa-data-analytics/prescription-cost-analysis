@@ -2,23 +2,19 @@ icb_map_new <- function(data,
                     icb_code_column,
                     value_column,
                     geo_data,
-                    icb_lsoa_lookup,
-                    lsoa_population,
+                    icb_population,
                     currency,
-                    scale_rounding) {
+                    scale_rounding, 
+                    minColor, 
+                    maxColor) {
   # include round any function to calculate min and max values to use in scales
   round_any <-
     function(x, accuracy, f = round) {
       f(x / accuracy) * accuracy
     }
   
-  # build ibc population lookup
-  icb_pop <- icb_lsoa_lookup |>
-    dplyr::left_join(lsoa_population,
-                     by = c("LSOA_CODE" = "LSOA_CODE")) |>
-    dplyr::group_by(ICB_CODE, ICB_NAME, ICB_LONG_CODE) |>
-    dplyr::summarise(POP = sum(POP, na.rm = TRUE),
-                     .groups = "drop")
+  # build icb population lookup
+  icb_pop <- icb_population
   
   # build raw data needed
   data_df <- data |>
@@ -61,8 +57,8 @@ icb_map_new <- function(data,
       )
     ) %>%
     highcharter:: hc_colorAxis(
-      minColor = "#fff",
-      maxColor = "#330072",
+      minColor = minColor,
+      maxColor = maxColor,
       min = round_any(min(data_df$TOTAL_ITEMS_PER_POP), scale_rounding, floor),
       max = round_any(max(data_df$TOTAL_ITEMS_PER_POP), scale_rounding, ceiling)
     ) %>%

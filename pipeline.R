@@ -126,17 +126,48 @@ log_print(head(recent_file_nat_fy), hide_notes = TRUE)
 # 4. load reference data  ---------
 
 #map data
-icb_geo_data <- nhsbsaExternalData::icb_geo_data()
+icb_geo_data <-
+  nhsbsaExternalData::icb_geo_data(
+    "https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Integrated_Care_Boards_April_2023_EN_BSC/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson",
+    SUB_GEOGRAPHY_CODE = "ICB23CD",
+    SUB_GEOGRAPHY_NAME = "ICB23NM"
+  )
 log_print("Geo data loaded", hide_notes = TRUE)
 
-#look ups
-icb_lsoa_lookup <- nhsbsaExternalData::icb_lsoa_lookup()
-log_print("Lookup data loaded", hide_notes = TRUE)
+#icb population
+temp1 <- tempfile()
+icb_population_raw <-
+  utils::download.file(url = "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/clinicalcommissioninggroupmidyearpopulationestimates/mid2021andmid2022/sapehealthgeogstablefinal.xlsx",
+                       temp1,
+                       mode = "wb")
 
-#population data
-imd_population <- nhsbsaExternalData::imd_population()
-lsoa_population_overall <-
-  nhsbsaExternalData::lsoa_population(group = "Overall")
+icb_population <- readxl::read_xlsx(temp1,
+                                    sheet = 9,
+                                    range = "A4:GG110",
+                                    col_names = TRUE) |>
+  group_by(`ICB 2023 Name`, `ICB 2023 Code`) |>
+  summarise(POP = sum(Total), 
+            .groups = "drop") |>
+  rename("ICB_NAME" = 1,
+         "ICB_LONG_CODE" = 2, 
+         "POP" = 3)
+
+icb_code_lookup <- 
+  dplyr::bind_rows(
+    # ICB
+    sf::read_sf("https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/ICB_APR_2023_EN_NC/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson") |>
+      dplyr::select(
+        ICB_CODE = "ICB23CDH",
+        ICB_LONG_CODE = "ICB23CD"
+      )
+  ) |>
+  data.frame() |>
+  select(-geometry)
+
+icb_pop <- icb_code_lookup |>
+  left_join(icb_population)
+  
+#national popualtion
 en_ons_national_pop <-
   nhsbsaExternalData::ons_national_pop(year = c(2014:as.numeric(max_dw_cy)), area = "ENPOP")
 sc_ons_national_pop <-
@@ -146,21 +177,13 @@ ni_ons_national_pop <-
 wa_ons_national_pop <-
   nhsbsaExternalData::ons_national_pop(year = (2014:as.numeric(max_dw_cy)), area = "WAPOP")
 
-# build icb population look up
-icb_pop <- icb_lsoa_lookup |>
-  dplyr::left_join(lsoa_population_overall,
-                   by = c("LSOA_CODE" = "LSOA_CODE")) |>
-  dplyr::group_by(ICB_CODE, ICB_NAME, ICB_LONG_CODE) |>
-  dplyr::summarise(POP = sum(POP, na.rm = TRUE),
-                   .groups = "drop")
-
 log_print("Population data loaded", hide_notes = TRUE)
 
 #pca data
 sc_pca <-
   nhsbsaExternalData::scottish_pca_extraction(link = config$scotland_pca)
 ni_pca <-
-  nhsbsaExternalData::northern_irish_pca_extraction(file_path = "Y:\\Official Stats\\PCA\\data\\NI_PCA_2022.xlsx")
+  northern_irish_pca_extraction_2024(file_path = config$ni_pca)
 wa_pca <-
   nhsbsaExternalData::wales_pca_extraction(file_path = config$wa_pca)
 log_print("Dev nation PCA data loaded", hide_notes = TRUE)
@@ -197,11 +220,13 @@ if (max_dw_fy <= max_data_fy) {
   nat_data_fy <- vroom::vroom(nat_data_fy,
                               #read snomed code as character
                               col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
-    dplyr::mutate(MYS_SERVICE_TYPE = case_when(
-      MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-      MYS_SERVICE_TYPE == "N" ~ "None",
-      TRUE ~ "None" 
-    ))
+    dplyr::mutate(
+      MYS_SERVICE_TYPE = case_when(
+        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
+        MYS_SERVICE_TYPE == "N" ~ "None",
+        TRUE ~ "None"
+      )
+    )
   
   #national data by cy
   nat_data_cy <- rownames(file.info(
@@ -221,12 +246,14 @@ if (max_dw_fy <= max_data_fy) {
   #read recent data
   nat_data_cy <- vroom::vroom(nat_data_cy,
                               #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))|>
-    dplyr::mutate(MYS_SERVICE_TYPE = case_when(
-      MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-      MYS_SERVICE_TYPE == "N" ~ "None",
-      TRUE ~ "None" 
-    ))
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
+    dplyr::mutate(
+      MYS_SERVICE_TYPE = case_when(
+        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
+        MYS_SERVICE_TYPE == "N" ~ "None",
+        TRUE ~ "None"
+      )
+    )
   
   #stp data by fy
   stp_data_fy <- rownames(file.info(
@@ -246,12 +273,14 @@ if (max_dw_fy <= max_data_fy) {
   #read recent data
   stp_data_fy <- vroom::vroom(stp_data_fy,
                               #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))|>
-    dplyr::mutate(MYS_SERVICE_TYPE = case_when(
-      MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-      MYS_SERVICE_TYPE == "N" ~ "None",
-      TRUE ~ "None" 
-    ))
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
+    dplyr::mutate(
+      MYS_SERVICE_TYPE = case_when(
+        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
+        MYS_SERVICE_TYPE == "N" ~ "None",
+        TRUE ~ "None"
+      )
+    )
   
   #stp data by cy
   stp_data_cy <- rownames(file.info(
@@ -271,12 +300,14 @@ if (max_dw_fy <= max_data_fy) {
   #read recent data
   stp_data_cy <- vroom::vroom(stp_data_cy,
                               #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))|>
-    dplyr::mutate(MYS_SERVICE_TYPE = case_when(
-      MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-      MYS_SERVICE_TYPE == "N" ~ "None",
-      TRUE ~ "None" 
-    ))
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
+    dplyr::mutate(
+      MYS_SERVICE_TYPE = case_when(
+        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
+        MYS_SERVICE_TYPE == "N" ~ "None",
+        TRUE ~ "None"
+      )
+    )
   
   log_print("Data pulled from most recent saved data", hide_notes = TRUE)
 } else {
@@ -330,12 +361,14 @@ if (max_dw_fy <= max_data_fy) {
   #read recent data
   nat_data_fy <- vroom::vroom(nat_data_fy,
                               #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))|>
-    dplyr::mutate(MYS_SERVICE_TYPE = case_when(
-      MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-      MYS_SERVICE_TYPE == "N" ~ "None",
-      TRUE ~ "None"
-    ))
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
+    dplyr::mutate(
+      MYS_SERVICE_TYPE = case_when(
+        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
+        MYS_SERVICE_TYPE == "N" ~ "None",
+        TRUE ~ "None"
+      )
+    )
   
   #national data by cy
   nat_data_cy <- rownames(file.info(
@@ -355,12 +388,14 @@ if (max_dw_fy <= max_data_fy) {
   #read recent data
   nat_data_cy <- vroom::vroom(nat_data_cy,
                               #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))|>
-    dplyr::mutate(MYS_SERVICE_TYPE = case_when(
-      MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-      MYS_SERVICE_TYPE == "N" ~ "None",
-      TRUE ~ "None"
-    ))
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
+    dplyr::mutate(
+      MYS_SERVICE_TYPE = case_when(
+        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
+        MYS_SERVICE_TYPE == "N" ~ "None",
+        TRUE ~ "None"
+      )
+    )
   
   #stp data by fy
   stp_data_fy <- rownames(file.info(
@@ -380,12 +415,14 @@ if (max_dw_fy <= max_data_fy) {
   #read recent data
   stp_data_fy <- vroom::vroom(stp_data_fy,
                               #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))|>
-    dplyr::mutate(MYS_SERVICE_TYPE = case_when(
-      MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-      MYS_SERVICE_TYPE == "N" ~ "None",
-      TRUE ~ "None" 
-    ))
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
+    dplyr::mutate(
+      MYS_SERVICE_TYPE = case_when(
+        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
+        MYS_SERVICE_TYPE == "N" ~ "None",
+        TRUE ~ "None"
+      )
+    )
   
   #stp data by cy
   stp_data_cy <- rownames(file.info(
@@ -405,12 +442,14 @@ if (max_dw_fy <= max_data_fy) {
   #read recent data
   stp_data_cy <- vroom::vroom(stp_data_cy,
                               #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c"))|>
-    dplyr::mutate(MYS_SERVICE_TYPE = case_when(
-      MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-      MYS_SERVICE_TYPE == "N" ~ "None",
-      TRUE ~ "None" 
-    ))
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
+    dplyr::mutate(
+      MYS_SERVICE_TYPE = case_when(
+        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
+        MYS_SERVICE_TYPE == "N" ~ "None",
+        TRUE ~ "None"
+      )
+    )
   
   log_print("New data pulled from warehouse and saved to Y drive", hide_notes = TRUE)
 }
@@ -568,13 +607,9 @@ figure_1_data <- add_anl_1 |>
   select(YEAR_DESC, TOTAL_NIC)
 
 figure_1_table <- figure_1_data |>
-  mutate(
-    TOTAL_NIC = format(signif(TOTAL_NIC, 3), big.mark = ",")
-  ) |>
-  rename(
-    "Financial year" = 1,
-    "Net ingredient cost (GBP)" = 2
-  )
+  mutate(TOTAL_NIC = format(signif(TOTAL_NIC, 3), big.mark = ",")) |>
+  rename("Financial year" = 1,
+         "Net ingredient cost (GBP)" = 2)
 
 figure_1 <- basic_chart_hc_new(
   figure_1_data,
@@ -587,7 +622,7 @@ figure_1 <- basic_chart_hc_new(
   currency = TRUE
 ) |>
   hc_subtitle(text = "B = Billions",
-              align = "left") 
+              align = "left")
 
 figure_1$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 
@@ -613,20 +648,20 @@ figure_1$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
 "
 )
 
-figure_1$x$hc_opts$yAxis$tickPositioner <- JS("function() {
+figure_1$x$hc_opts$yAxis$tickPositioner <- JS(
+  "function() {
                          var positions = [],
                          tick = Math.floor(this.dataMin / 1000000000) * 1000000000;
                          for (; tick - 1000000000 <= this.dataMax; tick += 1000000000) {
                          positions.push(tick);
                          }
                          return positions;
-                         }")
-
-figure_1$x$hc_opts$yAxis$labels <- list(
-  formatter = JS("function() {
-                    return this.value / 1000000000 + 'B';
-                    }")
+                         }"
 )
+
+figure_1$x$hc_opts$yAxis$labels <- list(formatter = JS("function() {
+                    return this.value / 1000000000 + 'B';
+                    }"))
 
 figure_1$x$hc_opts$xAxis$lineWidth <- 1
 figure_1$x$hc_opts$xAxis$lineColor <- "#E8EDEE"
@@ -636,13 +671,9 @@ figure_2_data <- add_anl_1 |>
   select(YEAR_DESC, TOTAL_ITEMS)
 
 figure_2_table <- figure_2_data |>
-  mutate(
-    TOTAL_ITEMS = format(signif(TOTAL_ITEMS, 4), big.mark = ",")
-  ) |>
-  rename(
-    "Financial year" = 1,
-    "Items" = 2
-  )
+  mutate(TOTAL_ITEMS = format(signif(TOTAL_ITEMS, 4), big.mark = ",")) |>
+  rename("Financial year" = 1,
+         "Items" = 2)
 
 figure_2 <- basic_chart_hc_new(
   figure_2_data,
@@ -653,7 +684,7 @@ figure_2 <- basic_chart_hc_new(
   yLab = "Number of items dispensed",
   title = "",
   color = "#330072"
-)|>
+) |>
   hc_subtitle(text = "M = Millions",
               align = "left")
 
@@ -668,19 +699,23 @@ figure_2$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
 "
 )
 
-figure_2$x$hc_opts$yAxis$tickPositioner <- JS("function() {
+figure_2$x$hc_opts$yAxis$tickPositioner <- JS(
+  "function() {
                          var positions = [],
                          tick = Math.floor(this.dataMin / 20000000) * 20000000;
                          for (; tick - 20000000 <= this.dataMax; tick += 20000000) {
                          positions.push(tick);
                          }
                          return positions;
-                         }")
+                         }"
+)
 
 figure_2$x$hc_opts$yAxis$labels <- list(
-  formatter = JS("function() {
+  formatter = JS(
+    "function() {
                     return Highcharts.numberFormat(this.value / 1000000, 0, '.', ',') + 'M';
-                    }")
+                    }"
+  )
 )
 
 figure_2$x$hc_opts$xAxis$lineWidth <- 1
@@ -694,9 +729,7 @@ figure_3_data <- nat_data_fy |>
 
 
 figure_3_table <- figure_3_data |>
-  mutate(
-    TOTAL_NIC = format(signif(TOTAL_NIC, 3), big.mark = ",")
-  ) |>
+  mutate(TOTAL_NIC = format(signif(TOTAL_NIC, 3), big.mark = ",")) |>
   rename(
     "BNF Chapter Code" = 1,
     "BNF Chapter Name" = 2,
@@ -740,14 +773,12 @@ figure_3$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 figure_4_data <- pca_bnf_costs_index(con = con)
 
 figure_4_table <- figure_4_data |>
-  mutate(
-    VALUE = format(signif(VALUE, 3), big.mark = ",")
-  ) |>
+  mutate(VALUE = format(signif(VALUE, 3), big.mark = ",")) |>
   select(-CHAPTER_DESCR) |>
   pivot_wider(names_from = BNF_CHAPTER,
               values_from = VALUE) |>
   rename("Financial year" = 1)
-  
+
 
 figure_4 <- group_chart_hc_new(
   figure_4_data,
@@ -761,14 +792,12 @@ figure_4 <- group_chart_hc_new(
 ) |>
   hc_subtitle(text = "2014/2015 = 100",
               align = "left") |>
-  hc_yAxis(
-    plotLines = list(list(
-      color = "#768692",
-      width = 1.5,
-      value = 100,
-      zIndex = 100
-    ))
-  )
+  hc_yAxis(plotLines = list(list(
+    color = "#768692",
+    width = 1.5,
+    value = 100,
+    zIndex = 100
+  )))
 
 figure_4$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 
@@ -779,9 +808,7 @@ figure_5_data <- nat_data_fy |>
   ungroup()
 
 figure_5_table <- figure_5_data |>
-  mutate(
-    TOTAL_ITEMS = format(signif(TOTAL_ITEMS, 3), big.mark = ",")
-  ) |>
+  mutate(TOTAL_ITEMS = format(signif(TOTAL_ITEMS, 3), big.mark = ",")) |>
   rename(
     "BNF Chapter Code" = 1,
     "BNF Chapter Name" = 2,
@@ -797,7 +824,7 @@ figure_5 <-  basic_chart_hc_new(
   yLab = "Number of items dispensed",
   title = "",
   color = "#330072"
-)|>
+) |>
   hc_subtitle(text = "M = Millions",
               align = "left")
 
@@ -820,9 +847,7 @@ figure_5$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 figure_6_data <- pca_bnf_items_index(con = con)
 
 figure_6_table <- figure_6_data |>
-  mutate(
-    VALUE = format(signif(VALUE, 3), big.mark = ",")
-  ) |>
+  mutate(VALUE = format(signif(VALUE, 3), big.mark = ",")) |>
   select(-CHAPTER_DESCR) |>
   pivot_wider(names_from = BNF_CHAPTER,
               values_from = VALUE) |>
@@ -840,15 +865,13 @@ figure_6 <- group_chart_hc_new(
   title = ""
 ) |>
   hc_subtitle(text = "2014/2015 = 100",
-              align = "left")|>
-  hc_yAxis(
-    plotLines = list(list(
-      color = "#768692",
-      width = 1.5,
-      value = 100,
-      zIndex = 100
-    ))
-  )
+              align = "left") |>
+  hc_yAxis(plotLines = list(list(
+    color = "#768692",
+    width = 1.5,
+    value = 100,
+    zIndex = 100
+  )))
 
 figure_6$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 
@@ -871,14 +894,14 @@ figure_7_data <- add_anl_5 |>
   select(YEAR_DESC, MEASURE, VALUE)
 
 figure_7_table <- figure_7_data |>
-  mutate(
-    VALUE = format(signif(VALUE, 3), big.mark = ",")
-  ) |>
+  mutate(VALUE = format(signif(VALUE, 3), big.mark = ",")) |>
   pivot_wider(names_from = MEASURE,
               values_from = VALUE) |>
-  rename("Financial year" = 1,
-         "Items (%)" = 2,
-         "Net ingredient cost (%)" = 3)
+  rename(
+    "Financial year" = 1,
+    "Items (%)" = 2,
+    "Net ingredient cost (%)" = 3
+  )
 
 
 figure_7 <- group_chart_hc_new(
@@ -925,11 +948,9 @@ figure_8_data <- data.frame(
 )
 
 figure_8_table <- figure_8_data |>
-  rename(
-    "From" = 1,
-    "To" = 2, 
-    "Items" = 3
-  ) |>
+  rename("From" = 1,
+         "To" = 2,
+         "Items" = 3) |>
   mutate(
     Items = format(signif(Items, 3), big.mark = ","),
     From = str_replace_all(From, "<br>", " "),
@@ -1033,7 +1054,7 @@ figure_10 <- basic_chart_hc_new(
   yLab = "Number of items dispensed",
   title = "",
   color = "#330072"
-)|>
+) |>
   hc_subtitle(text = "M = Millions",
               align = "left")
 
@@ -1061,15 +1082,16 @@ figure_11_data <-  stp_data_fy_agg$National |>
                    by = c("ICB_CODE" = "ICB_CODE")) |>
   dplyr::mutate("TOTAL_NIC_PER_POP" = TOTAL_NIC / POP)
 
-figure_11 <- nhsbsaVis::icb_map(
+figure_11 <- icb_map_new(
   data = stp_data_fy_agg$National,
   icb_code_column = "ICB Code",
   value_column = "Total Cost (GBP)",
   geo_data = icb_geo_data,
-  icb_lsoa_lookup = icb_lsoa_lookup,
-  lsoa_population = lsoa_population_overall,
+  icb_population = icb_pop,
   currency = TRUE,
-  scale_rounding = 100
+  scale_rounding = 100,
+  minColor = "#fff",
+  maxColor = "#005EB8"
 )
 
 # figure 12
@@ -1090,10 +1112,11 @@ figure_12 <- icb_map_new(
   icb_code_column = "ICB Code",
   value_column = "Total Items",
   geo_data = icb_geo_data,
-  icb_lsoa_lookup = icb_lsoa_lookup,
-  lsoa_population = lsoa_population_overall,
+  icb_population = icb_pop,
   currency = FALSE,
-  scale_rounding = 10
+  scale_rounding = 10,
+  minColor = "#fff",
+  maxColor = "#330072"
 )
 
 # figure 13
@@ -1156,7 +1179,7 @@ figure_15 <- basic_chart_hc_new(
   yLab = "Total cost absolute increase (GBP)",
   title = "",
   currency = TRUE
-)|>
+) |>
   hc_subtitle(text = "M = Millions",
               align = "left")
 
@@ -1192,7 +1215,7 @@ figure_16 <- figure_16_data |>
     yLab = "Total cost absolute decrease (GBP)",
     title = "",
     currency = TRUE
-  )|>
+  ) |>
   hc_subtitle(text = "M = Millions",
               align = "left")
 
