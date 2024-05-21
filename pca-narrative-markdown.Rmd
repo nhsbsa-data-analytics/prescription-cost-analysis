@@ -118,7 +118,7 @@ The designation of this publication as a National Statistic was confirmed in May
 
 ## 2. Results and commentary
 
-### Cost of prescription items dispensed in England {.tabset}
+### 2.1. Cost and number of prescription items dispensed in England {.tabset}
 
 #### Chart
 
@@ -138,6 +138,8 @@ get_download_button(title = "Download chart data", data = figure_1_data, filenam
 #### Table
 
 ##### Table 1: The cost of prescription items dispensed in England has been increasing since 2018/19
+
+###### `r paste0("Cost of prescription items dispensed in England 2014/15 to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
 ```{r total_nic_table, out.width = "100%"}
 knitr::kable(figure_1_table, align = "lr")
@@ -164,13 +166,15 @@ Source: [Summary Tables - Prescription Cost Analysis - National](`r config$fy_na
 
 In England, the cost of prescription items in 2022/23 was £10.4 billion, which is 8% more than the previous year's cost of £9.69 billion. Compared to 2014/15, the cost has increased by 17% or £1.48 billion. This marks the fourth year in a row where the cost of items dispensed has increased, after seeing a decrease in the previous 3 years from 2015/16 to 2018/19.
 
-### Number of prescription items dispensed in England {.tabset}
+###  {- .tabset}
 
 #### Chart
 
-Note: The y-axis does not start at zero to emphasise relative changes rather than absolute values. Please consider the scale when interpreting the data.
-
 ##### Figure 2: The number of prescription items dispensed in England has been increasing since 2020/21
+
+###### `r paste0("Number of prescription items dispensed in England 2014/15 to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
+
+Note: The y-axis does not start at zero to emphasise relative changes rather than absolute values. Please consider the scale when interpreting the data.
 
 ```{r total_items, out.width = "100%"}
 
@@ -181,6 +185,8 @@ get_download_button(title = "Download chart data", data = figure_2_data, filenam
 #### Table
 
 ##### Table 2: The number of prescription items dispensed in England has been increasing since 2020/21
+
+###### `r paste0("Number of prescription items dispensed in England 2014/15 to ", paste0(substr(max_data_fy,1,5), substr(max_data_fy, 8, 9)))`
 
 ```{r total_items_table, out.width = "100%"}
 knitr::kable(figure_2_table, align = "lr")
@@ -207,7 +213,7 @@ Source: [Summary Tables - Prescription Cost Analysis - National](`r config$fy_na
 
 In England, there were 1.18 billion items dispensed in 2022/23, which is 3% more than the previous year's 1.14 billion items. Compared to 2014/15, the number of items has increased by 10%.
 
-### `r paste0("Cost of items dispensed in England amongst BNF chapters")`{.tabset}
+### 2.2. Cost and number of prescription items dispensed in England amongst BNF chapters {.tabset}
 
 #### Chart
 
@@ -283,7 +289,7 @@ get_download_button(title = "Download table data", data = figure_4_data, filenam
 
 ***** PLACEHOLDER --- INDEX CHART NARRATIVE AND INFOBOXES *****
 
-### `r paste0("Items dispensed in England amongst BNF chapters")` {.tabset}
+### {- .tabset}
 
 #### Chart
 

@@ -1299,8 +1299,6 @@ rmarkdown::render("pca-narrative-markdown.Rmd",
                   output_format = "html_document",
                   output_file = "outputs/pca_summary_narrative_2022_23_v001.html")
 
-
-
 # NOTE: need to look into this a out.width is causing issue --------
 
 # rmarkdown::render("pca-narrative-markdown.Rmd",
