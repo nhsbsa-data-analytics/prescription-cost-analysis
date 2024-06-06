@@ -21,13 +21,13 @@ infoBox_no_border <- function(
     vertical-align: top;
     flex: 1;
     height: 100%;'>
-  <h4 style = 'color: ", fontColour, ";
+  <p style = 'color: ", fontColour, ";
   font-weight: bold;
   font-size: 18px;
   margin-top: 0px;
   margin-bottom: 10px;
   display: ", display,";'>", 
-  header, "</h4>
+  header, "</p>
   <p style = 'color: ", fontColour, ";
   font-size: 16px;
   margin-top: 0px;
