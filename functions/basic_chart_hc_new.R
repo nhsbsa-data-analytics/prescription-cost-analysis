@@ -38,10 +38,14 @@ basic_chart_hc_new <- function(
   )
   
   # check chart type to set grid lines
-  gridlineColor <- ifelse(type == "line", "#e6e6e6", "transparent")
+  #gridlineColor <- ifelse(type == "line", "#e6e6e6", "transparent")
+  
+  tickColor <- ifelse(type == "line", "#768692", "transparent")
+  
+  gridlineColor <- "#E8EDEE"
   
   # check chart type to turn on y axis labels
-  yLabels <- ifelse(type == "line", TRUE, FALSE)
+  #yLabels <- ifelse(type == "line", TRUE, FALSE)
   
   chart <- highcharter::highchart() |> 
     highcharter::hc_chart(style = list(fontFamily = font)) |> 
@@ -59,22 +63,24 @@ basic_chart_hc_new <- function(
                                                  style = list(textOutline = "none"))) |> 
     highcharter::hc_xAxis(type = "category",
                           title = list(text = xLab),
-                          gridLineWidth = 1,
-                          gridLineColor = gridlineColor,
-                          tickmarkPlacement = "on") |> 
+                          tickmarkPlacement = "on",
+                          tickWidth = 1,
+                          tickColor = tickColor,
+                          lineWidth = 1.5,
+                          lineColor = "#768692") |> 
     # turn off y axis and grid lines
     highcharter::hc_yAxis(title = list(text = yLab),
-                          labels = list(enabled = yLabels),
-                          gridLineColor = gridlineColor,
-                          min = 0) |> 
+                          labels = list(enabled = TRUE),
+                          gridLineColor = gridlineColor#,
+                          #lineWidth = 1,
+                          #lineColor = "#768692"
+                          ) |> 
     highcharter::hc_title(text = title,
                           style = list(fontSize = "16px",
                                        fontWeight = "bold")) |> 
     highcharter::hc_legend(enabled = FALSE) |> 
     highcharter::hc_tooltip(enabled = FALSE) |> 
-    highcharter::hc_credits(enabled = TRUE) |> 
-    highcharter::hc_caption(text = alt_text)
-  
+    highcharter::hc_credits(enabled = TRUE) 
   return(chart)
   
 }

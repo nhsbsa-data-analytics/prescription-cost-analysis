@@ -22,6 +22,7 @@ pca_top_total_cost_change <- function(con) {
       TOTAL_QUANTITY = sum(ITEM_CALC_PAY_QTY),
       TOTAL_NIC = sum(ITEM_PAY_DR_NIC) / 100
     ) |>
+    dplyr::filter(TOTAL_QUANTITY > 0) |>
     dplyr::mutate(UNIT_COST = sum(TOTAL_NIC, na.rm = TRUE) / sum(TOTAL_QUANTITY, na.rm = TRUE)) |>
     dplyr::select(-TOTAL_QUANTITY) |>
     dplyr::ungroup() |>

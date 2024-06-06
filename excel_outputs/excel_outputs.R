@@ -11,6 +11,7 @@ sheetNames_main <-
 
 #create metadata tab (will need to open file and auto row heights once ran)
 meta_fields <- c(
+  "Advanced Service Type",
   "BNF Chapter Code",
   "BNF Chapter Name",
   "BNF Chemical Substance Code",
@@ -39,6 +40,7 @@ meta_fields <- c(
 
 meta_descs <-
   c(
+    "The type of advanced service an item has been issued through.",
     "The unique code used to refer to the British National Formulary (BNF) chapter.",
     "The name given to a British National Formulary (BNF) chapter. This is the broadest grouping of the BNF therapeutical classification system.",
     "The unique code used to refer to the British National Formulary (BNF) chemical substance.",
@@ -282,7 +284,8 @@ accessibleTables::write_sheet(
     " totals by BNF presentation"
   ),
   c(
-    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
+    "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
   ),
   nat_data_fy_agg$Presentations,
   13
@@ -308,7 +311,8 @@ accessibleTables::format_data(
     "M",
     "N",
     "O",
-    "P"
+    "P", 
+    "Q"
   ),
   "left",
   ""
@@ -317,14 +321,14 @@ accessibleTables::format_data(
 #right align column B and format number
 accessibleTables::format_data(fy_nat_wb,
                               "Presentations",
-                              c("Q", "R"),
+                              c("R", "S"),
                               "right",
                               "#,##0")
 
 #right align column C and D and format numbers
 accessibleTables::format_data(fy_nat_wb,
                               "Presentations",
-                              c("S", "T", "U", "V"),
+                              c("T", "U", "V", "W"),
                               "right",
                               "#,##0.00")
 
@@ -339,7 +343,8 @@ accessibleTables::write_sheet(
     " totals by SNOMED code"
   ),
   c(
-    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
+    "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
   ),
   nat_data_fy_agg$SNOMED_Code,
   13
@@ -367,7 +372,8 @@ accessibleTables::format_data(
     "O",
     "P",
     "Q",
-    "R"
+    "R",
+    "S"
   ),
   "left",
   ""
@@ -376,16 +382,35 @@ accessibleTables::format_data(
 #right align column B and format number
 accessibleTables::format_data(fy_nat_wb,
                               "SNOMED_Codes",
-                              c("S", "T"),
+                              c("T", "U"),
                               "right",
                               "#,##0")
 
 #right align column C and D and format numbers
 accessibleTables::format_data(fy_nat_wb,
                               "SNOMED_Codes",
-                              c("U", "V", "W", "X"),
+                              c("V", "W", "X", "Y"),
                               "right",
                               "#,##0.00")
+
+accessibleTables::makeCoverSheet(
+  paste0("Prescription Cost Analysis - England ", max_data_fy),
+  paste0("Statistical Summary Tables - Financial Year ",max_data_fy ," - National level"),
+  paste0("Publication date: ", config$publication_date),
+  fy_nat_wb,
+  sheetNames_main,
+  c(
+    "Metadata",
+    "Table 1: National level data",
+    "Table 2: BNF chapter level data",
+    "Table 3: BNF section level data",
+    "Table 4: BNF paragraph level data",
+    "Table 5: BNF chemical substance level data",
+    "Table 6: BNF presentation level data",
+    "Table 7: SNOMED level data"
+  ),
+  c("Metadata", sheetNames_main)
+)
 
 
 #save file into outputs folder
@@ -614,7 +639,8 @@ accessibleTables::write_sheet(
     " totals by BNF presentation"
   ),
   c(
-    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
+    "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
   ),
   nat_data_cy_agg$Presentations,
   13
@@ -640,7 +666,8 @@ accessibleTables::format_data(
     "M",
     "N",
     "O",
-    "P"
+    "P",
+    "Q"
   ),
   "left",
   ""
@@ -649,14 +676,14 @@ accessibleTables::format_data(
 #right align column B and format number
 accessibleTables::format_data(cy_nat_wb,
                               "Presentations",
-                              c("Q", "R"),
+                              c("R", "S"),
                               "right",
                               "#,##0")
 
 #right align column C and D and format numbers
 accessibleTables::format_data(cy_nat_wb,
                               "Presentations",
-                              c("S", "T", "U", "V"),
+                              c("T", "U", "V", "W"),
                               "right",
                               "#,##0.00")
 
@@ -671,7 +698,8 @@ accessibleTables::write_sheet(
     " totals by BNF presentation"
   ),
   c(
-    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
+    "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
   ),
   nat_data_cy_agg$SNOMED_Code,
   13
@@ -699,7 +727,8 @@ accessibleTables::format_data(
     "O",
     "P",
     "Q",
-    "R"
+    "R",
+    "S"
   ),
   "left",
   ""
@@ -708,16 +737,35 @@ accessibleTables::format_data(
 #right align column B and format number
 accessibleTables::format_data(cy_nat_wb,
                               "SNOMED_Codes",
-                              c("S", "T"),
+                              c("T", "U"),
                               "right",
                               "#,##0")
 
 #right align column C and D and format numbers
 accessibleTables::format_data(cy_nat_wb,
                               "SNOMED_Codes",
-                              c("U", "V", "W", "X"),
+                              c("V", "W", "X", "Y"),
                               "right",
                               "#,##0.00")
+
+accessibleTables::makeCoverSheet(
+  paste0("Prescription Cost Analysis - England ", max_data_fy),
+  paste0("Statistical Summary Tables - Calendar Year ",max_data_cy ," - National level"),
+  paste0("Publication date: ", config$publication_date),
+  cy_nat_wb,
+  sheetNames_main,
+  c(
+    "Metadata",
+    "Table 1: National level data",
+    "Table 2: BNF chapter level data",
+    "Table 3: BNF section level data",
+    "Table 4: BNF paragraph level data",
+    "Table 5: BNF chemical substance level data",
+    "Table 6: BNF presentation level data",
+    "Table 7: SNOMED level data"
+  ),
+  c("Metadata", sheetNames_main)
+)
 
 #save file into outputs folder
 openxlsx::saveWorkbook(
@@ -945,7 +993,8 @@ accessibleTables::write_sheet(
     " totals by BNF presentation"
   ),
   c(
-    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
+    "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
   ),
   stp_data_fy_agg$Presentations,
   13
@@ -975,7 +1024,8 @@ accessibleTables::format_data(
     "Q",
     "R",
     "S",
-    "T"
+    "T",
+    "U"
   ),
   "left",
   ""
@@ -984,16 +1034,102 @@ accessibleTables::format_data(
 #right align column B and format number
 accessibleTables::format_data(fy_stp_wb,
                               "Presentations",
-                              c("U", "V"),
+                              c("V", "W"),
                               "right",
                               "#,##0")
 
 #right align column C and D and format numbers
 accessibleTables::format_data(fy_stp_wb,
                               "Presentations",
-                              c("W", "X", "Y", "Z"),
+                              c("X", "Y", "Z", "AA"),
                               "right",
                               "#,##0.00")
+
+#### SNOMED tab
+# write data to sheet
+accessibleTables::write_sheet(
+  fy_stp_wb,
+  "SNOMED_Codes",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_fy,
+    " totals by SNOMED code"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
+    "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
+  ),
+  stp_data_fy_agg$SNOMED_Code,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(
+  fy_stp_wb,
+  "SNOMED_Codes",
+  c(
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T",
+    "U",
+    "V", 
+    "W"
+  ),
+  "left",
+  ""
+)
+
+#right align column B and format number
+accessibleTables::format_data(fy_stp_wb,
+                              "SNOMED_Codes",
+                              c("X", "Y"),
+                              "right",
+                              "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(fy_stp_wb,
+                              "SNOMED_Codes",
+                              c("Z", "AA", "AB", "AC"),
+                              "right",
+                              "#,##0.00")
+
+accessibleTables::makeCoverSheet(
+  paste0("Prescription Cost Analysis - England ", max_data_fy),
+  paste0("Statistical Summary Tables - Financial Year ",max_data_fy ," - ICB level"),
+  paste0("Publication date: ", config$publication_date),
+  fy_stp_wb,
+  sheetNames_main,
+  c(
+    "Metadata",
+    "Table 1: National level data",
+    "Table 2: BNF chapter level data",
+    "Table 3: BNF section level data",
+    "Table 4: BNF paragraph level data",
+    "Table 5: BNF chemical substance level data",
+    "Table 6: BNF presentation level data",
+    "Table 7: SNOMED level data"
+  ),
+  c("Metadata", sheetNames_main)
+)
+
+
 
 #save file into outputs folder
 openxlsx::saveWorkbook(
@@ -1008,6 +1144,7 @@ openxlsx::saveWorkbook(
   ),
   overwrite = TRUE
 )
+
 
 # 4. create stp excel for cy ------
 
@@ -1223,7 +1360,8 @@ accessibleTables::write_sheet(
     " totals by BNF presentation"
   ),
   c(
-    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
+    "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
   ),
   stp_data_cy_agg$Presentations,
   13
@@ -1253,7 +1391,59 @@ accessibleTables::format_data(
     "Q",
     "R",
     "S",
-    "T"
+    "T",
+    "U"
+  ),
+  "left",
+  ""
+)
+
+#### SNOMED tab
+# write data to sheet
+accessibleTables::write_sheet(
+  cy_stp_wb,
+  "SNOMED_Codes",
+  paste0(
+    "Prescription Cost Analysis - England ",
+    max_data_cy,
+    " totals by SNOMED code"
+  ),
+  c(
+    "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
+    "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
+  ),
+  stp_data_cy_agg$SNOMED_Code,
+  13
+)
+
+#left align column A
+accessibleTables::format_data(
+  cy_stp_wb,
+  "SNOMED_Codes",
+  c(
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K",
+    "L",
+    "M",
+    "N",
+    "O",
+    "P",
+    "Q",
+    "R",
+    "S",
+    "T",
+    "U",
+    "V", 
+    "W"
   ),
   "left",
   ""
@@ -1261,17 +1451,52 @@ accessibleTables::format_data(
 
 #right align column B and format number
 accessibleTables::format_data(cy_stp_wb,
+                              "SNOMED_Codes",
+                              c("X", "Y"),
+                              "right",
+                              "#,##0")
+
+#right align column C and D and format numbers
+accessibleTables::format_data(cy_stp_wb,
+                              "SNOMED_Codes",
+                              c("Z", "AA", "AB", "AC"),
+                              "right",
+                              "#,##0.00")
+
+
+
+#right align column B and format number
+accessibleTables::format_data(cy_stp_wb,
                               "Presentations",
-                              c("U", "V"),
+                              c("V", "W"),
                               "right",
                               "#,##0")
 
 #right align column C and D and format numbers
 accessibleTables::format_data(cy_stp_wb,
                               "Presentations",
-                              c("W", "X", "Y", "Z"),
+                              c("X", "Y", "Z","AA"),
                               "right",
                               "#,##0.00")
+
+accessibleTables::makeCoverSheet(
+  paste0("Prescription Cost Analysis - England ", max_data_fy),
+  paste0("Statistical Summary Tables - Financial Year ",max_data_cy ," - ICB level"),
+  paste0("Publication date: ", config$publication_date),
+  cy_stp_wb,
+  sheetNames_main,
+  c(
+    "Metadata",
+    "Table 1: National level data",
+    "Table 2: BNF chapter level data",
+    "Table 3: BNF section level data",
+    "Table 4: BNF paragraph level data",
+    "Table 5: BNF chemical substance level data",
+    "Table 6: BNF presentation level data",
+    "Table 7: SNOMED level data"
+  ),
+  c("Metadata", sheetNames_main)
+)
 
 #save file into outputs folder
 openxlsx::saveWorkbook(
@@ -1332,7 +1557,7 @@ meta_fields_add_anl <- c(
   "Cost of items prescribed generically (GBP)",
   "Cost of items prescribed generically, dispensed and reimbursed as proprietary (%)",
   "Cost of items prescribed generically, dispensed and reimbursed as proprietary (GBP)",
-  "Cost Per Capita (GBP)",
+  "Cost per person (GBP)",
   "Cost per dressing and appliance (GBP)",
   "Cost Per Item (GBP)",
   "Cost per item prescribed and dispensed generically (GBP)",
@@ -1346,7 +1571,7 @@ meta_fields_add_anl <- c(
   "Financial Year",
   "Items dispensed generically",
   "Items dispensed generically (%)",
-  "Items Per Capita",
+  "Items per person",
   "Items prescribed and dispensed generically",
   "Items prescribed and dispensed generically (%)",
   "Items prescribed and dispensed proprietary",
@@ -1395,7 +1620,7 @@ meta_descs_add_anl <- c(
   "The 'Total Cost (GBP)' of prescription items with a preparation class of 1 or 2.",
   "The 'Total Cost (GBP)' of prescription items with a preparation class of 2 expressed as a percentage.",
   "The 'Total Cost (GBP)' of prescription items with a preparation class of 2.",
-  "Cost per capita is calculated by dividing the 'Total Cost (GBP)' by the 'England population'.",
+  "Cost per person is calculated by dividing the 'Total Cost (GBP)' by the 'England population'.",
   "Cost per dressing and appliance is calculated by dividing the 'Total Cost (GBP)' of dressings and appliances by the number of 'Total Items' for dressings and appliances.",
   "Cost per item is calculated by dividing the 'Total Cost (GBP)' by the number of 'Total Items'.",
   "This is calculated by dividing the relevant 'Total Cost (GBP)' by the relevant number of 'Total Items'.",
@@ -1409,7 +1634,7 @@ meta_descs_add_anl <- c(
   "The financial year to which the data belongs.",
   "The number of prescription items that have a preparation class of 1 or 5.",
   "The number of prescription items that have a preparation class of 1 or 5 expressed as a percentage.",
-  "Items per capita calculated by dividing 'Total Items' by 'England population'.",
+  "Items per person calculated by dividing 'Total Items' by 'England population'.",
   "The number of prescription items with a preparation class of 1, 2, or 5 that were dispensed as items with class of 1 or 5",
   "The number of prescription items with a preparation class of 1, 2, or 5 that were dispensed as items with class of 1 or 5 expressed as a percentage.",
   "The number of prescription items with a preparation class of 3.",
@@ -1441,15 +1666,15 @@ names(add_anl_1) <- c(
   "Total Cost (GBP)",
   "England Population",
   "Cost Per Item",
-  "Items Per Capita",
-  "Cost Per Capita (GBP)"
+  "Items Per Person",
+  "Cost Per Person (GBP)"
 )
 # write data to sheet
 accessibleTables::write_sheet(
   add_anl_wb,
   "Table_A1",
   paste0(
-    "Table A1: Total items, cost, number of items and cost per capita, 2014/2015 to ",
+    "Table A1: Total items, cost, number of items and cost per person, 2014/2015 to ",
     max_data_fy
   ),
   c(
@@ -1509,7 +1734,8 @@ accessibleTables::write_sheet(
   "Table_A2",
   paste0("Table A2: Top 20 drugs by cost, ", max_data_fy),
   c(
-    "Top 20 calculations are made excluding BNF chapters 20 to 23, as presentations in these chapters do not hold chemical substances."
+    "Top 20 calculations are made excluding BNF chapters 20 to 23, as presentations in these chapters do not hold chemical substances.",
+    "Some cells may appear blank. In these cases there was no dispensing of this chemical substance in the period."
   ),
   add_anl_2,
   42
@@ -1606,7 +1832,7 @@ accessibleTables::write_sheet(
   ),
   c(
     "A charged item is one where the patient has paid the set fee that has been collected by the dispensing contractor.",
-    "An exempt item is one where the patient has not paid the set fee for their prescription as they hold a valid exemption. More information on exemption categories can be found at https://www.nhsbsa.nhs.uk/help-nhs-prescription-costs/free-nhs-prescriptions."
+    "An exempt item is one where the patient has not paid the set fee for their prescription at the point of dispensing as they hold a valid exemption or Prescription Prepayment Certificate (PPC)"
   ),
   add_anl_4,
   14
@@ -1838,7 +2064,7 @@ accessibleTables::write_sheet(
     "Table A6: Generic prescribing and dispensing by BNF Chapters, 2014/2015 to ",
     max_data_fy
   ),
-  c(),
+  c("Some cells may appear blank. In these cases there was no dispensing within this BNF chapter in the period."),
   add_anl_6,
   14
 )
@@ -1876,10 +2102,10 @@ names(add_anl_7) <- c(
   "Total Cost 2014/2015 (GBP)",
   paste0("Total Cost ",
          max_data_fy_minus_1,
-         "(GBP)"),
+         " (GBP)"),
   paste0("Total Cost ",
          max_data_fy,
-         "(GBP)"),
+         " (GBP)"),
   "Cost Per Item 2014/2015 (GBP)",
   paste0("Cost Per Item ",
          max_data_fy_minus_1,
@@ -2012,10 +2238,10 @@ names(add_anl_8) <- c(
  "Total Cost 2014/2015 (GBP)",
  paste0("Total Cost ",
         max_data_fy_minus_1,
-        "(GBP)"),
+        " (GBP)"),
  paste0("Total Cost ",
         max_data_fy,
-        "(GBP)"),
+        " (GBP)"),
  "Cost Per Item 2014/2015 (GBP)",
  paste0("Cost Per Item ",
         max_data_fy_minus_1,
@@ -2087,7 +2313,7 @@ accessibleTables::write_sheet(
     " and ",
     max_data_fy
   ),
-  c(),
+  c("Some cells may appear blank. In these cases there was no dispensing within this BNF section in the period."),
   add_anl_8,
   19
 )
@@ -2145,10 +2371,10 @@ names(add_anl_9) <- c(
   "Total Cost 2014/2015 (GBP)",
   paste0("Total Cost ",
          max_data_fy_minus_1,
-         "(GBP)"),
+         " (GBP)"),
   paste0("Total Cost ",
          max_data_fy,
-         "(GBP)"),
+         " (GBP)"),
   "Cost Per Item 2014/2015 (GBP)",
   paste0("Cost Per Item ",
          max_data_fy_minus_1,
@@ -2220,7 +2446,7 @@ accessibleTables::write_sheet(
     " and ",
     max_data_fy
   ),
-  c(),
+  c("Some cells may appear blank. In these cases there was no dispensing within this BNF chapter in the period."),
   add_anl_9,
   19
 )
@@ -2277,10 +2503,10 @@ names(add_anl_10) <- c(
   "Total Cost 2014/2015 (GBP)",
   paste0("Total Cost ",
          max_data_fy_minus_1,
-         "(GBP)"),
+         " (GBP)"),
   paste0("Total Cost ",
          max_data_fy,
-         "(GBP)"),
+         " (GBP)"),
   "Cost Per Item 2014/2015 (GBP)",
   paste0("Cost Per Item ",
          max_data_fy_minus_1,
@@ -2486,7 +2712,8 @@ accessibleTables::write_sheet(
     max_data_fy
   ),
   c(
-    "Analysis is limited to presentations with a total cost greater than 1 million GBP"
+    "Analysis is limited to presentations with a total cost greater than 1 million GBP",
+    "Some cells may appear blank. In these cases there was no dispensing of this presentation in the period."
   ),
   add_anl_11,
   23
@@ -2621,7 +2848,8 @@ accessibleTables::write_sheet(
     max_data_fy
   ),
   c(
-    "Analysis is limited to presentations with a total cost greater than 1 million GBP"
+    "Analysis is limited to presentations with a total cost greater than 1 million GBP",
+    "Some cells may appear blank. In these cases there was no dispensing of this presentation in the period."
   ),
   add_anl_12,
   23
@@ -2756,7 +2984,8 @@ accessibleTables::write_sheet(
     max_data_fy
   ),
   c(
-    "Analysis is limited to presentations with a total cost greater than 1 million GBP"
+    "Analysis is limited to presentations with a total cost greater than 1 million GBP",
+    "Some cells may appear blank. In these cases there was no dispensing of this presentation in the period."
   ),
   add_anl_13,
   23
@@ -2891,7 +3120,8 @@ accessibleTables::write_sheet(
     max_data_fy
   ),
   c(
-    "Analysis is limited to presentations with a total cost greater than 1 million GBP"
+    "Analysis is limited to presentations with a total cost greater than 1 million GBP",
+    "Some cells may appear blank. In these cases there was no dispensing of this presentation in the period."
   ),
   add_anl_14,
   23
@@ -2936,6 +3166,34 @@ format_data(
   "right",
   "#,##0.00"
 )
+
+accessibleTables::makeCoverSheet(
+  paste0("Prescription Cost Analysis - England ", max_data_fy),
+  "Additional analysis data tables",
+  paste0("Publication date: ", config$publication_date),
+  add_anl_wb,
+  sheetNames_add_anl,
+  c(
+    "Metadata",
+    paste0("Table A1: Total items, cost, number of items and cost per person, 2014/2015 to ", max_data_fy),
+    paste0("Table A2: Top 20 drugs by cost, ", max_data_fy),
+    paste0("Table A3: Top 20 drugs by items dispensed, ", max_data_fy),
+    paste0("Table A4: Total items and cost by charge status, 2014/15 to ", max_data_fy),
+    paste0("Table A5: Generic Prescribing and dispensing by preparation class, 2014/2015 to ", max_data_fy),
+    paste0("Table A6: Generic prescribing and dispensing by BNF Chapters, 2014/15 to ", max_data_fy),
+    paste0("Table A7: Number, cost and cost per item by BNF Chapters, 2014/2015, ", max_data_fy_minus_1, " and", max_data_fy),
+    paste0("Table A8: Top 20 BNF Sections by cost, 2014/2015, ", max_data_fy_minus_1, " and", max_data_fy),
+    paste0("Table A9: Top 20 BNF Sections by increase in cost, 2014/2015, ", max_data_fy_minus_1, " and", max_data_fy),
+    paste0("Table A10: Top 20 BNF Sections by decrease in cost, 2014/2015, ", max_data_fy_minus_1, " and", max_data_fy),
+    paste0("Table A11: Top 20 BNF Presentations by increase in Unit Cost, 2014/2015, ", max_data_fy_minus_1, " and", max_data_fy),
+    paste0("Table A12: Top 20 BNF Presentations by decrease in Unit Cost, 2014/2015, ", max_data_fy_minus_1, " and", max_data_fy),
+    paste0("Table A13: Top 20 BNF Presentations by increase in Costs, 2014/2015, ", max_data_fy_minus_1, " and", max_data_fy),
+    paste0("Table A14: Top 20 BNF Presentations by decrease in Costs, 2014/2015, ", max_data_fy_minus_1, " and", max_data_fy)
+    
+  ),
+  c("Metadata", sheetNames_add_anl)
+)
+
 
 #save file into outputs folder
 openxlsx::saveWorkbook(
@@ -3025,6 +3283,19 @@ accessibleTables::format_data(ex_cat_wb,
                               c("D", "E"),
                               "right",
                               "#,##0.00")
+
+accessibleTables::makeCoverSheet(
+  paste0("Prescription Cost Analysis - England ", max_data_fy),
+  "Management Information Tables - Exemption Categories",
+  paste0("Publication date: ", config$publication_date),
+  ex_cat_wb,
+  sheetNames_ex_cat,
+  c(
+    "Metadata",
+    paste0("Table 1: Total items and cost by exemption category, 2014/15 to ", max_data_fy)
+  ),
+  c("Metadata", sheetNames_ex_cat)
+)
 
 #save file into outputs folder
 openxlsx::saveWorkbook(

@@ -1,70 +1,167 @@
+/* HEADERS */
 
-/* style headers */
 h1 {
-  font-size: 34px;
-}
-.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-  color: #005EB8;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-  font-weight: 700;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
+font-size: 34px!important;
 }
 
-/* style main container */
+.title {
+font-size: 38px!important;
+}
+
+h2 {
+font-size: 30px!important;
+color: #005EB8!important;
+}
+
+h3 {
+font-size: 24px!important;
+}
+
+h4 {
+font-size: 18px!important;
+font-weight: bold!important;
+}
+
+h5 {
+font-size: 16px!important;
+font-weight: bold!important;
+}
+
+h6 {
+font-size: 16px!important;
+font-weight: bold!important;
+}
+
+/* MAIN BODY */  
+
 .main-container {
-  max-width: 940px;
-  margin-left: auto;
-  margin-right: auto;
+max-width: 940px;
+margin-left: auto;
+margin-right: auto;
 }
+
 code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
+color: inherit;
+background-color: rgba(0, 0, 0, 0.04);
 }
-img {
-  max-width:100%;
-}
-.tabbed-pane {
-  padding-top: 12px;
-}
-.html-widget {
-  margin-bottom: 20px;
-}
-.code-folding-btn:focus {
-  outline: none;
-}
+
+body, td { 
+font-size: 16px; 
+font-family: sans-serif; 
+} 
+
 summary {
-  display: list-item;
+display: list-item;
+}
+
+a { 
+color: #005EB8!important; 
+} 
+
+* {
+font-family: Arial;
+}
+
+.quartoheader {
+position: fixed;
+width: 100%;
+top:0;
+left:0;
+-webkit-font-smoothing: antialiased;
+margin: 0 auto;
+padding: 0;
+z-index: 2000;
+}
+
+p {
+font-size: 16px!important;
+}
+
+.html-widget {
+margin-bottom: 20px;
+width: 100%!important;
+}
+
+.nhsuk-list, ol, ul {
+font-size: 16px!important;
+}
+
+/* TABS */
+
+.tabbed-pane {
+padding-top: 12px;
+}
+
+.nav-tabs>li>a {
+color: black!important;
+border-radius: 0px!important;
+font-size: 16px;
+}
+
+.nav-tabs > li:not(.active) {
+text-decoration: underline;
+background-color: #d8dde0!important;
+}
+
+.nav-tabs > li.active {
+text-decoration: none;
+}
+
+.nav-tabs > li:not(.active)> a:hover,
+.nav-tabs > li:not(.active)> a:focus {
+background-color: transparent!important;
+border: none!important;
+box-shadow: none!important;
+padding-bottom: 10px!important;
+padding-left: 15px!important;
+padding-right: 15px!important;
+padding-top:10px!important;
+position: relative!important;
+margin-bottom: 0px!important;
+}
+
+.nav-tabs > li:not(.active):hover {
+text-decoration: none!important;
+}
+
+.tabbed-pane {
+padding-top: 24px!important;
+}
+
+.nav-tabs {
+border-bottom: 0px;
+}
+
+.tab-content {
+border: 1px solid #d8dde0;
+background-color: white;
+margin-bottom: 24px;
+}
+
+.nav-tabs>li.active>a {
+padding-bottom: 13px!important;
+margin-bottom: -1px;
+}
+
+[role = "tabpanel"] {
+padding: 10px;
+}
+
+/* IMAGES */
+
+img {
+max-width:100%;
 }
 
 #nav_logo {
-  width: 50%;
-  margin-top: 20px;
+width: 50%;
+margin-top: 20px;
 }
 
-body, td { font-size: 16px; font-family: sans-serif; } 
+/* BUTTON */
 
-.list-group-item.active { background-color: #005EB8!important; border-color: #005EB8!important; } 
-
-a { color: #005EB8!important; } 
-
-.tocify { border-radius: 0px!important; }
-
-* {
-   font-family: Arial;
+.code-folding-btn:focus {
+outline: none;
 }
 
 .nhs-button-style {
@@ -91,4 +188,54 @@ outline: 4px solid rgba(0,0,0,0)!important;
 
 div.dt-buttons {
 float: right!important;
+}
+
+/* TOC */
+
+.list-group-item.active { 
+background-color: #005EB8!important; 
+border-color: #005EB8!important; 
+} 
+
+.tocify { 
+border-radius: 0px!important; 
+}
+
+.tocify-subheader .list-group-item {
+text-indent: 0px!important;
+margin-left: 20px!important;
+}
+
+.title, .tocify {
+margin-top:140px;
+}
+
+.tocify {
+margin-top:140px!important;
+background-color: white!important;
+} 
+
+.tocify-subheader {
+font-size:14px!important;
+}
+
+.tocify-header {
+font-size:16px!important;
+text-indent: 0px!important;
+}
+
+li[role="presentation"] {
+margin-right: 4px;
+}
+
+/* TABLES */
+
+td[align="right"], th[align="right"] {
+text-align: right!important;
+font-size:16px!important;
+}
+
+td[align="left"], th[align="left"] {
+text-align: left!important;
+font-size:16px!important;
 }
