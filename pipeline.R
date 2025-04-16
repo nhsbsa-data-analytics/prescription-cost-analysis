@@ -100,7 +100,7 @@ log_print("Options loaded", hide_notes = TRUE)
 
 # 2. connect to DWH and pull max CY/FY  ---------
 #build connection to warehouse
-con <- nhsbsaR::con_nhsbsa(dsn = "FBS_8192k",
+con <- nhsbsaR::con_nhsbsa(dsn = NULL,
                            driver = "Oracle in OraClient19Home1",
                            database = "DWCP")
 
@@ -255,6 +255,60 @@ if (max_dw_fy <= max_data_fy) {
       )
     )
   
+  #regional data by fy
+  region_data_fy <- rownames(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "region_data_fy"
+    )
+  ))[which.max(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "region_data_fy"
+    )
+  )$mtime)]
+  
+  #read recent data
+  region_data_fy <- vroom::vroom(region_data_fy,
+                              #read snomed code as character
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
+    dplyr::mutate(
+      MYS_SERVICE_TYPE = case_when(
+        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
+        MYS_SERVICE_TYPE == "N" ~ "None",
+        TRUE ~ "None"
+      )
+    )
+  
+  #regional data by cy
+  region_data_cy <- rownames(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "region_data_cy"
+    )
+  ))[which.max(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "region_data_cy"
+    )
+  )$mtime)]
+  
+  #read recent data
+  region_data_cy <- vroom::vroom(region_data_cy,
+                              #read snomed code as character
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
+    dplyr::mutate(
+      MYS_SERVICE_TYPE = case_when(
+        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
+        MYS_SERVICE_TYPE == "N" ~ "None",
+        TRUE ~ "None"
+      )
+    )
+  
   #stp data by fy
   stp_data_fy <- rownames(file.info(
     list.files(
@@ -317,6 +371,11 @@ if (max_dw_fy <= max_data_fy) {
   nat_data_cy <-
     extract_nat_data(con, year_type = "calendar", year = max_dw_cy)
   
+  region_data_fy <-
+    extract_region_data(con, year_type = "financial", year = max_dw_fy)
+  region_data_cy <-
+    extract_region_data(con, year_type = "calendar", year = max_dw_cy)
+  
   stp_data_fy <-
     extract_stp_data(con, year_type = "financial", year = max_dw_fy)
   stp_data_cy <-
@@ -331,6 +390,16 @@ if (max_dw_fy <= max_data_fy) {
   save_data(nat_data_fy,
             dir = "Y:/Official Stats/PCA",
             filename = "nat_data_fy",
+            quote = TRUE)
+  
+  save_data(region_data_fy,
+            dir = "Y:/Official Stats/PCA",
+            filename = "region_data_fy",
+            quote = TRUE)
+  
+  save_data(region_data_cy,
+            dir = "Y:/Official Stats/PCA",
+            filename = "region_data_cy",
             quote = TRUE)
   
   save_data(stp_data_cy,
@@ -387,6 +456,114 @@ if (max_dw_fy <= max_data_fy) {
   
   #read recent data
   nat_data_cy <- vroom::vroom(nat_data_cy,
+                              #read snomed code as character
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
+    dplyr::mutate(
+      MYS_SERVICE_TYPE = case_when(
+        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
+        MYS_SERVICE_TYPE == "N" ~ "None",
+        TRUE ~ "None"
+      )
+    )
+  
+  #national data by fy
+  nat_data_fy <- rownames(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "nat_data_fy"
+    )
+  ))[which.max(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "nat_data_fy"
+    )
+  )$mtime)]
+  
+  #read recent data
+  nat_data_fy <- vroom::vroom(nat_data_fy,
+                              #read snomed code as character
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
+    dplyr::mutate(
+      MYS_SERVICE_TYPE = case_when(
+        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
+        MYS_SERVICE_TYPE == "N" ~ "None",
+        TRUE ~ "None"
+      )
+    )
+  
+  #national data by cy
+  nat_data_cy <- rownames(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "nat_data_cy"
+    )
+  ))[which.max(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "nat_data_cy"
+    )
+  )$mtime)]
+  
+  #read recent data
+  nat_data_cy <- vroom::vroom(nat_data_cy,
+                              #read snomed code as character
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
+    dplyr::mutate(
+      MYS_SERVICE_TYPE = case_when(
+        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
+        MYS_SERVICE_TYPE == "N" ~ "None",
+        TRUE ~ "None"
+      )
+    )
+  
+  #regional data by fy
+  region_data_fy <- rownames(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "region_data_fy"
+    )
+  ))[which.max(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "region_data_fy"
+    )
+  )$mtime)]
+  
+  #read recent data
+  region_data_fy <- vroom::vroom(region_data_fy,
+                              #read snomed code as character
+                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
+    dplyr::mutate(
+      MYS_SERVICE_TYPE = case_when(
+        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
+        MYS_SERVICE_TYPE == "N" ~ "None",
+        TRUE ~ "None"
+      )
+    )
+  
+  #national data by cy
+  region_data_cy <- rownames(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "region_data_cy"
+    )
+  ))[which.max(file.info(
+    list.files(
+      "Y:/Official Stats/PCA/data",
+      full.names = T,
+      pattern = "region_data_cy"
+    )
+  )$mtime)]
+  
+  #read recent data
+  region_data_cy <- vroom::vroom(region_data_cy,
                               #read snomed code as character
                               col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
     dplyr::mutate(
