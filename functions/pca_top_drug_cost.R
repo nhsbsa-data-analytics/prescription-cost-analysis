@@ -3,7 +3,7 @@ pca_top_drug_cost <- function(con) {
   raw_data <- dplyr::tbl(con,
                          from = dbplyr::in_schema("AML", "PCA_MY_FY_CY_FACT")) |>
     dplyr::filter(MONTH_TYPE %in% c("FY")) |>
-    dplyr::filter(YEAR_DESC != "2013/2014") |>
+    dplyr::filter(!YEAR_DESC %in% c("2013/2014", "2014/2015")) |>
     dplyr::filter(!BNF_CHAPTER %in% c("20","21","22","23")) |>
     dplyr::select(
       "YEAR_DESC",

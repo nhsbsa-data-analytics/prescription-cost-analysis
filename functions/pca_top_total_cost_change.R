@@ -3,10 +3,10 @@ pca_top_total_cost_change <- function(con) {
   raw_data <- dplyr::tbl(con,
                          from = dbplyr::in_schema("AML", "PCA_MY_FY_CY_FACT")) |>
     dplyr::filter(MONTH_TYPE %in% c("FY")) |>
-    dplyr::filter(YEAR_DESC != "2013/2014") |>
+    dplyr::filter(!YEAR_DESC %in% c("2013/2014", "2014/2015")) |>
     dplyr::select(
       "YEAR_DESC",
-      "DISP_PRESEN_BNF",
+      #"DISP_PRESEN_BNF",
       "DISP_PRESEN_BNF_DESCR",
       "VMPP_UOM",
       "ITEM_COUNT",
@@ -14,7 +14,7 @@ pca_top_total_cost_change <- function(con) {
       "ITEM_PAY_DR_NIC"
     ) |>
     dplyr::group_by(YEAR_DESC,
-                    DISP_PRESEN_BNF,
+                    #DISP_PRESEN_BNF,
                     DISP_PRESEN_BNF_DESCR,
                     VMPP_UOM) |>
     dplyr::summarise(

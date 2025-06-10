@@ -2,7 +2,7 @@ pca_item_generic_bnf <- function(con) {
   #extract raw data
   raw_data <- dplyr::tbl(con,
                          from = dbplyr::in_schema("AML", "PCA_MY_FY_CY_FACT")) |>
-    dplyr::filter(MONTH_TYPE %in% c("FY"),YEAR_DESC != "2013/2014") |>
+    dplyr::filter(MONTH_TYPE %in% c("FY"),!YEAR_DESC %in% c("2013/2014", "2014/2015")) |>
     dplyr::filter(!BNF_CHAPTER %in% c("20","21","22","23")) |>
     dplyr::select(
       "YEAR_DESC",

@@ -143,7 +143,7 @@ padding-bottom: 13px!important;
 margin-bottom: -1px;
 }
 
-[role = "tabpanel"] {
+.tab-content .tab-pane {
 padding: 10px;
 }
 
@@ -156,6 +156,10 @@ max-width:100%;
 #nav_logo {
 width: 50%;
 margin-top: 20px;
+}
+
+#Layer_1 {
+height: 80px;
 }
 
 /* BUTTON */
@@ -238,4 +242,81 @@ font-size:16px!important;
 td[align="left"], th[align="left"] {
 text-align: left!important;
 font-size:16px!important;
+}
+
+/* BACK TO TOP BUTTON */
+#backtop-button {
+    display: block;
+    visibility: hidden!important;
+    position: fixed;
+    z-index: 10000;
+    bottom: 20px;
+    right: 20px;
+    font-size: 10px;
+    padding: 0 10px 10px 10px;
+    border-radius: 5px;
+    color: white;
+    pointer-events: none;
+    transition: opacity 1s;
+    height: 50px!important;
+}
+
+button {
+    appearance: auto;
+    font-style: ;
+    font-variant-ligatures: ;
+    font-variant-caps: ;
+    font-variant-numeric: ;
+    font-variant-east-asian: ;
+    font-variant-alternates: ;
+    font-variant-position: ;
+    font-weight: ;
+    font-stretch: ;
+    font-size: ;
+    font-family: ;
+    font-optical-sizing: ;
+    font-kerning: ;
+    font-feature-settings: ;
+    font-variation-settings: ;
+    text-rendering: auto;
+    color: buttontext;
+    letter-spacing: normal;
+    word-spacing: normal;
+    line-height: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+    display: inline-block;
+    text-align: center;
+    align-items: flex-start;
+    cursor: default;
+    box-sizing: border-box;
+    background-color: buttonface;
+    margin: 0em;
+    padding-block: 1px;
+    padding-inline: 6px;
+    border-width: 2px;
+    border-style: outset;
+    border-color: buttonborder;
+    border-image: initial;
+}
+
+input[type=submit], input[type=reset], input[type=button], button, .button, .submit {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    border: 0;
+    border-radius: 0;
+    padding: 8px 30px;
+    background: #005EB8;
+    font-size: 18px;
+    color: #e8edee;
+    transition: all 0.2s ease-in-out;
+    line-height: 1;
+}
+
+#backtop-button span {
+    display: block;
+    font-size: 30px;
 }

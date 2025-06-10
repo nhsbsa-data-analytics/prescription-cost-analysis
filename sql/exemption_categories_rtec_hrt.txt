@@ -1,0 +1,75 @@
+DROP TABLE    PCA_EXEMPTIONS_RTEC_HRT_202403  PURGE;
+CREATE TABLE  PCA_EXEMPTIONS_RTEC_HRT_202403  COMPRESS FOR QUERY HIGH AS
+
+WITH tdim as (
+select /*+ materialize */
+  year_month
+  ,financial_year
+  ,count(year_month) over(partition by	financial_year)	as	ym_count
+from
+  dim.year_month_dim
+where 1  =  1
+  and year_month  between 202304  and 202403
+),
+hrt_anytime as
+(
+select  /*+ materialize */
+            cdr.RECORD_ID,
+            cdr.HRT_FLAG
+from        DIM.CDR_EP_DRUG_BNF_DIM         cdr
+where       1=1
+    and     cdr.YEAR_MONTH between 202304 and 202403
+    and     cdr.HRT_FLAG = 'Y'
+group by    cdr.RECORD_ID,
+            cdr.HRT_FLAG
+)
+,
+cdrd as
+(
+select  /*+ materialize */
+            cdr.YEAR_MONTH,
+            cdr.RECORD_ID,
+            cdr.HRT_FLAG,
+            nvl(hrta.HRT_FLAG,'N') as HRT_FLAG_ANYTIME
+from        DIM.CDR_EP_DRUG_BNF_DIM     cdr
+left join   hrt_anytime                 hrta    on  cdr.RECORD_ID   =   hrta.RECORD_ID
+where       1=1
+    and     cdr.YEAR_MONTH between 202304 and 202403
+)
+select    
+    tdim.financial_year
+    ,fact.patient_identified
+    ,cdrd.HRT_FLAG_ANYTIME
+    ,coalesce(rtc.ASSIGNED_PFEA, fact.PFEA_EXEMPT_CAT)    as PFEA_EXEMPT_CAT    
+    ,sum(fact.ITEM_COUNT)                                 as TOTAL_ITEMS
+    ,sum(fact.item_pay_dr_nic) / 100   AS  item_pay_dr_nic
+    ,count(DISTINCT PATIENT_ID) AS patient_count
+    ,sum(nvl(estc.EST_PRESCRIPTION_CHRG,0)) as EST_PRESCRIPTION_CHRG
+from aml.px_form_item_elem_comb_fact_av fact
+inner join tdim tdim
+    ON  fact.year_month  = tdim.year_month
+left join PX_EST_PX_CHARGE_LOOKUP estc   
+    on  fact.YEAR_MONTH = estc.YEAR_MONTH
+    and fact.PF_ID =   estc.PF_ID
+    and fact.I_ID =   estc.I_ID
+    and fact.ELEM_ID = estc.ELEM_ID
+left join   PX_PFID_RTEC_LOOKUP  rtc         
+    on  fact.YEAR_MONTH = rtc.YEAR_MONTH
+    and fact.PF_ID = rtc.PF_ID
+    and rtc.LINK_CATEGORY_CDE <=  4   --exclude match categories 5 and 6
+left join                                       
+cdrd    on  fact.YEAR_MONTH = cdrd.YEAR_MONTH
+and fact.CALC_PREC_DRUG_RECORD_ID = cdrd.RECORD_ID
+where       1=1
+    --limit to valid dispensed items
+    and     fact.NHS_PAID_FLAG          = 'Y'
+    and     (  fact. CONSULT_ONLY_IND   is null
+            or  fact.CONSULT_ONLY_IND   = 'N'
+            )
+    and fact.DISPENSER_COUNTRY_OU = 1
+    AND coalesce(rtc.ASSIGNED_PFEA, fact.PFEA_EXEMPT_CAT) = 'W'
+group by 
+    tdim.financial_year
+    ,fact.patient_identified
+    ,cdrd.HRT_FLAG_ANYTIME
+    ,coalesce(rtc.ASSIGNED_PFEA, fact.PFEA_EXEMPT_CAT);
