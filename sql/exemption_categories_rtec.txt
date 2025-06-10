@@ -1,0 +1,46 @@
+-- These tables are ran at a financial year level, tables for 2015/16 through 2024/25 already built in OST
+--DROP TABLE    PCA_EXEMPTIONS_RTEC_201603  PURGE;
+--CREATE TABLE  PCA_EXEMPTIONS_RTEC_202503  COMPRESS FOR QUERY HIGH AS
+
+WITH tdim as (
+select
+  year_month
+  ,financial_year
+  ,count(year_month) over(partition by	financial_year)	as	ym_count
+from
+  dim.year_month_dim
+where 1  =  1
+  and year_month  between 202404  and 202503
+)
+select    
+    tdim.financial_year
+    ,fact.patient_identified
+    ,coalesce(rtc.ASSIGNED_PFEA, fact.PFEA_EXEMPT_CAT)    as PFEA_EXEMPT_CAT    
+    ,sum(fact.ITEM_COUNT)                                 as TOTAL_ITEMS
+    ,sum(fact.item_pay_dr_nic) / 100   AS  item_pay_dr_nic
+    ,count(DISTINCT PATIENT_ID) AS patient_count
+    ,sum(nvl(estc.EST_PRESCRIPTION_CHRG,0)) as EST_PRESCRIPTION_CHRG
+from aml.px_form_item_elem_comb_fact_av fact
+inner join tdim tdim
+    ON  fact.year_month  = tdim.year_month
+left join PX_EST_PX_CHARGE_LOOKUP estc   
+    on  fact.YEAR_MONTH = estc.YEAR_MONTH
+    and fact.PF_ID =   estc.PF_ID
+    and fact.I_ID =   estc.I_ID
+    and fact.ELEM_ID = estc.ELEM_ID
+left join   PX_PFID_RTEC_LOOKUP  rtc         
+    on  fact.YEAR_MONTH = rtc.YEAR_MONTH
+    and fact.PF_ID = rtc.PF_ID
+    and rtc.LINK_CATEGORY_CDE <=  4   --exclude match categories 5 and 6
+where       1=1
+    --limit to valid dispensed items
+    and     fact.NHS_PAID_FLAG          = 'Y'
+    and     (  fact. CONSULT_ONLY_IND   is null
+            or  fact.CONSULT_ONLY_IND   = 'N'
+            )
+    and fact.DISPENSER_COUNTRY_OU = 1
+group by 
+    tdim.financial_year
+    ,fact.patient_identified
+    ,coalesce(rtc.ASSIGNED_PFEA, fact.PFEA_EXEMPT_CAT);
+    

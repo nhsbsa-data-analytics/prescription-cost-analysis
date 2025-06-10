@@ -1,0 +1,38 @@
+DROP TABLE    PCA_EXEMPTIONS_RTEC_202503  PURGE;
+CREATE TABLE  PCA_EXEMPTIONS_RTEC_202503  COMPRESS FOR QUERY HIGH AS
+
+WITH tdim as (
+select
+  year_month
+  ,financial_year
+  ,count(year_month) over(partition by	financial_year)	as	ym_count
+from
+  dim.year_month_dim
+where 1  =  1
+  and year_month  between 201504  and mgmt.pkg_public_dwh_functions.f_get_latest_period('EPACT2')
+)
+select    
+    tdim.financial_year
+    coalesce(rtc.ASSIGNED_PFEA, pxf.PFEA_EXEMPT_CAT)    as PFEA_EXEMPT_CAT
+    ,sum(pxf.ITEM_COUNT)                                 as TOTAL_ITEMS
+    ,sum(pxf.item_pay_dr_nic) / 100   AS  item_pay_dr_nic
+from aml.px_form_item_elem_comb_fact_av pxf
+inner join tdim tdim
+    ON  pxf.year_month  = tdim.year_month
+left join   PX_PFID_RTEC_LOOKUP  rtc         
+    on  pxf.YEAR_MONTH                  =   rtc.YEAR_MONTH
+    and pxf.PF_ID                       =   rtc.PF_ID
+    and rtc.LINK_CATEGORY_CDE           <=  4   --exclude match categories 5 and 6
+where       1=1
+    --limit to valid dispensed items
+    and     pxf.NHS_PAID_FLAG          = 'Y'
+    and     (  pxf. CONSULT_ONLY_IND   is null
+            or  pxf.CONSULT_ONLY_IND   = 'N'
+            )
+    and pxf.DISPENSER_COUNTRY_OU = 1
+    and tdim.ym_count = 12
+group by 
+tdim.financial_year
+,coalesce(rtc.ASSIGNED_PFEA, pxf.PFEA_EXEMPT_CAT)    as PFEA_EXEMPT_CAT;
+
+select * from PCA_EXEMPTIONS_RTEC_202503;

@@ -168,6 +168,173 @@ pca_aggregations <- function(data, area = c("national", "ICB")) {
         `Quantity Per Item` = `Total Quantity` / `Total Items`)
   }
   
+  else if (area == "regional") {
+    
+    df <- df %>%
+      dplyr::rename(`Region Name` = REGION_NAME,
+                    `Region Code` = REGION_CODE,)
+    
+    national_total <- df %>%
+      dplyr::group_by(
+        YEAR_DESC,
+        `Region Name`, 
+        `Region Code`) %>%
+      dplyr::summarise(`Total Items` = sum(`Total Items`),
+                       `Total Cost (£)` = sum(`Total Cost (£)`)) %>%
+      ungroup() %>%
+      {if ("FY" %in% df$MONTH_TYPE) dplyr::rename(.,`Financial Year` = YEAR_DESC) else .} %>%
+      {if ("CY" %in% df$MONTH_TYPE) dplyr::rename(.,`Calendar Year` = YEAR_DESC) else .} %>%
+      dplyr::mutate(`Cost Per Item (£)` = `Total Cost (£)` / `Total Items`) %>%
+      dplyr::arrange(`Region Code`)
+    
+    bnf_chapters <- df %>%
+      dplyr::group_by(
+        YEAR_DESC,
+        `Region Name`,
+        `Region Code`,
+        `BNF Chapter Code`,
+        `BNF Chapter Name`
+      ) %>%
+      dplyr::summarise(`Total Items` = sum(`Total Items`),
+                       `Total Cost (£)` = sum(`Total Cost (£)`)) %>%
+      ungroup() %>%
+      {if ("FY" %in% df$MONTH_TYPE) dplyr::rename(.,`Financial Year` = YEAR_DESC) else .} %>%
+      {if ("CY" %in% df$MONTH_TYPE) dplyr::rename(.,`Calendar Year` = YEAR_DESC) else .} %>%
+      dplyr::mutate(`Cost Per Item (£)` = `Total Cost (£)` / `Total Items`) %>%
+      dplyr::arrange(`Region Code`)
+    
+    bnf_sections <- df %>%
+      dplyr::group_by(
+        YEAR_DESC,
+        `Region Name`,
+        `Region Code`,
+        `BNF Section Code`,
+        `BNF Section Name`,
+        `BNF Chapter Code`,
+        `BNF Chapter Name`
+      ) %>%
+      dplyr::summarise(`Total Items` = sum(`Total Items`),
+                       `Total Cost (£)` = sum(`Total Cost (£)`)) %>%
+      ungroup() %>%
+      {if ("FY" %in% df$MONTH_TYPE) dplyr::rename(.,`Financial Year` = YEAR_DESC) else .} %>%
+      {if ("CY" %in% df$MONTH_TYPE) dplyr::rename(.,`Calendar Year` = YEAR_DESC) else .} %>%
+      dplyr::mutate(`Cost Per Item (£)` = `Total Cost (£)` / `Total Items`) %>%
+      dplyr::arrange(`Region Code`)
+    
+    bnf_paragraphs <- df %>%
+      dplyr::group_by(
+        YEAR_DESC,
+        `Region Name`,
+        `Region Code`,
+        `BNF Paragraph Code`,
+        `BNF Paragraph Name`,
+        `BNF Section Code`,
+        `BNF Section Name`,
+        `BNF Chapter Code`,
+        `BNF Chapter Name`
+      ) %>%
+      dplyr::summarise(`Total Items` = sum(`Total Items`),
+                       `Total Cost (£)` = sum(`Total Cost (£)`)) %>%
+      ungroup() %>%
+      {if ("FY" %in% df$MONTH_TYPE) dplyr::rename(.,`Financial Year` = YEAR_DESC) else .} %>%
+      {if ("CY" %in% df$MONTH_TYPE) dplyr::rename(.,`Calendar Year` = YEAR_DESC) else .} %>%
+      dplyr::mutate(`Cost Per Item (£)` = `Total Cost (£)` / `Total Items`) %>%
+      dplyr::arrange(`Region Code`)
+    
+    chemical_substances <- df %>%
+      dplyr::group_by(
+        YEAR_DESC,
+        `Region Name`,
+        `Region Code`,
+        `BNF Chemical Substance Code`,
+        `BNF Chemical Substance Name`,
+        `BNF Paragraph Code`,
+        `BNF Paragraph Name`,
+        `BNF Section Code`,
+        `BNF Section Name`,
+        `BNF Chapter Code`,
+        `BNF Chapter Name`
+      ) %>%
+      dplyr::summarise(`Total Items` = sum(`Total Items`),
+                       `Total Cost (£)` = sum(`Total Cost (£)`)) %>%
+      ungroup() %>%
+      {if ("FY" %in% df$MONTH_TYPE) dplyr::rename(.,`Financial Year` = YEAR_DESC) else .} %>%
+      {if ("CY" %in% df$MONTH_TYPE) dplyr::rename(.,`Calendar Year` = YEAR_DESC) else .} %>%
+      dplyr::mutate(`Cost Per Item (£)` = `Total Cost (£)` / `Total Items`) %>%
+      dplyr::arrange(`Region Code`)
+    
+    presentations <- df %>%
+      dplyr::group_by(
+        YEAR_DESC,
+        `Region Name`,
+        `Region Code`,
+        `BNF Presentation Code`,
+        `BNF Presentation Name`,
+        `Unit of Measure`,
+        `Generic BNF Presentation Code`,
+        `Generic BNF Presentation Name`,
+        `BNF Chemical Substance Code`,
+        `BNF Chemical Substance Name`,
+        `BNF Paragraph Code`,
+        `BNF Paragraph Name`,
+        `BNF Section Code`,
+        `BNF Section Name`,
+        `BNF Chapter Code`,
+        `BNF Chapter Name`,
+        `Preparation Class`,
+        `Prescribed Preparation Class`,
+        `Advanced Service Type`
+      ) %>%
+      dplyr::summarise(
+        `Total Items` = sum(`Total Items`),
+        `Total Quantity` = sum(`Total Quantity`),
+        `Total Cost (£)` = sum(`Total Cost (£)`)
+      ) %>%
+      ungroup() %>%
+      {if ("FY" %in% df$MONTH_TYPE) dplyr::rename(.,`Financial Year` = YEAR_DESC) else .} %>%
+      {if ("CY" %in% df$MONTH_TYPE) dplyr::rename(.,`Calendar Year` = YEAR_DESC) else .} %>%
+      dplyr::mutate(
+        `Cost Per Item (£)` = `Total Cost (£)` / `Total Items`,
+        `Cost Per Quantity (£)` = `Total Cost (£)` / `Total Quantity`,
+        `Quantity Per Item` = `Total Quantity` / `Total Items`) %>%
+      dplyr::arrange(`Region Code`)
+    
+    SNOMED_code <- df %>%
+      dplyr::select(
+        YEAR_DESC,
+        `Region Name`,
+        `Region Code`,
+        `BNF Presentation Code`,
+        `BNF Presentation Name`,
+        `SNOMED Code`,
+        `Supplier Name`,
+        `Unit of Measure`,
+        `Generic BNF Presentation Code`,
+        `Generic BNF Presentation Name`,
+        `BNF Chemical Substance Code`,
+        `BNF Chemical Substance Name`,
+        `BNF Paragraph Code`,
+        `BNF Paragraph Name`,
+        `BNF Section Code`,
+        `BNF Section Name`,
+        `BNF Chapter Code`,
+        `BNF Chapter Name`,
+        `Preparation Class`,
+        `Prescribed Preparation Class`,
+        `Advanced Service Type`,
+        `Total Items`,
+        `Total Quantity`,
+        `Total Cost (£)`
+      ) %>%
+      {if ("FY" %in% df$MONTH_TYPE) dplyr::rename(.,`Financial Year` = YEAR_DESC) else .} %>%
+      {if ("CY" %in% df$MONTH_TYPE) dplyr::rename(.,`Calendar Year` = YEAR_DESC) else .} %>%
+      dplyr::mutate(
+        `Cost Per Item (£)` = `Total Cost (£)` / `Total Items`,
+        `Cost Per Quantity (£)` = `Total Cost (£)` / `Total Quantity`,
+        `Quantity Per Item` = `Total Quantity` / `Total Items`) %>%
+      dplyr::arrange(`Region Code`)
+  }
+  
   else if (area == "ICB") {
     
     df <- df %>%
