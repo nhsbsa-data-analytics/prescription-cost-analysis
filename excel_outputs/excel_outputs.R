@@ -4038,7 +4038,7 @@ accessibleTables::write_sheet(
     "A fix applied from June 2024 onwards assigns an exemption category directly to the EPS record when the RTEC check is performed. For NHSBSA issued exemptions this will show the exemption held. However, for DWP issued exemptions (Income Support (IS), Job Seekers Allowance (JSA), Universal Credit (UC) and Pension Credit Guarantee) these are all being captured in the EPS data as Cat-U (Universal Credit). This is due to the limitations of the API used to check DWP issued exemptions.",
     "Backfilled items and costs for an HRT Pre-payment Certificate where a medication was not eligible have been assigned an exemption category code of '-'.",
     "The backfilling process was applied for all prescriptions from November 2021 onwards. Figures for financial year 2021/2022 are for a partial year. Some cells will appear blank as there is no data prior to this time period. This applies to the columns 'Total items backfilled' and 'Total cost backfilled (GBP)'.",
-    "The Age exemption categories Aged 60 or over and Under 16 are grouped together on paper prescriptions as category A from January 2020."
+    "The age exemption categories ‘A - Under 16‘ and  ‘C - Aged 60 or over’ are grouped together on paper prescription forms from January 2020 onwards. In this data table category A is likely to include items for some patients aged 60 or over where A was marked on the back of the form and the NHSBSA processing system did not scan sufficient age information to assign it to category C. If the age was scanned clearly enough then they may be reported as C even though the ‘combined’ box A was marked on the back of the form."
     ),
   pca_exemption_categories,
   13
