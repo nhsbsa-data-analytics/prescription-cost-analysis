@@ -133,7 +133,7 @@ In instances where dispensing contractors are unable to purchase products at or 
 
 ## 2. Methodology
 
-Generic (unbranded) prescribing is encouraged (by who ?), and many drugs are now prescribed this way even if they are not available in generic form, leading to the existence of preparation class 2. The source data for these statistics does not record what product was actually dispensed but, in class 2 cases, our methodology generates a ‘best guess’ for this information. It is not possible to allocate a ‘best guess’ of the actual product dispensed for preparation class 1 drugs. 
+Generic (unbranded) prescribing is encouraged, and many drugs are now prescribed this way even if they are not available in generic form, leading to the existence of preparation class 2. The source data for these statistics does not record what product was actually dispensed but, in class 2 cases, our methodology generates a ‘best guess’ for this information. It is not possible to allocate a ‘best guess’ of the actual product dispensed for preparation class 1 drugs. 
 
 In December 2020 the NHSBSA held a public consultation on changing the methodology used in the PCA and on expanding the content. Following this consultation, we changed the way in which we make our ‘best guess’ of which propriety product was dispensed in class 2 preparations, as described below in section 2.1.2.
 
