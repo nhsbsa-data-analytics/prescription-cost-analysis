@@ -89,6 +89,8 @@ req_pkgs <-
     "tcltk",
     "DT",
     "htmltools",
+    "odbc",
+    "dbplyr",
     "nhsbsa-data-analytics/nhsbsaR",
     "nhsbsa-data-analytics/nhsbsaExternalData",
     "nhsbsa-data-analytics/accessibleTables",
@@ -98,50 +100,20 @@ req_pkgs <-
 #library/install packages as required
 nhsbsaUtils::check_and_install_packages(req_pkgs)
 
-# set up logging
-lf <-
-  logr::log_open(paste0(
-    "Y:/Official Stats/PCA/log/pca_log",
-    format(Sys.time(), "%d%m%y%H%M%S"),
-    ".log"
-  ))
-
 # load config
 config <- yaml::yaml.load_file("config.yml")
-log_print("Config loaded", hide_notes = TRUE)
-log_print(config, hide_notes = TRUE)
 
 # load options
 nhsbsaUtils::publication_options()
-log_print("Options loaded", hide_notes = TRUE)
 
-# 2. connect to DWH and pull max CY/FY  ---------
-#build connection to warehouse
-con <- nhsbsaR::con_nhsbsa(dsn = NULL,
-                           driver = "Oracle in OraClient19Home1",
-                           database = "DWCP")
+# 2. connect to Fabric ---------
+# build Fabric connection
+con <- nhsbsaR::con_nhsbsa_fabric(
+  sql_analytics_endpoint = Sys.getenv("FABRIC_PCA_CONN_STRING"),
+  lakehouse_name = "dsaas_prescription_cost_analysis_gold"
+)
 
-#get max fy from pca table
-max_dw_fy <- get_max_dw_fy(con)
-log_print("Max DWH FY pulled", hide_notes = TRUE)
-log_print(max_dw_fy, hide_notes = TRUE)
-
-#get max cy from pca table
-max_dw_cy <- get_max_dw_cy(con)
-
-log_print("Max DWH CY pulled", hide_notes = TRUE)
-log_print(max_dw_cy, hide_notes = TRUE)
-
-# 3. load latest data  ---------
-#load latest available data
-#read most recent monthly file
-recent_file_nat_fy <- get_recent_file_nat_fy()
-
-log_print("Latest saved data loaded", hide_notes = TRUE)
-log_print(head(recent_file_nat_fy), hide_notes = TRUE)
-
-# 4. load reference data  ---------
-
+# 3. load reference data  ---------
 #map data
 icb_geo_data <-
   nhsbsaExternalData::icb_geo_data(
@@ -149,15 +121,14 @@ icb_geo_data <-
     SUB_GEOGRAPHY_CODE = "ICB23CD",
     SUB_GEOGRAPHY_NAME = "ICB23NM"
   )
-log_print("Geo data loaded", hide_notes = TRUE)
 
 #icb population
 temp1 <- tempfile()
 icb_population_raw <-
-  utils::download.file(url = "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/clinicalcommissioninggroupmidyearpopulationestimates/mid2011tomid2022integratedcareboards2024geography/sapeicb202420112022.xlsx", temp1, mode = "wb")
+  utils::download.file(url = "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/clinicalcommissioninggroupmidyearpopulationestimates/mid2022revisednov2025tomid2024integratedcareboards2024geography/sapeicb20222024.xlsx", temp1, mode = "wb")
 
 icb_population <- readxl::read_xlsx(temp1,
-                                    sheet = 16,
+                                    sheet = 7,
                                     range = "A4:GG110",
                                     col_names = TRUE) |>
   group_by(`ICB 2024 Name`, `ICB 2024 Code`) |>
@@ -181,7 +152,7 @@ icb_pop <- icb_code_lookup |>
   left_join(icb_population)
 
 region_population <- readxl::read_xlsx(temp1,
-                                       sheet = 16,
+                                       sheet = 7,
                                        range = "A4:GG110",
                                        col_names = TRUE) |>
   group_by(`NHSER 2024 Name`, `NHSER 2024 Code`) |>
@@ -196,15 +167,13 @@ region_population <- readxl::read_xlsx(temp1,
 
 # national population
 en_ons_national_pop <-
-  nhsbsaExternalData::ons_national_pop(year = c(2014:as.numeric(max_dw_cy)), area = "ENPOP")
+  nhsbsaExternalData::ons_national_pop(year = c(2014:as.numeric(config$cy_suffix)), area = "ENPOP")
 sc_ons_national_pop <-
-  nhsbsaExternalData::ons_national_pop(year = (2014:as.numeric(max_dw_cy)), area = "SCPOP")
+  nhsbsaExternalData::ons_national_pop(year = (2014:as.numeric(config$cy_suffix)), area = "SCPOP")
 ni_ons_national_pop <-
-  nhsbsaExternalData::ons_national_pop(year = (2014:as.numeric(max_dw_cy)), area = "NIPOP")
+  nhsbsaExternalData::ons_national_pop(year = (2014:as.numeric(config$cy_suffix)), area = "NIPOP")
 wa_ons_national_pop <-
-  nhsbsaExternalData::ons_national_pop(year = (2014:as.numeric(max_dw_cy)), area = "WAPOP")
-
-log_print("Population data loaded", hide_notes = TRUE)
+  nhsbsaExternalData::ons_national_pop(year = (2014:as.numeric(config$cy_suffix)), area = "WAPOP")
 
 #pca data
 sc_pca <-
@@ -213,504 +182,152 @@ ni_pca <-
   northern_irish_pca_extraction_2024(file_path = config$ni_pca)
 wa_pca <-
   wales_pca_extraction_2324(file_path = config$wa_pca)
-log_print("Dev nation PCA data loaded", hide_notes = TRUE)
 
-# 5. pull data from warehouse if more recent data is available ------
-#check max DWH fy against max data fy and pull data if different
+# 4. pull data from Fabric ------
+# fy national data
+nat_data_fy_agg <- list()
+nat_data_fy_agg$National <- DBI::dbGetQuery(con, paste0("SELECT * FROM [national].national_total_fy_", as.character(config$fy_suffix)))
+nat_data_fy_agg$BNF_Chapters <- DBI::dbGetQuery(con, paste0("SELECT * FROM [national].chapter_total_fy_", as.character(config$fy_suffix)))
+nat_data_fy_agg$BNF_Sections <- DBI::dbGetQuery(con, paste0("SELECT * FROM [national].section_total_fy_", as.character(config$fy_suffix)))
+nat_data_fy_agg$BNF_Paragraphs <- DBI::dbGetQuery(con, paste0("SELECT * FROM [national].paragraph_total_fy_", as.character(config$fy_suffix)))
+nat_data_fy_agg$Chemical_Substances <- DBI::dbGetQuery(con, paste0("SELECT * FROM [national].chem_sub_total_fy_", as.character(config$fy_suffix)))
+nat_data_fy_agg$Presentations <- DBI::dbGetQuery(con, paste0("SELECT * FROM [national].presentation_total_fy_", as.character(config$fy_suffix)))
+nat_data_fy_agg$SNOMED_Code <- DBI::dbGetQuery(con, paste0("SELECT * FROM [national].snomed_total_fy_", as.character(config$fy_suffix)))
+#replace NA with blanks
+nat_data_fy_agg$National[is.na(nat_data_fy_agg$National)] <- ""
+nat_data_fy_agg$BNF_Chapters[is.na(nat_data_fy_agg$BNF_Chapters)] <- ""
+nat_data_fy_agg$BNF_Sections[is.na(nat_data_fy_agg$BNF_Sections)] <- ""
+nat_data_fy_agg$BNF_Paragraphs[is.na(nat_data_fy_agg$BNF_Paragraphs)] <- ""
+nat_data_fy_agg$Chemical_Substances[is.na(nat_data_fy_agg$Chemical_Substances)] <- ""
+nat_data_fy_agg$Presentations[is.na(nat_data_fy_agg$Presentations)] <- ""
+nat_data_fy_agg$SNOMED_Code[is.na(nat_data_fy_agg$SNOMED_Code)] <- ""
+
+# cy national data
+nat_data_cy_agg <- list()
+nat_data_cy_agg$National <- DBI::dbGetQuery(con, paste0("SELECT * FROM [national].national_total_cy_", as.character(config$cy_suffix)))
+nat_data_cy_agg$BNF_Chapters <- DBI::dbGetQuery(con, paste0("SELECT * FROM [national].chapter_total_cy_", as.character(config$cy_suffix)))
+nat_data_cy_agg$BNF_Sections <- DBI::dbGetQuery(con, paste0("SELECT * FROM [national].section_total_cy_", as.character(config$cy_suffix)))
+nat_data_cy_agg$BNF_Paragraphs <- DBI::dbGetQuery(con, paste0("SELECT * FROM [national].paragraph_total_cy_", as.character(config$cy_suffix)))
+nat_data_cy_agg$Chemical_Substances <- DBI::dbGetQuery(con, paste0("SELECT * FROM [national].chem_sub_total_cy_", as.character(config$cy_suffix)))
+nat_data_cy_agg$Presentations <- DBI::dbGetQuery(con, paste0("SELECT * FROM [national].presentation_total_cy_", as.character(config$cy_suffix)))
+nat_data_cy_agg$SNOMED_Code <- DBI::dbGetQuery(con, paste0("SELECT * FROM [national].snomed_total_cy_", as.character(config$cy_suffix)))
+#replace NA with blanks
+nat_data_cy_agg$National[is.na(nat_data_cy_agg$National)] <- ""
+nat_data_cy_agg$BNF_Chapters[is.na(nat_data_cy_agg$BNF_Chapters)] <- ""
+nat_data_cy_agg$BNF_Sections[is.na(nat_data_cy_agg$BNF_Sections)] <- ""
+nat_data_cy_agg$BNF_Paragraphs[is.na(nat_data_cy_agg$BNF_Paragraphs)] <- ""
+nat_data_cy_agg$Chemical_Substances[is.na(nat_data_cy_agg$Chemical_Substances)] <- ""
+nat_data_cy_agg$Presentations[is.na(nat_data_cy_agg$Presentations)] <- ""
+nat_data_cy_agg$SNOMED_Code[is.na(nat_data_cy_agg$SNOMED_Code)] <- ""
+
+# fy region data
+region_data_fy_agg <- list()
+region_data_fy_agg$National <- DBI::dbGetQuery(con, paste0("SELECT * FROM [region].region_total_fy_", as.character(config$fy_suffix)))
+region_data_fy_agg$BNF_Chapters <- DBI::dbGetQuery(con, paste0("SELECT * FROM [region].region_chapter_total_fy_", as.character(config$fy_suffix)))
+region_data_fy_agg$BNF_Sections <- DBI::dbGetQuery(con, paste0("SELECT * FROM [region].region_section_total_fy_", as.character(config$fy_suffix)))
+region_data_fy_agg$BNF_Paragraphs <- DBI::dbGetQuery(con, paste0("SELECT * FROM [region].region_paragraph_total_fy_", as.character(config$fy_suffix)))
+region_data_fy_agg$Chemical_Substances <- DBI::dbGetQuery(con, paste0("SELECT * FROM [region].region_chem_sub_total_fy_", as.character(config$fy_suffix)))
+region_data_fy_agg$Presentations <- DBI::dbGetQuery(con, paste0("SELECT * FROM [region].region_presentation_total_fy_", as.character(config$fy_suffix)))
+region_data_fy_agg$SNOMED_Code <- DBI::dbGetQuery(con, paste0("SELECT * FROM [region].region_snomed_total_fy_", as.character(config$fy_suffix)))
+#replace NA with blanks
+region_data_fy_agg$National[is.na(region_data_fy_agg$National)] <- ""
+region_data_fy_agg$BNF_Chapters[is.na(region_data_fy_agg$BNF_Chapters)] <- ""
+region_data_fy_agg$BNF_Sections[is.na(region_data_fy_agg$BNF_Sections)] <- ""
+region_data_fy_agg$BNF_Paragraphs[is.na(region_data_fy_agg$BNF_Paragraphs)] <- ""
+region_data_fy_agg$Chemical_Substances[is.na(region_data_fy_agg$Chemical_Substances)] <- ""
+region_data_fy_agg$Presentations[is.na(region_data_fy_agg$Presentations)] <- ""
+region_data_fy_agg$SNOMED_Code[is.na(region_data_fy_agg$SNOMED_Code)] <- ""
+
+# cy region data
+region_data_cy_agg <- list()
+region_data_cy_agg$National <- DBI::dbGetQuery(con, paste0("SELECT * FROM [region].region_total_cy_", as.character(config$cy_suffix)))
+region_data_cy_agg$BNF_Chapters <- DBI::dbGetQuery(con, paste0("SELECT * FROM [region].region_chapter_total_cy_", as.character(config$cy_suffix)))
+region_data_cy_agg$BNF_Sections <- DBI::dbGetQuery(con, paste0("SELECT * FROM [region].region_section_total_cy_", as.character(config$cy_suffix)))
+region_data_cy_agg$BNF_Paragraphs <- DBI::dbGetQuery(con, paste0("SELECT * FROM [region].region_paragraph_total_cy_", as.character(config$cy_suffix)))
+region_data_cy_agg$Chemical_Substances <- DBI::dbGetQuery(con, paste0("SELECT * FROM [region].region_chem_sub_total_cy_", as.character(config$cy_suffix)))
+region_data_cy_agg$Presentations <- DBI::dbGetQuery(con, paste0("SELECT * FROM [region].region_presentation_total_cy_", as.character(config$cy_suffix)))
+region_data_cy_agg$SNOMED_Code <- DBI::dbGetQuery(con, paste0("SELECT * FROM [region].region_snomed_total_cy_", as.character(config$cy_suffix)))
+#replace NA with blanks
+region_data_cy_agg$National[is.na(region_data_cy_agg$National)] <- ""
+region_data_cy_agg$BNF_Chapters[is.na(region_data_cy_agg$BNF_Chapters)] <- ""
+region_data_cy_agg$BNF_Sections[is.na(region_data_cy_agg$BNF_Sections)] <- ""
+region_data_cy_agg$BNF_Paragraphs[is.na(region_data_cy_agg$BNF_Paragraphs)] <- ""
+region_data_cy_agg$Chemical_Substances[is.na(region_data_cy_agg$Chemical_Substances)] <- ""
+region_data_cy_agg$Presentations[is.na(region_data_cy_agg$Presentations)] <- ""
+region_data_cy_agg$SNOMED_Code[is.na(region_data_cy_agg$SNOMED_Code)] <- ""
+
+# fy ICB data
+icb_data_fy_agg <- list()
+icb_data_fy_agg$National <- DBI::dbGetQuery(con, paste0("SELECT * FROM [icb].icb_total_fy_", as.character(config$fy_suffix)))
+icb_data_fy_agg$BNF_Chapters <- DBI::dbGetQuery(con, paste0("SELECT * FROM [icb].icb_chapter_total_fy_", as.character(config$fy_suffix)))
+icb_data_fy_agg$BNF_Sections <- DBI::dbGetQuery(con, paste0("SELECT * FROM [icb].icb_section_total_fy_", as.character(config$fy_suffix)))
+icb_data_fy_agg$BNF_Paragraphs <- DBI::dbGetQuery(con, paste0("SELECT * FROM [icb].icb_paragraph_total_fy_", as.character(config$fy_suffix)))
+icb_data_fy_agg$Chemical_Substances <- DBI::dbGetQuery(con, paste0("SELECT * FROM [icb].icb_chem_sub_total_fy_", as.character(config$fy_suffix)))
+icb_data_fy_agg$Presentations <- DBI::dbGetQuery(con, paste0("SELECT * FROM [icb].icb_presentation_total_fy_", as.character(config$fy_suffix)))
+icb_data_fy_agg$SNOMED_Code <- DBI::dbGetQuery(con, paste0("SELECT * FROM [icb].icb_snomed_total_fy_", as.character(config$fy_suffix)))
+#replace NA with blanks
+icb_data_fy_agg$National[is.na(icb_data_fy_agg$National)] <- ""
+icb_data_fy_agg$BNF_Chapters[is.na(icb_data_fy_agg$BNF_Chapters)] <- ""
+icb_data_fy_agg$BNF_Sections[is.na(icb_data_fy_agg$BNF_Sections)] <- ""
+icb_data_fy_agg$BNF_Paragraphs[is.na(icb_data_fy_agg$BNF_Paragraphs)] <- ""
+icb_data_fy_agg$Chemical_Substances[is.na(icb_data_fy_agg$Chemical_Substances)] <- ""
+icb_data_fy_agg$Presentations[is.na(icb_data_fy_agg$Presentations)] <- ""
+icb_data_fy_agg$SNOMED_Code[is.na(icb_data_fy_agg$SNOMED_Code)] <- ""
+
+# cy ICB data
+icb_data_cy_agg <- list()
+icb_data_cy_agg$National <- DBI::dbGetQuery(con, paste0("SELECT * FROM [icb].icb_total_cy_", as.character(config$cy_suffix)))
+icb_data_cy_agg$BNF_Chapters <- DBI::dbGetQuery(con, paste0("SELECT * FROM [icb].icb_chapter_total_cy_", as.character(config$cy_suffix)))
+icb_data_cy_agg$BNF_Sections <- DBI::dbGetQuery(con, paste0("SELECT * FROM [icb].icb_section_total_cy_", as.character(config$cy_suffix)))
+icb_data_cy_agg$BNF_Paragraphs <- DBI::dbGetQuery(con, paste0("SELECT * FROM [icb].icb_paragraph_total_cy_", as.character(config$cy_suffix)))
+icb_data_cy_agg$Chemical_Substances <- DBI::dbGetQuery(con, paste0("SELECT * FROM [icb].icb_chem_sub_total_cy_", as.character(config$cy_suffix)))
+icb_data_cy_agg$Presentations <- DBI::dbGetQuery(con, paste0("SELECT * FROM [icb].icb_presentation_total_cy_", as.character(config$cy_suffix)))
+icb_data_cy_agg$SNOMED_Code <- DBI::dbGetQuery(con, paste0("SELECT * FROM [icb].icb_snomed_total_cy_", as.character(config$cy_suffix)))
+#replace NA with blanks
+icb_data_cy_agg$National[is.na(icb_data_cy_agg$National)] <- ""
+icb_data_cy_agg$BNF_Chapters[is.na(icb_data_cy_agg$BNF_Chapters)] <- ""
+icb_data_cy_agg$BNF_Sections[is.na(icb_data_cy_agg$BNF_Sections)] <- ""
+icb_data_cy_agg$BNF_Paragraphs[is.na(icb_data_cy_agg$BNF_Paragraphs)] <- ""
+icb_data_cy_agg$Chemical_Substances[is.na(icb_data_cy_agg$Chemical_Substances)] <- ""
+icb_data_cy_agg$Presentations[is.na(icb_data_cy_agg$Presentations)] <- ""
+icb_data_cy_agg$SNOMED_Code[is.na(icb_data_cy_agg$SNOMED_Code)] <- ""
+
+# 5. build variable for max and prev fy to use in headers ------
 #get max fy from latest data
-max_data_fy <- recent_file_nat_fy |>
-  dplyr::select(YEAR_DESC) |>
-  dplyr::filter(YEAR_DESC == max(YEAR_DESC, na.rm = TRUE)) |>
+max_data_fy <- nat_data_fy_agg$National |>
+  dplyr::select(year_desc) |>
+  dplyr::filter(year_desc == max(year_desc, na.rm = TRUE)) |>
   distinct() |>
   pull()
-
-if (max_dw_fy <= max_data_fy) {
-  #read most recent data to use
-  print("No new data in DWH, using most recent saved data")
-  
-  #national data by fy
-  nat_data_fy <- rownames(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "nat_data_fy"
-    )
-  ))[which.max(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "nat_data_fy"
-    )
-  )$mtime)]
-  
-  #read recent data
-  nat_data_fy <- vroom::vroom(nat_data_fy, #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
-    dplyr::mutate(
-      MYS_SERVICE_TYPE = case_when(
-        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-        MYS_SERVICE_TYPE == "N" ~ "None",
-        TRUE ~ "None"
-      )
-    )
-  
-  #national data by cy
-  nat_data_cy <- rownames(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "nat_data_cy"
-    )
-  ))[which.max(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "nat_data_cy"
-    )
-  )$mtime)]
-  
-  #read recent data
-  nat_data_cy <- vroom::vroom(nat_data_cy, #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
-    dplyr::mutate(
-      MYS_SERVICE_TYPE = case_when(
-        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-        MYS_SERVICE_TYPE == "N" ~ "None",
-        TRUE ~ "None"
-      )
-    )
-  
-  #regional data by fy
-  region_data_fy <- rownames(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "region_data_fy"
-    )
-  ))[which.max(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "region_data_fy"
-    )
-  )$mtime)]
-  
-  #read recent data
-  region_data_fy <- vroom::vroom(region_data_fy, #read snomed code as character
-                                 col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
-    dplyr::mutate(
-      MYS_SERVICE_TYPE = case_when(
-        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-        MYS_SERVICE_TYPE == "N" ~ "None",
-        TRUE ~ "None"
-      )
-    )
-  
-  #regional data by cy
-  region_data_cy <- rownames(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "region_data_cy"
-    )
-  ))[which.max(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "region_data_cy"
-    )
-  )$mtime)]
-  
-  #read recent data
-  region_data_cy <- vroom::vroom(region_data_cy, #read snomed code as character
-                                 col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
-    dplyr::mutate(
-      MYS_SERVICE_TYPE = case_when(
-        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-        MYS_SERVICE_TYPE == "N" ~ "None",
-        TRUE ~ "None"
-      )
-    )
-  
-  #stp data by fy
-  stp_data_fy <- rownames(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "stp_data_fy"
-    )
-  ))[which.max(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "stp_data_fy"
-    )
-  )$mtime)]
-  
-  #read recent data
-  stp_data_fy <- vroom::vroom(stp_data_fy, #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
-    dplyr::mutate(
-      MYS_SERVICE_TYPE = case_when(
-        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-        MYS_SERVICE_TYPE == "N" ~ "None",
-        TRUE ~ "None"
-      )
-    )
-  
-  #stp data by cy
-  stp_data_cy <- rownames(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "stp_data_cy"
-    )
-  ))[which.max(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "stp_data_cy"
-    )
-  )$mtime)]
-  
-  #read recent data
-  stp_data_cy <- vroom::vroom(stp_data_cy, #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
-    dplyr::mutate(
-      MYS_SERVICE_TYPE = case_when(
-        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-        MYS_SERVICE_TYPE == "N" ~ "None",
-        TRUE ~ "None"
-      )
-    )
-  
-  log_print("Data pulled from most recent saved data", hide_notes = TRUE)
-} else {
-  # Pull data from DWH and save to Y drive
-  nat_data_fy <-
-    extract_nat_data(con, year_type = "financial", year = max_dw_fy)
-  nat_data_cy <-
-    extract_nat_data(con, year_type = "calendar", year = max_dw_cy)
-  
-  region_data_fy <-
-    extract_region_data(con, year_type = "financial", year = max_dw_fy)
-  region_data_cy <-
-    extract_region_data(con, year_type = "calendar", year = max_dw_cy)
-  
-  stp_data_fy <-
-    extract_stp_data(con, year_type = "financial", year = max_dw_fy)
-  stp_data_cy <-
-    extract_stp_data(con, year_type = "calendar", year = max_dw_cy)
-  
-  #save new extracts to Y drive
-  save_data(nat_data_cy,
-            dir = "Y:/Official Stats/PCA",
-            filename = "nat_data_cy",
-            quote = TRUE)
-  
-  save_data(nat_data_fy,
-            dir = "Y:/Official Stats/PCA",
-            filename = "nat_data_fy",
-            quote = TRUE)
-  
-  save_data(region_data_fy,
-            dir = "Y:/Official Stats/PCA",
-            filename = "region_data_fy",
-            quote = TRUE)
-  
-  save_data(region_data_cy,
-            dir = "Y:/Official Stats/PCA",
-            filename = "region_data_cy",
-            quote = TRUE)
-  
-  save_data(stp_data_cy,
-            dir = "Y:/Official Stats/PCA",
-            filename = "stp_data_cy",
-            quote = TRUE)
-  
-  save_data(stp_data_fy,
-            dir = "Y:/Official Stats/PCA",
-            filename = "stp_data_fy",
-            quote = TRUE)
-  
-  #national data by fy
-  nat_data_fy <- rownames(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "nat_data_fy"
-    )
-  ))[which.max(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "nat_data_fy"
-    )
-  )$mtime)]
-  
-  #read recent data
-  nat_data_fy <- vroom::vroom(nat_data_fy, #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
-    dplyr::mutate(
-      MYS_SERVICE_TYPE = case_when(
-        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-        MYS_SERVICE_TYPE == "N" ~ "None",
-        TRUE ~ "None"
-      )
-    )
-  
-  #national data by cy
-  nat_data_cy <- rownames(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "nat_data_cy"
-    )
-  ))[which.max(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "nat_data_cy"
-    )
-  )$mtime)]
-  
-  #read recent data
-  nat_data_cy <- vroom::vroom(nat_data_cy, #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
-    dplyr::mutate(
-      MYS_SERVICE_TYPE = case_when(
-        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-        MYS_SERVICE_TYPE == "N" ~ "None",
-        TRUE ~ "None"
-      )
-    )
-  
-  #national data by fy
-  nat_data_fy <- rownames(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "nat_data_fy"
-    )
-  ))[which.max(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "nat_data_fy"
-    )
-  )$mtime)]
-  
-  #read recent data
-  nat_data_fy <- vroom::vroom(nat_data_fy, #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
-    dplyr::mutate(
-      MYS_SERVICE_TYPE = case_when(
-        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-        MYS_SERVICE_TYPE == "N" ~ "None",
-        TRUE ~ "None"
-      )
-    )
-  
-  #national data by cy
-  nat_data_cy <- rownames(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "nat_data_cy"
-    )
-  ))[which.max(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "nat_data_cy"
-    )
-  )$mtime)]
-  
-  #read recent data
-  nat_data_cy <- vroom::vroom(nat_data_cy, #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
-    dplyr::mutate(
-      MYS_SERVICE_TYPE = case_when(
-        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-        MYS_SERVICE_TYPE == "N" ~ "None",
-        TRUE ~ "None"
-      )
-    )
-  
-  #regional data by fy
-  region_data_fy <- rownames(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "region_data_fy"
-    )
-  ))[which.max(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "region_data_fy"
-    )
-  )$mtime)]
-  
-  #read recent data
-  region_data_fy <- vroom::vroom(region_data_fy, #read snomed code as character
-                                 col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
-    dplyr::mutate(
-      MYS_SERVICE_TYPE = case_when(
-        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-        MYS_SERVICE_TYPE == "N" ~ "None",
-        TRUE ~ "None"
-      )
-    )
-  
-  #national data by cy
-  region_data_cy <- rownames(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "region_data_cy"
-    )
-  ))[which.max(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "region_data_cy"
-    )
-  )$mtime)]
-  
-  #read recent data
-  region_data_cy <- vroom::vroom(region_data_cy, #read snomed code as character
-                                 col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
-    dplyr::mutate(
-      MYS_SERVICE_TYPE = case_when(
-        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-        MYS_SERVICE_TYPE == "N" ~ "None",
-        TRUE ~ "None"
-      )
-    )
-  
-  #stp data by fy
-  stp_data_fy <- rownames(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "stp_data_fy"
-    )
-  ))[which.max(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "stp_data_fy"
-    )
-  )$mtime)]
-  
-  #read recent data
-  stp_data_fy <- vroom::vroom(stp_data_fy, #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
-    dplyr::mutate(
-      MYS_SERVICE_TYPE = case_when(
-        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-        MYS_SERVICE_TYPE == "N" ~ "None",
-        TRUE ~ "None"
-      )
-    )
-  
-  #stp data by cy
-  stp_data_cy <- rownames(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "stp_data_cy"
-    )
-  ))[which.max(file.info(
-    list.files(
-      "Y:/Official Stats/PCA/data",
-      full.names = T,
-      pattern = "stp_data_cy"
-    )
-  )$mtime)]
-  
-  #read recent data
-  stp_data_cy <- vroom::vroom(stp_data_cy, #read snomed code as character
-                              col_types = c(DISP_PRESEN_SNOMED_CODE = "c")) |>
-    dplyr::mutate(
-      MYS_SERVICE_TYPE = case_when(
-        MYS_SERVICE_TYPE == "CCS" ~ "Pharmacy First - Clinical Pathway",
-        MYS_SERVICE_TYPE == "N" ~ "None",
-        TRUE ~ "None"
-      )
-    )
-  
-  log_print("New data pulled from warehouse and saved to Y drive", hide_notes = TRUE)
-}
-
-# 6. build variable for max and prev fy to use in headers ------
-#get max fy from latest data
-max_data_fy <- nat_data_fy |>
-  dplyr::filter(MONTH_TYPE %in% c("FY")) |>
-  dplyr::select(YEAR_DESC) |>
-  dplyr::filter(YEAR_DESC == max(YEAR_DESC, na.rm = TRUE)) |>
-  distinct() |>
-  pull()
-
-log_print(paste0("max_data_fy built as: ", max_data_fy), hide_notes = TRUE)
 
 #get max fy minus 1 from latest data
 max_data_fy_minus_1 <-
   paste0(as.numeric(substr(max_data_fy, 1, 4)) - 1, "/", as.numeric(substr(max_data_fy, 6, 9)) - 1)
 
-log_print(paste0("max_data_fy_minus_1 built as: ", max_data_fy_minus_1),
-         hide_notes = TRUE)
-
-
 #get max cy from latest data
-max_data_cy <- nat_data_cy |>
-  dplyr::filter(MONTH_TYPE %in% c("CY")) |>
-  dplyr::select(YEAR_DESC) |>
-  dplyr::filter(YEAR_DESC == max(YEAR_DESC, na.rm = TRUE)) |>
+max_data_cy <- nat_data_cy_agg$National |>
+  dplyr::select(year_desc) |>
+  dplyr::filter(year_desc == max(year_desc, na.rm = TRUE)) |>
   distinct() |>
   pull()
 
-log_print(paste0("max_data_cy built as: ", max_data_cy), hide_notes = TRUE)
-
-# 7. create aggregate data for main tables ------
-
-#national data
-nat_data_fy_agg <- pca_aggregations(nat_data_fy, area = "national")
-log_print("national FY data aggregated", hide_notes = TRUE)
-nat_data_cy_agg <- pca_aggregations(nat_data_cy, area = "national")
-log_print("national CY data aggregated", hide_notes = TRUE)
-
-#regional data
-region_data_fy_agg <- pca_aggregations(region_data_fy, area = "regional")
-log_print("national FY data aggregated", hide_notes = TRUE)
-region_data_cy_agg <- pca_aggregations(region_data_cy, area = "regional")
-log_print("national CY data aggregated", hide_notes = TRUE)
-
-#ICB data
-stp_data_fy_agg <- pca_aggregations(stp_data_fy, area = "ICB")
-log_print("ICB FY data aggregated", hide_notes = TRUE)
-stp_data_cy_agg <- pca_aggregations(stp_data_cy, area = "ICB")
-log_print("ICB CY data aggregated", hide_notes = TRUE)
-
-
-
-# 8. Pull data for additional analysis ------------
+# 6. Pull data for additional analysis ------------
 #dev_nations_data (requires add_anl_1)
 add_anl_1 <-
-  pca_item_cost_per_capita(con = con) |>
+  DBI::dbGetQuery(con, paste0("SELECT * FROM [additional_analysis].year_summary_", as.character(config$fy_suffix))) |>
+  mutate(join_year = as.numeric(join_year)) |>
   dplyr::left_join(
     select(en_ons_national_pop, YEAR, ENPOP),
-    by = c("JOIN_YEAR" = "YEAR"),
+    by = c("join_year" = "YEAR"),
     copy = TRUE
   ) |>
-  dplyr::arrange(YEAR_DESC) |>
+  dplyr::arrange(year_desc) |>
   dplyr::mutate(
-    COST_PER_ITEM = TOTAL_NIC / TOTAL_ITEMS,
-    ITEMS_PER_CAPITA = TOTAL_ITEMS / ENPOP,
-    NIC_PER_CAPITA = TOTAL_NIC / ENPOP
+    cost_per_item = total_nic / total_items,
+    items_per_capita = total_items / ENPOP,
+    nic_per_capita = total_nic / ENPOP
   ) |>
-  dplyr::select(-JOIN_YEAR)
+  dplyr::select(-join_year)
 
 dev_nations_data <- data.frame(
   "Country" = c("England", "Wales", "Scotland", "Northern Ireland"),
@@ -768,193 +385,39 @@ dev_nations_data <- data.frame(
     COSTS_PER_CAPITA = round(TOTAL_COSTS / POP, 2)
   )
 
-add_anl_2 <- pca_top_drug_cost(con = con)
-add_anl_3 <- pca_top_item_cost(con = con)
-add_anl_4 <- pca_top_items_status(con = con)
-add_anl_5 <- pca_item_cost_class(con = con)
-add_anl_6 <- pca_item_generic_bnf(con = con)
-add_anl_7 <- pca_item_cost_BNF(con = con)
-add_anl_8 <- pca_item_cost_BNF_sect(con = con)
-add_anl_9 <-
-  pca_item_cost_BNF_sect_increase(con = con)
-add_anl_10 <-
-  pca_item_cost_BNF_sect_decrease(con = con)
-add_anl_11 <-
-  pca_top_percentage_change(con = con)
-add_anl_12 <-
-  pca_bottom_percentage_change(con = con)
-add_anl_13 <-
-  pca_top_total_cost_change(con = con)
-add_anl_14 <-
-  pca_bottom_total_cost_change(con = con)
+add_anl_2 <- DBI::dbGetQuery(con, paste0("SELECT * FROM [additional_analysis].top_chem_sub_costs_", as.character(config$fy_suffix)))
+add_anl_3 <- DBI::dbGetQuery(con, paste0("SELECT * FROM [additional_analysis].top_chem_sub_items_", as.character(config$fy_suffix)))
+add_anl_4 <- DBI::dbGetQuery(con, paste0("SELECT * FROM [additional_analysis].items_costs_charge_status_", as.character(config$fy_suffix)))
+add_anl_5 <- DBI::dbGetQuery(con, paste0("SELECT * FROM [additional_analysis].gen_presc_disp_prep_class_", as.character(config$fy_suffix)))
+add_anl_6 <- DBI::dbGetQuery(con, paste0("SELECT * FROM [additional_analysis].gen_presc_disp_bnf_chapter_", as.character(config$fy_suffix)))
+add_anl_7 <- DBI::dbGetQuery(con, paste0("SELECT * FROM [additional_analysis].items_costs_bnf_chapter_", as.character(config$fy_suffix)))
+add_anl_8 <- DBI::dbGetQuery(con, paste0("SELECT * FROM [additional_analysis].top_bnf_section_costs_", as.character(config$fy_suffix)))
+add_anl_9 <- DBI::dbGetQuery(con, paste0("SELECT * FROM [additional_analysis].top_bnf_section_cost_increase_", as.character(config$fy_suffix)))
+add_anl_10 <- DBI::dbGetQuery(con, paste0("SELECT * FROM [additional_analysis].top_bnf_section_cost_decrease_", as.character(config$fy_suffix)))
+add_anl_11 <- DBI::dbGetQuery(con, paste0("SELECT * FROM [additional_analysis].unit_costs_bnf_presentation_increase_", as.character(config$fy_suffix)))
+add_anl_12 <- DBI::dbGetQuery(con, paste0("SELECT * FROM [additional_analysis].unit_costs_bnf_presentation_decrease_", as.character(config$fy_suffix)))
+add_anl_13 <- DBI::dbGetQuery(con, paste0("SELECT * FROM [additional_analysis].total_costs_bnf_presentation_increase_", as.character(config$fy_suffix)))
+add_anl_14 <- DBI::dbGetQuery(con, paste0("SELECT * FROM [additional_analysis].total_costs_bnf_presentation_decrease_", as.character(config$fy_suffix)))
 
-log_print("Data pulled for additional analysis", hide_notes = TRUE)
+# 7. Exemption categories -------------------------------------------------
+pca_exemption_categories <- DBI::dbGetQuery(con, paste0("SELECT * FROM [exemption_categories].pca_exemption_categories_", as.character(config$fy_suffix)))
+pca_rtec_charges <- DBI::dbGetQuery(con, paste0("SELECT * FROM [exemption_categories].pca_rtec_charges_", as.character(config$fy_suffix)))
 
-# 9. Exemption categories -------------------------------------------------
-# pull fact table level exemption data
-pca_exemption_categories_raw <- pca_exemption_categories(con = con)
-
-# build code lookup to account for name changes
-latest_category <- pca_exemption_categories_raw |>
-  select(PFEA_EXEMPT_CAT, EXEMPT_CAT) |>
-  distinct() |>
-  arrange(PFEA_EXEMPT_CAT) |>
-  group_by(PFEA_EXEMPT_CAT) |>
-  slice_tail(n = 1) |>
-  ungroup()
-
-# back fill fact level exemption with corrected names
-pca_exemption_categories <- pca_exemption_categories_raw |>
-  select(-EXEMPT_CAT) |>
-  left_join(latest_category) |>
-  group_by(YEAR_DESC, PFEA_EXEMPT_CAT, EXEMPT_CAT) |>
-  summarise(
-    ITEM_COUNT = sum(ITEM_COUNT, na.rm = TRUE),
-    ITEM_PAY_DR_NIC = sum(ITEM_PAY_DR_NIC, na.rm = TRUE),
-    .groups = "drop"
-  )
-
-# pull exemption category data including rtec back fill
-rtec_201516 <- dplyr::tbl(con, from = dbplyr::in_schema("OST", "PCA_EXEMPTIONS_RTEC_201603")) |>
-  collect()
-
-rtec_201617 <- dplyr::tbl(con, from = dbplyr::in_schema("OST", "PCA_EXEMPTIONS_RTEC_201703")) |>
-  collect()
-
-rtec_201718 <- dplyr::tbl(con, from = dbplyr::in_schema("OST", "PCA_EXEMPTIONS_RTEC_201803")) |>
-  collect()
-
-rtec_201819 <- dplyr::tbl(con, from = dbplyr::in_schema("OST", "PCA_EXEMPTIONS_RTEC_201903")) |>
-  collect()
-
-rtec_201920 <- dplyr::tbl(con, from = dbplyr::in_schema("OST", "PCA_EXEMPTIONS_RTEC_202003")) |>
-  collect()
-
-rtec_202021 <- dplyr::tbl(con, from = dbplyr::in_schema("OST", "PCA_EXEMPTIONS_RTEC_202103")) |>
-  collect()
-
-rtec_202122 <- dplyr::tbl(con, from = dbplyr::in_schema("OST", "PCA_EXEMPTIONS_RTEC_202203")) |>
-  collect()
-
-rtec_202223 <- dplyr::tbl(con, from = dbplyr::in_schema("OST", "PCA_EXEMPTIONS_RTEC_202303")) |>
-  collect()
-
-rtec_202324 <- dplyr::tbl(con, from = dbplyr::in_schema("OST", "PCA_EXEMPTIONS_RTEC_202403")) |>
-  collect()
-
-rtec_202425 <- dplyr::tbl(con, from = dbplyr::in_schema("OST", "PCA_EXEMPTIONS_RTEC_202503")) |>
-  collect()
-
-# join 10 years of rtec into one data frame
-pca_rtec_table <- rtec_201516 |>
-  bind_rows(
-    list(
-      rtec_201617,
-      rtec_201718,
-      rtec_201819,
-      rtec_201920,
-      rtec_202021,
-      rtec_202122,
-      rtec_202223,
-      rtec_202324,
-      rtec_202425
-    )
-  )  |>
-  # filter out HRT for 2023/24 and beyond
-  filter(
-    !(PFEA_EXEMPT_CAT == "W" & as.integer(sub("/.*", "", FINANCIAL_YEAR)) >= 2023)
-  )
-
-# read in rtec HRT tables
-rtec_hrt_202324 <- dplyr::tbl(con, from = dbplyr::in_schema("OST", "PCA_EXEMPTIONS_RTEC_HRT_202403")) |>
-  collect()
-
-rtec_hrt_202425 <- dplyr::tbl(con, from = dbplyr::in_schema("OST", "PCA_EXEMPTIONS_RTEC_HRT_202503")) |>
-  collect()
-
-rtec_hrt_overall <- rtec_hrt_202324 |>
-  bind_rows(
-    rtec_hrt_202425
-  ) |>
-  # mutate rows so those with HRT_FLAG = 'N' are now unassigned
-  mutate(
-    PFEA_EXEMPT_CAT = case_when(
-      HRT_FLAG_ANYTIME == "N" ~ "-",
-      TRUE ~ PFEA_EXEMPT_CAT
-    )
-  ) |>
-  select(-HRT_FLAG_ANYTIME)
-
-# join hrt data to main rtec table
-pca_rtec_table <- pca_rtec_table |>
-  bind_rows(rtec_hrt_overall)
-
-# build rtec exemption table with back filled category names
-pca_rtec_exemptions <- pca_rtec_table |>
-  left_join(latest_category) |>
-  group_by(YEAR_DESC = FINANCIAL_YEAR, PFEA_EXEMPT_CAT, EXEMPT_CAT) |>
-  summarise(
-    ITEM_COUNT = sum(TOTAL_ITEMS, na.rm = TRUE),
-    ITEM_PAY_DR_NIC = sum(ITEM_PAY_DR_NIC, na.rm = TRUE),
-    .groups = "drop"
-  ) |>
-  rename(TOTAL_ITEMS_BACKFILL = ITEM_COUNT,
-         ITEM_PAY_DR_NIC_BACKFILL = ITEM_PAY_DR_NIC) |>
-  #filter out years prior to 21/22 when backfilling began
-  filter(
-    sub("/.*", "", YEAR_DESC) >= 2021
-    )
-
-pca_exemption_categories <- pca_exemption_categories |>
-  left_join(pca_rtec_exemptions)
-
-
-# read in PPC charges for 'savings'
-ppc_charges <- read.csv("Y:\\Official Stats\\PCA\\data\\ppc_charges_lookup.csv")
-
-# build savings table for identified patients only
-pca_rtec_charges <- pca_rtec_table |>
-  filter(PATIENT_IDENTIFIED == "Y") |>
-  left_join(latest_category) |>
-  filter(PFEA_EXEMPT_CAT %in% c("D", "E", "F", "L", "M", "W")) |>
-  select(
-    FINANCIAL_YEAR,
-    PFEA_EXEMPT_CAT,
-    EXEMPT_CAT,
-    PATIENT_COUNT,
-    TOTAL_ITEMS,
-    EST_PRESCRIPTION_CHRG
-  ) |>
-  mutate(CHARGE_PER_PATIENT = EST_PRESCRIPTION_CHRG / PATIENT_COUNT) |>
-  arrange(FINANCIAL_YEAR, PFEA_EXEMPT_CAT) |>
-  #left_join(ppc_charges) |>
-  # mutate(
-  #   EST_SAVINGS_TO_PATIENTS = case_when(
-  #     PFEA_EXEMPT_CAT == "F" ~ EST_PRESCRIPTION_CHRG - (PATIENT_COUNT * X12_MONTH_PPC_CHARGE),
-  #     PFEA_EXEMPT_CAT == "W" ~ EST_PRESCRIPTION_CHRG - (PATIENT_COUNT * HRT_PPC_CHARGE),
-  #     TRUE ~ EST_PRESCRIPTION_CHRG
-  #   )
-  # ) |>
-  #select(-X12_MONTH_PPC_CHARGE, -HRT_PPC_CHARGE) |>
-  filter(
-    !(PFEA_EXEMPT_CAT == "W" & FINANCIAL_YEAR == "2022/2023")
-  )
-
-# 10. create chart and data for them ----------
+# 8. create chart and data for them ----------
 
 #figure 1
 figure_1_data <- add_anl_1 |>
-  select(YEAR_DESC, TOTAL_NIC)
+  select(year_desc, total_nic)
 
 table_1 <- figure_1_data |>
-  mutate(TOTAL_NIC = format(TOTAL_NIC, big.mark = ",")) |>
+  mutate(TOTAL_NIC = format(total_nic, big.mark = ",")) |>
   rename("Financial year" = 1,
          "Net ingredient cost (£)" = 2)
 
 figure_1 <- nhsbsaVis::basic_chart_hc(
   figure_1_data,
-  x = YEAR_DESC,
-  y = TOTAL_NIC,
+  x = year_desc,
+  y = total_nic,
   type = "line",
   xLab = "Financial year",
   yLab = "Total cost (£)",
@@ -968,7 +431,7 @@ figure_1$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 
 figure_1$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
   "function formatCurrency() {
-    var ynum = this.point.TOTAL_NIC;
+    var ynum = this.point.total_nic;
 
     if (ynum >= 1000000000) {
         var result = ynum / 1000000000;
@@ -1008,16 +471,16 @@ figure_1$x$hc_opts$xAxis$lineColor <- "#E8EDEE"
 
 # figure 2
 figure_2_data <- add_anl_1 |>
-  select(YEAR_DESC, TOTAL_ITEMS)
+  select(year_desc, total_items)
 
 table_2 <- figure_2_data |>
-  mutate(TOTAL_ITEMS = format(TOTAL_ITEMS, big.mark = ",")) |>
+  mutate(total_items = format(total_items, big.mark = ",")) |>
   rename("Financial year" = 1, "Items" = 2)
 
 figure_2 <- nhsbsaVis::basic_chart_hc(
   figure_2_data,
-  x = YEAR_DESC,
-  y = TOTAL_ITEMS,
+  x = year_desc,
+  y = total_items,
   type = "line",
   xLab = "Financial year",
   yLab = "Number of items dispensed",
@@ -1665,9 +1128,113 @@ figure_18 <-
   ) |>
   highcharter::hc_plotOptions(series = list(enableMouseTracking = FALSE))
 
-log_print("Charts and chart data created", hide_notes = TRUE)
 
-# 11. join population data to all levels ------
+# 9. Rename columns in main data accordingly ------------------------------
+
+# rename function
+rename_if_present <- function(df, year_type = c("FY", "CY")) {
+  year_type <- match.arg(year_type)
+  
+  # Base rename map
+  rename_map <- c(
+    region_name = "Region Name",
+    region_code = "Region Code",                 
+    stp_name = "ICB Name",
+    stp_code = "ICB Code",
+    disp_presen_bnf = "BNF Presentation Code",             
+    disp_presen_bnf_descr = "BNF Presentation Name",
+    disp_presen_snomed_code = "SNOMED Code",
+    disp_supplier_name = "Supplier Name",
+    vmpp_uom = "Unit of Measure",
+    generic_bnf_code = "Generic BNF Presentation Code",
+    gen_presentation_bnf_descr = "Generic BNF Presentation Name",  
+    bnf_chemical_substance = "BNF Chemical Substance Code",
+    chemical_substance_bnf_descr = "BNF Chemical Substance Name",
+    bnf_paragraph = "BNF Paragraph Code",               
+    paragraph_descr = "BNF Paragraph Name",
+    bnf_section = "BNF Section Code",
+    section_descr = "BNF Section Name",
+    bnf_chapter = "BNF Chapter Code",
+    chapter_descr = "BNF Chapter Name",
+    disp_prep_class = "Preparation Class",             
+    presc_prep_class = "Prescribed Preparation Class",
+    mys_service_type = "Advanced Service Type",
+    item_count = "Total Items",                  
+    item_calc_pay_qty = "Total Quantity",
+    item_pay_dr_nic = "Total Cost (£)",
+    cost_per_item = "Cost Per Item (£)",               
+    cost_per_quantity = "Cost Per Quantity (£)",
+    quantity_per_item  = "Quantity Per Item"
+  )
+
+  # Add conditional rename for year_desc
+  if ("year_desc" %in% names(df)) {
+    rename_map["year_desc"] <- if (year_type == "FY") {
+      "Financial Year"
+    } else {
+      "Calendar Year"
+    }
+  }
+  
+  # Apply renames only where columns exist
+  present <- names(rename_map)[names(rename_map) %in% names(df)]
+  
+  for (old in present) {
+    names(df)[names(df) == old] <- rename_map[[old]]
+  }
+  
+  df
+}
+
+nat_data_fy_agg$National <- rename_if_present(nat_data_fy_agg$National, "FY")
+nat_data_fy_agg$BNF_Chapters <- rename_if_present(nat_data_fy_agg$BNF_Chapters, "FY")
+nat_data_fy_agg$BNF_Sections <- rename_if_present(nat_data_fy_agg$BNF_Sections, "FY")
+nat_data_fy_agg$BNF_Paragraphs <- rename_if_present(nat_data_fy_agg$BNF_Paragraphs, "FY")
+nat_data_fy_agg$Chemical_Substances <- rename_if_present(nat_data_fy_agg$Chemical_Substances, "FY")
+nat_data_fy_agg$Presentations <- rename_if_present(nat_data_fy_agg$Presentations, "FY")
+nat_data_fy_agg$SNOMED_Code <- rename_if_present(nat_data_fy_agg$SNOMED_Code, "FY")
+
+nat_data_cy_agg$National <- rename_if_present(nat_data_cy_agg$National, "FY")
+nat_data_cy_agg$BNF_Chapters <- rename_if_present(nat_data_cy_agg$BNF_Chapters, "FY")
+nat_data_cy_agg$BNF_Sections <- rename_if_present(nat_data_cy_agg$BNF_Sections, "FY")
+nat_data_cy_agg$BNF_Paragraphs <- rename_if_present(nat_data_cy_agg$BNF_Paragraphs, "FY")
+nat_data_cy_agg$Chemical_Substances <- rename_if_present(nat_data_cy_agg$Chemical_Substances, "FY")
+nat_data_cy_agg$Presentations <- rename_if_present(nat_data_cy_agg$Presentations, "FY")
+nat_data_cy_agg$SNOMED_Code <- rename_if_present(nat_data_cy_agg$SNOMED_Code, "FY")
+
+region_data_fy_agg$National <- rename_if_present(region_data_fy_agg$National, "FY")
+region_data_fy_agg$BNF_Chapters <- rename_if_present(region_data_fy_agg$BNF_Chapters, "FY")
+region_data_fy_agg$BNF_Sections <- rename_if_present(region_data_fy_agg$BNF_Sections, "FY")
+region_data_fy_agg$BNF_Paragraphs <- rename_if_present(region_data_fy_agg$BNF_Paragraphs, "FY")
+region_data_fy_agg$Chemical_Substances <- rename_if_present(region_data_fy_agg$Chemical_Substances, "FY")
+region_data_fy_agg$Presentations <- rename_if_present(region_data_fy_agg$Presentations, "FY")
+region_data_fy_agg$SNOMED_Code <- rename_if_present(region_data_fy_agg$SNOMED_Code, "FY")
+
+region_data_cy_agg$National <- rename_if_present(region_data_cy_agg$National, "FY")
+region_data_cy_agg$BNF_Chapters <- rename_if_present(region_data_cy_agg$BNF_Chapters, "FY")
+region_data_cy_agg$BNF_Sections <- rename_if_present(region_data_cy_agg$BNF_Sections, "FY")
+region_data_cy_agg$BNF_Paragraphs <- rename_if_present(region_data_cy_agg$BNF_Paragraphs, "FY")
+region_data_cy_agg$Chemical_Substances <- rename_if_present(region_data_cy_agg$Chemical_Substances, "FY")
+region_data_cy_agg$Presentations <- rename_if_present(region_data_cy_agg$Presentations, "FY")
+region_data_cy_agg$SNOMED_Code <- rename_if_present(region_data_cy_agg$SNOMED_Code, "FY")
+
+icb_data_fy_agg$National <- rename_if_present(icb_data_fy_agg$National, "FY")
+icb_data_fy_agg$BNF_Chapters <- rename_if_present(icb_data_fy_agg$BNF_Chapters, "FY")
+icb_data_fy_agg$BNF_Sections <- rename_if_present(icb_data_fy_agg$BNF_Sections, "FY")
+icb_data_fy_agg$BNF_Paragraphs <- rename_if_present(icb_data_fy_agg$BNF_Paragraphs, "FY")
+icb_data_fy_agg$Chemical_Substances <- rename_if_present(icb_data_fy_agg$Chemical_Substances, "FY")
+icb_data_fy_agg$Presentations <- rename_if_present(icb_data_fy_agg$Presentations, "FY")
+icb_data_fy_agg$SNOMED_Code <- rename_if_present(icb_data_fy_agg$SNOMED_Code, "FY")
+
+icb_data_cy_agg$National <- rename_if_present(icb_data_cy_agg$National, "FY")
+icb_data_cy_agg$BNF_Chapters <- rename_if_present(icb_data_cy_agg$BNF_Chapters, "FY")
+icb_data_cy_agg$BNF_Sections <- rename_if_present(icb_data_cy_agg$BNF_Sections, "FY")
+icb_data_cy_agg$BNF_Paragraphs <- rename_if_present(icb_data_cy_agg$BNF_Paragraphs, "FY")
+icb_data_cy_agg$Chemical_Substances <- rename_if_present(icb_data_cy_agg$Chemical_Substances, "FY")
+icb_data_cy_agg$Presentations <- rename_if_present(icb_data_cy_agg$Presentations, "FY")
+icb_data_cy_agg$SNOMED_Code <- rename_if_present(icb_data_cy_agg$SNOMED_Code, "FY")
+
+# 10. join population data to all levels ------
 england_pop <- en_ons_national_pop |>
   filter(YEAR == max(YEAR)) |>
   select(ENPOP) |>
@@ -1692,7 +1259,7 @@ nat_data_cy_agg <- lapply(nat_data_cy_agg, function(df) {
   df
 })
 
-region_pop_year <- 2022
+region_pop_year <- 2024
 
 region_data_fy_agg <- lapply(region_data_fy_agg, function(df) {
   df$`Population Year` <- region_pop_year
@@ -1712,7 +1279,7 @@ region_data_cy_agg <- lapply(region_data_cy_agg, function(df) {
   df
 })
 
-icb_pop_year <- 2022
+icb_pop_year <- 2024
 
 icb_pop_for_join <- icb_pop |>
   select(ICB_CODE, POP)
@@ -1736,17 +1303,15 @@ stp_data_cy_agg <- lapply(stp_data_cy_agg, function(df) {
 })
 
 
-# 12. create Excel outputs if required ------
+# 11. create Excel outputs if required ------
 if (makeSheet == 1) {
   print("Generating Excel outputs")
   source("./excel_outputs/excel_outputs.R")
-  log_print("Excel outputs generated", hide_notes = TRUE)
 } else {
   print("Excel outputs will not be generated")
-  log_print("Excel outputs not generated", hide_notes = TRUE)
 }
 
-# 13. Automate tidy dates -------
+# 12. Automate tidy dates -------
 #tidy max year to automate title
 year <- stp_data_fy |>
   select(YEAR_DESC) |>
@@ -1755,7 +1320,7 @@ year <- stp_data_fy |>
 
 year_tidy <- paste0(substr(year, 1, 5), substr(year, 8, 9))
 
-# 14. create markdowns -------
+# 13. create markdowns -------
 
 rmarkdown::render("pca-narrative-markdown.Rmd",
                   output_format = "html_document",
@@ -1777,11 +1342,3 @@ rmarkdown::render("pca-background-june-2025.Rmd",
                   output_file = "outputs/pca_background_info_methodology_june2025_v001.docx")
 
 log_print("Background markdown generated", hide_notes = TRUE)
-
-
-# 15. disconnect from DWH  ---------
-DBI::dbDisconnect(con)
-log_print("Disconnected from DWH", hide_notes = TRUE)
-
-close log
-logr::log_close()
