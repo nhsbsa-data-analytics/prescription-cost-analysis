@@ -14,13 +14,13 @@ for (file in function_files) {
 # quick fix for Wales PCA
 wales_pca_extraction_2324 <- function(file_path = NULL) {
   items <- readxl::read_excel(file_path,
-                              sheet = 2,
-                              range = "Z26:Z26",
+                              sheet = 1,
+                              range = "A3",
                               col_names = "TOTAL_ITEMS")
   
   cost <- readxl::read_excel(file_path,
-                             sheet = 3,
-                             range = "Z26:Z26",
+                             sheet = 1,
+                             range = "A2",
                              col_names = "TOTAL_COST")
   
   wales_pca <- cbind(items, cost)
@@ -73,7 +73,6 @@ req_pkgs <-
     "yaml",
     "openxlsx",
     "rmarkdown",
-    "logr",
     "highcharter",
     "lubridate",
     "vroom",
@@ -81,7 +80,6 @@ req_pkgs <-
     "kableExtra",
     "devtools",
     "yaml",
-    "logr",
     "DBI",
     "geojsonsf",
     "sf",
@@ -894,7 +892,7 @@ figure_10$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
 )
 
 # figure 11
-figure_11_data <-  stp_data_fy_agg$National |>
+figure_11_data <-  icb_data_fy_agg$National |>
   dplyr::select(`ICB Code`, `Total Cost (£)`) |>
   dplyr::rename(ICB_CODE = 1, TOTAL_NIC = 2) |>
   dplyr::group_by(ICB_CODE) |>
@@ -910,7 +908,7 @@ table_11 <- figure_11_data |>
          "Net ingredient cost (£) per person" = 2)
 
 figure_11 <- nhsbsaVis::icb_map(
-  data = stp_data_fy_agg$National,
+  data = icb_data_fy_agg$National,
   icb_code_column = "ICB Code",
   value_column = "Total Cost (£)",
   geo_data = icb_geo_data,
@@ -922,7 +920,7 @@ figure_11 <- nhsbsaVis::icb_map(
 )
 
 # figure 12
-figure_12_data <-  stp_data_fy_agg$National |>
+figure_12_data <-  icb_data_fy_agg$National |>
   dplyr::select(`ICB Code`, `Total Items`) |>
   dplyr::rename(ICB_CODE = 1, TOTAL_ITEMS = 2) |>
   dplyr::group_by(ICB_CODE) |>
@@ -938,7 +936,7 @@ table_12 <- figure_12_data |>
   rename("ICB name" = 1, "Items per person" = 2)
 
 figure_12 <- nhsbsaVis::icb_map(
-  data = stp_data_fy_agg$National,
+  data = icb_data_fy_agg$National,
   icb_code_column = "ICB Code",
   value_column = "Total Items",
   geo_data = icb_geo_data,
@@ -1194,13 +1192,13 @@ nat_data_fy_agg$Chemical_Substances <- rename_if_present(nat_data_fy_agg$Chemica
 nat_data_fy_agg$Presentations <- rename_if_present(nat_data_fy_agg$Presentations, "FY")
 nat_data_fy_agg$SNOMED_Code <- rename_if_present(nat_data_fy_agg$SNOMED_Code, "FY")
 
-nat_data_cy_agg$National <- rename_if_present(nat_data_cy_agg$National, "FY")
-nat_data_cy_agg$BNF_Chapters <- rename_if_present(nat_data_cy_agg$BNF_Chapters, "FY")
-nat_data_cy_agg$BNF_Sections <- rename_if_present(nat_data_cy_agg$BNF_Sections, "FY")
-nat_data_cy_agg$BNF_Paragraphs <- rename_if_present(nat_data_cy_agg$BNF_Paragraphs, "FY")
-nat_data_cy_agg$Chemical_Substances <- rename_if_present(nat_data_cy_agg$Chemical_Substances, "FY")
-nat_data_cy_agg$Presentations <- rename_if_present(nat_data_cy_agg$Presentations, "FY")
-nat_data_cy_agg$SNOMED_Code <- rename_if_present(nat_data_cy_agg$SNOMED_Code, "FY")
+nat_data_cy_agg$National <- rename_if_present(nat_data_cy_agg$National, "CY")
+nat_data_cy_agg$BNF_Chapters <- rename_if_present(nat_data_cy_agg$BNF_Chapters, "CY")
+nat_data_cy_agg$BNF_Sections <- rename_if_present(nat_data_cy_agg$BNF_Sections, "CY")
+nat_data_cy_agg$BNF_Paragraphs <- rename_if_present(nat_data_cy_agg$BNF_Paragraphs, "CY")
+nat_data_cy_agg$Chemical_Substances <- rename_if_present(nat_data_cy_agg$Chemical_Substances, "CY")
+nat_data_cy_agg$Presentations <- rename_if_present(nat_data_cy_agg$Presentations, "CY")
+nat_data_cy_agg$SNOMED_Code <- rename_if_present(nat_data_cy_agg$SNOMED_Code, "CY")
 
 region_data_fy_agg$National <- rename_if_present(region_data_fy_agg$National, "FY")
 region_data_fy_agg$BNF_Chapters <- rename_if_present(region_data_fy_agg$BNF_Chapters, "FY")
@@ -1210,13 +1208,13 @@ region_data_fy_agg$Chemical_Substances <- rename_if_present(region_data_fy_agg$C
 region_data_fy_agg$Presentations <- rename_if_present(region_data_fy_agg$Presentations, "FY")
 region_data_fy_agg$SNOMED_Code <- rename_if_present(region_data_fy_agg$SNOMED_Code, "FY")
 
-region_data_cy_agg$National <- rename_if_present(region_data_cy_agg$National, "FY")
-region_data_cy_agg$BNF_Chapters <- rename_if_present(region_data_cy_agg$BNF_Chapters, "FY")
-region_data_cy_agg$BNF_Sections <- rename_if_present(region_data_cy_agg$BNF_Sections, "FY")
-region_data_cy_agg$BNF_Paragraphs <- rename_if_present(region_data_cy_agg$BNF_Paragraphs, "FY")
-region_data_cy_agg$Chemical_Substances <- rename_if_present(region_data_cy_agg$Chemical_Substances, "FY")
-region_data_cy_agg$Presentations <- rename_if_present(region_data_cy_agg$Presentations, "FY")
-region_data_cy_agg$SNOMED_Code <- rename_if_present(region_data_cy_agg$SNOMED_Code, "FY")
+region_data_cy_agg$National <- rename_if_present(region_data_cy_agg$National, "CY")
+region_data_cy_agg$BNF_Chapters <- rename_if_present(region_data_cy_agg$BNF_Chapters, "CY")
+region_data_cy_agg$BNF_Sections <- rename_if_present(region_data_cy_agg$BNF_Sections, "CY")
+region_data_cy_agg$BNF_Paragraphs <- rename_if_present(region_data_cy_agg$BNF_Paragraphs, "CY")
+region_data_cy_agg$Chemical_Substances <- rename_if_present(region_data_cy_agg$Chemical_Substances, "CY")
+region_data_cy_agg$Presentations <- rename_if_present(region_data_cy_agg$Presentations, "CY")
+region_data_cy_agg$SNOMED_Code <- rename_if_present(region_data_cy_agg$SNOMED_Code, "CY")
 
 icb_data_fy_agg$National <- rename_if_present(icb_data_fy_agg$National, "FY")
 icb_data_fy_agg$BNF_Chapters <- rename_if_present(icb_data_fy_agg$BNF_Chapters, "FY")
@@ -1226,21 +1224,23 @@ icb_data_fy_agg$Chemical_Substances <- rename_if_present(icb_data_fy_agg$Chemica
 icb_data_fy_agg$Presentations <- rename_if_present(icb_data_fy_agg$Presentations, "FY")
 icb_data_fy_agg$SNOMED_Code <- rename_if_present(icb_data_fy_agg$SNOMED_Code, "FY")
 
-icb_data_cy_agg$National <- rename_if_present(icb_data_cy_agg$National, "FY")
-icb_data_cy_agg$BNF_Chapters <- rename_if_present(icb_data_cy_agg$BNF_Chapters, "FY")
-icb_data_cy_agg$BNF_Sections <- rename_if_present(icb_data_cy_agg$BNF_Sections, "FY")
-icb_data_cy_agg$BNF_Paragraphs <- rename_if_present(icb_data_cy_agg$BNF_Paragraphs, "FY")
-icb_data_cy_agg$Chemical_Substances <- rename_if_present(icb_data_cy_agg$Chemical_Substances, "FY")
-icb_data_cy_agg$Presentations <- rename_if_present(icb_data_cy_agg$Presentations, "FY")
-icb_data_cy_agg$SNOMED_Code <- rename_if_present(icb_data_cy_agg$SNOMED_Code, "FY")
+icb_data_cy_agg$National <- rename_if_present(icb_data_cy_agg$National, "CY")
+icb_data_cy_agg$BNF_Chapters <- rename_if_present(icb_data_cy_agg$BNF_Chapters, "CY")
+icb_data_cy_agg$BNF_Sections <- rename_if_present(icb_data_cy_agg$BNF_Sections, "CY")
+icb_data_cy_agg$BNF_Paragraphs <- rename_if_present(icb_data_cy_agg$BNF_Paragraphs, "CY")
+icb_data_cy_agg$Chemical_Substances <- rename_if_present(icb_data_cy_agg$Chemical_Substances, "CY")
+icb_data_cy_agg$Presentations <- rename_if_present(icb_data_cy_agg$Presentations, "CY")
+icb_data_cy_agg$SNOMED_Code <- rename_if_present(icb_data_cy_agg$SNOMED_Code, "CY")
 
 # 10. join population data to all levels ------
 england_pop <- en_ons_national_pop |>
+  filter(!is.na(ENPOP)) |>
   filter(YEAR == max(YEAR)) |>
   select(ENPOP) |>
   pull()
 
 england_pop_year <- en_ons_national_pop |>
+  filter(!is.na(ENPOP)) |>
   filter(YEAR == max(YEAR)) |>
   select(YEAR) |>
   pull()
@@ -1284,7 +1284,7 @@ icb_pop_year <- 2024
 icb_pop_for_join <- icb_pop |>
   select(ICB_CODE, POP)
 
-stp_data_fy_agg <- lapply(stp_data_fy_agg, function(df) {
+icb_data_fy_agg <- lapply(icb_data_fy_agg, function(df) {
   df$`Population Year` <- icb_pop_year
   df <- df |>
     left_join(icb_pop_for_join, by = c("ICB Code" = "ICB_CODE")) |>
@@ -1293,7 +1293,7 @@ stp_data_fy_agg <- lapply(stp_data_fy_agg, function(df) {
   df
 })
 
-stp_data_cy_agg <- lapply(stp_data_cy_agg, function(df) {
+icb_data_cy_agg <- lapply(icb_data_cy_agg, function(df) {
   df$`Population Year` <- icb_pop_year
   df <- df |>
     left_join(icb_pop_for_join, by = c("ICB Code" = "ICB_CODE")) |>

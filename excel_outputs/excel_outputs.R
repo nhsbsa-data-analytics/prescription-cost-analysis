@@ -913,7 +913,7 @@ accessibleTables::write_sheet(
   c(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
   ),
-  stp_data_fy_agg$National,
+  icb_data_fy_agg$National,
   13
 )
 
@@ -945,7 +945,7 @@ accessibleTables::write_sheet(
   c(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
   ),
-  stp_data_fy_agg$BNF_Chapters,
+  icb_data_fy_agg$BNF_Chapters,
   13
 )
 
@@ -981,7 +981,7 @@ accessibleTables::write_sheet(
   c(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
   ),
-  stp_data_fy_agg$BNF_Sections,
+  icb_data_fy_agg$BNF_Sections,
   13
 )
 
@@ -1016,7 +1016,7 @@ accessibleTables::write_sheet(
   c(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
   ),
-  stp_data_fy_agg$BNF_Paragraphs,
+  icb_data_fy_agg$BNF_Paragraphs,
   13
 )
 
@@ -1053,7 +1053,7 @@ accessibleTables::write_sheet(
   c(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
   ),
-  stp_data_fy_agg$Chemical_Substances,
+  icb_data_fy_agg$Chemical_Substances,
   13
 )
 
@@ -1096,7 +1096,7 @@ accessibleTables::write_sheet(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
     "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
   ),
-  stp_data_fy_agg$Presentations,
+  icb_data_fy_agg$Presentations,
   13
 )
 
@@ -1161,7 +1161,7 @@ accessibleTables::write_sheet(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
     "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
   ),
-  stp_data_fy_agg$SNOMED_Code,
+  icb_data_fy_agg$SNOMED_Code,
   13
 )
 
@@ -1347,7 +1347,7 @@ accessibleTables::write_sheet(
   c(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
   ),
-  stp_data_cy_agg$National,
+  icb_data_cy_agg$National,
   13
 )
 
@@ -1379,7 +1379,7 @@ accessibleTables::write_sheet(
   c(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
   ),
-  stp_data_cy_agg$BNF_Chapters,
+  icb_data_cy_agg$BNF_Chapters,
   13
 )
 
@@ -1414,7 +1414,7 @@ accessibleTables::write_sheet(
   c(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
   ),
-  stp_data_cy_agg$BNF_Sections,
+  icb_data_cy_agg$BNF_Sections,
   13
 )
 
@@ -1449,7 +1449,7 @@ accessibleTables::write_sheet(
   c(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
   ),
-  stp_data_cy_agg$BNF_Paragraphs,
+  icb_data_cy_agg$BNF_Paragraphs,
   13
 )
 
@@ -1486,7 +1486,7 @@ accessibleTables::write_sheet(
   c(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
   ),
-  stp_data_cy_agg$Chemical_Substances,
+  icb_data_cy_agg$Chemical_Substances,
   13
 )
 
@@ -1528,7 +1528,7 @@ accessibleTables::write_sheet(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
     "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
   ),
-  stp_data_cy_agg$Presentations,
+  icb_data_cy_agg$Presentations,
   13
 )
 
@@ -1592,7 +1592,7 @@ accessibleTables::write_sheet(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
     "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
   ),
-  stp_data_cy_agg$SNOMED_Code,
+  icb_data_cy_agg$SNOMED_Code,
   13
 )
 
