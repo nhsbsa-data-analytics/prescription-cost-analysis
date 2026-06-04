@@ -45,12 +45,43 @@ knitr::opts_chunk$set(echo = FALSE,
       </div>
     </div>
     </div>
+    
+<!-- JS to handle hiding the header on scroll -->
+<script>
+  document.addEventListener("scroll", function() {
+    var header = document.getElementById("fixed-header");
+    var toc = document.getElementById("TOC");
+    var BackTopButton = document.getElementById("backtop-button");
+    var scrollPosition = window.scrollY || document.documentElement.scrollTop;
+  if(scrollPosition > 88) {
+    header.style.top = "-200px";
+    toc.style.setProperty('margin-top', '24px', 'important');
+    BackTopButton.style.setProperty('visibility', 'visible', 'important');
+  } else
+  {
+    header.style.top = "0";
+    toc.style.setProperty('margin-top', '140px', 'important');
+    BackTopButton.style.setProperty('visibility', 'hidden', 'important');
+  }
+}
+);
+</script>
+
+<!-- JS to handle back to top button -->
+<script>
+       function BackTop() {
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+    }
+</script>
+
+<button onclick="BackTop()" id="backtop-button" style="opacity: 0.7; pointer-events: initial; visibility: visible;"><span aria-hidden="true">▲</span>Back to top</button>    
 
 <main>
 
 # Background Information and Methodology {.toc-ignore}
  
-## June 2025 {.toc-ignore}
+## June 2026 {.toc-ignore}
 
 ---
  
@@ -365,7 +396,23 @@ Information on items dispensed via the Pharmacy First Clinical Pathway is now in
 
 A full service specification is available online via [Community Pharmacy advanced service specification: NHS Pharmacy First Service](https://www.england.nhs.uk/publication/community-pharmacy-advanced-service-specification-nhs-pharmacy-first-service/).
 
-### 3.5. Statistics on Public Health 
+### 3.5. NHS Pharmacy Contraception Service (PCS)
+
+The PCS:  
+
+- offers people greater choice on accessing contraception services  
+- helps address health inequalities by providing wider healthcare access for high-risk communities and vulnerable patients in their communities and signposting service users to local sexual health services
+- creates extra capacity in primary care and sexual health clinics (or equivalent) to support meeting the demand for more complex assessments 
+
+More information in the PCS can be found on the [NHS England website](https://www.england.nhs.uk/primary-care/pharmacy/pharmacy-services/nhs-pharmacy-contraception-service/).
+
+### 3.6. Seasonal Influenza Vaccination Service
+
+The Seasonal Influenza Vaccination Advanced Service allows eligible patients in England to receive a free NHS flu jab at their local pharmacy. Commissioned by NHS England, it provides a convenient alternative to GP appointments for at-risk groups.
+
+More information in the Seasonal Influenza Vaccination Service can be found on the [NHS England website](https://www.england.nhs.uk/wp-content/uploads/2025/07/prn01998-v-community-pharmacy-advanced-service-specification-seasonal-influenza-vaccination-1-sept-2025-31-march-2026.pdf).
+
+### 3.7. Statistics on Public Health 
 
 To more closely align the statistics in this publication with those provided in the [Statistics on Public Health](https://digital.nhs.uk/data-and-information/publications/statistical/statistics-on-public-health/) publication produced by NHS England we have included some additional tables and fields from the 2024/25 publication onwards. 
 
@@ -379,7 +426,7 @@ PCA differs from the Statistics on Public Health publication in that the statist
 
 PCA does no include any statistics on medicines in secondary care.
 
-### 3.6. Exemption categories
+### 3.8. Exemption categories
 
 Some patients are automatically entitled to free NHS prescriptions. Others can apply for certificates that entitle them to free NHS prescriptions. The exemption category of an item is self declared by the patient from a range of options.
 
@@ -395,7 +442,7 @@ NHSBSA performs no validation or verification of which exemption category has be
 
 The reported exemption category will represent the data as submitted by dispensing accounts and processed by NHSBSA to inform reimbursement.
 
-### 3.7. Exemption category backfilling
+### 3.9. Exemption category backfilling
 
 When Real Time Exemption Checking (RTEC) was introduced one of the impacts was that any form confirmed via RTEC was being assigned an exemption category of 'Z' (No Declaration/Declaration Not Specific). This has had a big impact on the ability to track the number of forms being claimed by the different exemption categories. A fix was deployed from late June 2024 that records the confirmed category to the EPS record and this is being rolled out as accounts update their RTEC system. However, there is a historic dip between March 2020 to June 2024 when the categories were not being captured, and from June 2024 onwards there is a bit of overlap where some accounts will record an exemption via RTEC whilst others are still capturing category 'Z'.
 
@@ -405,19 +452,19 @@ A process has been developed to apply a best fit approach to use RTEC log data t
 
 The exemption category was based on information submitted to NHSBSA and recorded during prescription processing activity. For patients who were checked via the Real Time Exemption Checking (RTEC) service, the exemption category was based on the exemption confirmed by RTEC that could be best aligned with the prescription form data.
 
-#### 3.7.1. Department for Work and Pensions (DWP) benefits and RTEC
+#### 3.9.1. Department for Work and Pensions (DWP) benefits and RTEC
 
 The fix applied from June 2024 onwards assigns an exemption category directly to the EPS record when the RTEC check is performed. For NHSBSA issued exemptions this will show the exemption held. However, for DWP issued exemptions (Income Support (IS), Job Seekers Allowance (JSA), Universal Credit (UC) and Pension Credit Guarantee) these are all being captured in the EPS data as category 'U' (Universal Credit). This is due to the limitations of the API used to check DWP issued exemptions.
 
 As this is the process applied in the RTEC fix, we have decided to follow suit and apply the same logic to the back-filled data.
 
-### 3.8.Estimated prescription charges
+### 3.10. Estimated prescription charges
 
 Experimental figures around estimated prescription charges that would have been paid by patients had they not held a valid exemption are now included in the management information tables which support this publication.
 
 In this table we provide insight into estimated prescription charges for patients  had they not held a valid exemption that is administered by the NHSBSA, including Maternity Exemption certificates, Medical Exemption certificates, HC2 Charges, NHS Tax Credit Exemption certificates, and pre-payment certificates (PPC), including Hormone Replacement Therapy (HRT) PPCs.
 
-#### 3.8.1. Methodology
+#### 3.10.1. Methodology
 
 Individual patients were identified based on the NHS number captured from the prescribing data, with data aggregated by NHS number. Figures are limited to prescription data where a valid NHS number can be identified.
 

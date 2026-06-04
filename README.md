@@ -32,7 +32,7 @@ This RAP includes a `config.yml` file. Before running this pipeline you should e
 
 Users outside of the Official Statistics team may not have the required access permissions to run all parts of this RAP. The following information is included to document how this pipeline is run by members of the Official Statistics team during production.
 
-Once the repository has been cloned, open the `pipeline.R` file and run the script from start to finish. If you do not already have them set up you will be prompted to add you `DB_DWCP_USERNAME` and `DB_DWCP_PASSWORD` to you `.Renviron` file. You will also be prompted as to whether or not you wish to generate the Excel outputs which accompany the publication. All other code in this script should require no other manual intervention.
+Once the repository has been cloned, open the `pipeline.R` file and run the script from start to finish. If you do not already have them set up you will be prompted to add you `FABRIC_USERNAME` and `FABRIC_PASSWORD` to you `.Renviron` file. You will also be prompted as to whether or not you wish to generate the Excel outputs which accompany the publication. All other code in this script should require no other manual intervention.
 
 The code should handle installing and loading any required packages and external data. It should then get data extracts from the PCA fact table, perform data manipulations, then save this data into spreadsheet outputs. The pipeline will then render the statistical summary narrative and background document as HTML files for use in web publishing.
 

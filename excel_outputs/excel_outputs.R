@@ -895,8 +895,19 @@ Class 5 - drugs prescribed generically with a named supplier",
     "The unit of measure given to the smallest available unit of a product. For example, tablet, capsule, unit dose, vial, gram, millilitre etc."
   )
 
+sheetNames_icb <-
+  c(
+    "ICB",
+    "BNF_Chapters",
+    "BNF_Sections",
+    "BNF_Paragraphs",
+    "Chemical_Substances",
+    "Presentations",
+    "SNOMED_Codes"
+  )
+
 #create workbook and meta data
-fy_stp_wb <- create_wb(sheetNames_main)
+fy_stp_wb <- create_wb(sheetNames_icb)
 
 create_metadata(fy_stp_wb, meta_fields_icb_fy, meta_descs_icb_fy)
 
@@ -904,7 +915,7 @@ create_metadata(fy_stp_wb, meta_fields_icb_fy, meta_descs_icb_fy)
 # write data to sheet
 accessibleTables::write_sheet(
   fy_stp_wb,
-  "National",
+  "ICB",
   paste0(
     "Prescription Cost Analysis - England ",
     max_data_fy,
@@ -913,23 +924,23 @@ accessibleTables::write_sheet(
   c(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
   ),
-  stp_data_fy_agg$National,
+  icb_data_fy_agg$National,
   13
 )
 
 #left align column A to E
-accessibleTables::format_data(fy_stp_wb, "National", c("A", "B", "C", "D", "E"), "left", "")
+accessibleTables::format_data(fy_stp_wb, "ICB", c("A", "B", "C", "D", "E"), "left", "")
 
 #right align column B and format number
-accessibleTables::format_data(fy_stp_wb, "National", c("F"), "right", "#,##0")
+accessibleTables::format_data(fy_stp_wb, "ICB", c("F"), "right", "#,##0")
 
 #right align column C and D and format numbers
-accessibleTables::format_data(fy_stp_wb, "National", c("G", "H"), "right", "#,##0.00")
+accessibleTables::format_data(fy_stp_wb, "ICB", c("G", "H"), "right", "#,##0.00")
 
-accessibleTables::format_data(fy_stp_wb, "National", c("I"), "left", "")
+accessibleTables::format_data(fy_stp_wb, "ICB", c("I"), "left", "")
 
 #right align column B and format number
-accessibleTables::format_data(fy_stp_wb, "National", c("J", "K"), "right", "#,##0")
+accessibleTables::format_data(fy_stp_wb, "ICB", c("J", "K"), "right", "#,##0")
 
 
 #### BNF CHAPTER tab
@@ -945,7 +956,7 @@ accessibleTables::write_sheet(
   c(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
   ),
-  stp_data_fy_agg$BNF_Chapters,
+  icb_data_fy_agg$BNF_Chapters,
   13
 )
 
@@ -981,7 +992,7 @@ accessibleTables::write_sheet(
   c(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
   ),
-  stp_data_fy_agg$BNF_Sections,
+  icb_data_fy_agg$BNF_Sections,
   13
 )
 
@@ -1016,7 +1027,7 @@ accessibleTables::write_sheet(
   c(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
   ),
-  stp_data_fy_agg$BNF_Paragraphs,
+  icb_data_fy_agg$BNF_Paragraphs,
   13
 )
 
@@ -1053,7 +1064,7 @@ accessibleTables::write_sheet(
   c(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
   ),
-  stp_data_fy_agg$Chemical_Substances,
+  icb_data_fy_agg$Chemical_Substances,
   13
 )
 
@@ -1096,7 +1107,7 @@ accessibleTables::write_sheet(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
     "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
   ),
-  stp_data_fy_agg$Presentations,
+  icb_data_fy_agg$Presentations,
   13
 )
 
@@ -1161,7 +1172,7 @@ accessibleTables::write_sheet(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
     "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
   ),
-  stp_data_fy_agg$SNOMED_Code,
+  icb_data_fy_agg$SNOMED_Code,
   13
 )
 
@@ -1225,18 +1236,16 @@ accessibleTables::makeCoverSheet(
   sheetNames_main,
   c(
     "Metadata",
-    "Table 1: National level data",
-    "Table 2: BNF chapter level data",
-    "Table 3: BNF section level data",
-    "Table 4: BNF paragraph level data",
-    "Table 5: BNF chemical substance level data",
-    "Table 6: BNF presentation level data",
-    "Table 7: SNOMED level data"
+    "Table 1: ICB level data",
+    "Table 2: BNF chapter level data by ICB",
+    "Table 3: BNF section level data by ICB",
+    "Table 4: BNF paragraph level data by ICB",
+    "Table 5: BNF chemical substance level data by ICB",
+    "Table 6: BNF presentation level data by ICB",
+    "Table 7: SNOMED level data by ICB"
   ),
-  c("Metadata", sheetNames_main)
+  c("Metadata", sheetNames_icb)
 )
-
-
 
 #save file into outputs folder
 openxlsx::saveWorkbook(
@@ -1251,7 +1260,6 @@ openxlsx::saveWorkbook(
   ),
   overwrite = TRUE
 )
-
 
 # 4. create stp excel for cy ------
 meta_fields_icb_cy <- c(
@@ -1331,14 +1339,14 @@ Class 5 - drugs prescribed generically with a named supplier",
   )
 
 #create workbook and meta data
-cy_stp_wb <- create_wb(sheetNames_main)
+cy_stp_wb <- create_wb(sheetNames_icb)
 
 create_metadata(cy_stp_wb, meta_fields_icb_cy, meta_descs_icb_cy)
 
 #### National tab
 accessibleTables::write_sheet(
   cy_stp_wb,
-  "National",
+  "ICB",
   paste0(
     "Prescription Cost Analysis - England ",
     max_data_cy,
@@ -1347,23 +1355,23 @@ accessibleTables::write_sheet(
   c(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
   ),
-  stp_data_cy_agg$National,
+  icb_data_cy_agg$National,
   13
 )
 
 #left align column A to E
-accessibleTables::format_data(cy_stp_wb, "National", c("A", "B", "C", "D", "E"), "left", "")
+accessibleTables::format_data(cy_stp_wb, "ICB", c("A", "B", "C", "D", "E"), "left", "")
 
 #right align column B and format number
-accessibleTables::format_data(cy_stp_wb, "National", c("F"), "right", "#,##0")
+accessibleTables::format_data(cy_stp_wb, "ICB", c("F"), "right", "#,##0")
 
 #right align column C and D and format numbers
-accessibleTables::format_data(cy_stp_wb, "National", c("G", "H"), "right", "#,##0.00")
+accessibleTables::format_data(cy_stp_wb, "ICB", c("G", "H"), "right", "#,##0.00")
 
-accessibleTables::format_data(cy_stp_wb, "National", c("I"), "left", "")
+accessibleTables::format_data(cy_stp_wb, "ICB", c("I"), "left", "")
 
 #right align column B and format number
-accessibleTables::format_data(cy_stp_wb, "National", c("J", "K"), "right", "#,##0")
+accessibleTables::format_data(cy_stp_wb, "ICB", c("J", "K"), "right", "#,##0")
 
 
 #### BNF CHAPTER tab
@@ -1379,7 +1387,7 @@ accessibleTables::write_sheet(
   c(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
   ),
-  stp_data_cy_agg$BNF_Chapters,
+  icb_data_cy_agg$BNF_Chapters,
   13
 )
 
@@ -1414,7 +1422,7 @@ accessibleTables::write_sheet(
   c(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
   ),
-  stp_data_cy_agg$BNF_Sections,
+  icb_data_cy_agg$BNF_Sections,
   13
 )
 
@@ -1449,7 +1457,7 @@ accessibleTables::write_sheet(
   c(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
   ),
-  stp_data_cy_agg$BNF_Paragraphs,
+  icb_data_cy_agg$BNF_Paragraphs,
   13
 )
 
@@ -1486,7 +1494,7 @@ accessibleTables::write_sheet(
   c(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence."
   ),
-  stp_data_cy_agg$Chemical_Substances,
+  icb_data_cy_agg$Chemical_Substances,
   13
 )
 
@@ -1528,7 +1536,7 @@ accessibleTables::write_sheet(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
     "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
   ),
-  stp_data_cy_agg$Presentations,
+  icb_data_cy_agg$Presentations,
   13
 )
 
@@ -1592,7 +1600,7 @@ accessibleTables::write_sheet(
     "Due to rounding, total figures may not match exactly between the different summary tables. Costs are rounded to the nearest pence.",
     "Some products may appear with an item count and 0 quantity and 0 cost. It is possible for prescriptions to be issued with a prescribed quantity of 0, when these items are processed by the NHSBSA reimbursement is done so within the framework as set out in the Drug Tariff for England and Wales."
   ),
-  stp_data_cy_agg$SNOMED_Code,
+  icb_data_cy_agg$SNOMED_Code,
   13
 )
 
@@ -1657,15 +1665,15 @@ accessibleTables::makeCoverSheet(
   sheetNames_main,
   c(
     "Metadata",
-    "Table 1: National level data",
-    "Table 2: BNF chapter level data",
-    "Table 3: BNF section level data",
-    "Table 4: BNF paragraph level data",
-    "Table 5: BNF chemical substance level data",
-    "Table 6: BNF presentation level data",
-    "Table 7: SNOMED level data"
+    "Table 1: ICB level data",
+    "Table 2: BNF chapter level data by ICB",
+    "Table 3: BNF section level data by ICB",
+    "Table 4: BNF paragraph level data by ICB",
+    "Table 5: BNF chemical substance level data by ICB",
+    "Table 6: BNF presentation level data by ICB",
+    "Table 7: SNOMED level data by ICB"
   ),
-  c("Metadata", sheetNames_main)
+  c("Metadata", sheetNames_icb)
 )
 
 #save file into outputs folder
@@ -1749,8 +1757,19 @@ Class 5 - drugs prescribed generically with a named supplier",
     "The unit of measure given to the smallest available unit of a product. For example, tablet, capsule, unit dose, vial, gram, millilitre etc."
   )
 
+sheetNames_region <-
+  c(
+    "Region",
+    "BNF_Chapters",
+    "BNF_Sections",
+    "BNF_Paragraphs",
+    "Chemical_Substances",
+    "Presentations",
+    "SNOMED_Codes"
+  )
+
 #create workbook and meta data
-fy_region_wb <- create_wb(sheetNames_main)
+fy_region_wb <- create_wb(sheetNames_region)
 
 create_metadata(fy_region_wb, meta_fields_region_fy, meta_descs_region_fy)
 
@@ -1758,7 +1777,7 @@ create_metadata(fy_region_wb, meta_fields_region_fy, meta_descs_region_fy)
 # write data to sheet
 accessibleTables::write_sheet(
   fy_region_wb,
-  "National",
+  "Region",
   paste0(
     "Prescription Cost Analysis - England ",
     max_data_fy,
@@ -1772,18 +1791,18 @@ accessibleTables::write_sheet(
 )
 
 #left align column A to E
-accessibleTables::format_data(fy_region_wb, "National", c("A", "B", "C"), "left", "")
+accessibleTables::format_data(fy_region_wb, "Region", c("A", "B", "C"), "left", "")
 
 #right align column B and format number
-accessibleTables::format_data(fy_region_wb, "National", c("D"), "right", "#,##0")
+accessibleTables::format_data(fy_region_wb, "Region", c("D"), "right", "#,##0")
 
 #right align column C and D and format numbers
-accessibleTables::format_data(fy_region_wb, "National", c("E", "F"), "right", "#,##0.00")
+accessibleTables::format_data(fy_region_wb, "Region", c("E", "F"), "right", "#,##0.00")
 
-accessibleTables::format_data(fy_region_wb, "National", c("G"), "left", "")
+accessibleTables::format_data(fy_region_wb, "Region", c("G"), "left", "")
 
 #right align column B and format number
-accessibleTables::format_data(fy_region_wb, "National", c("H", "I"), "right", "#,##0")
+accessibleTables::format_data(fy_region_wb, "Region", c("H", "I"), "right", "#,##0")
 
 
 #### BNF CHAPTER tab
@@ -2080,15 +2099,15 @@ accessibleTables::makeCoverSheet(
   sheetNames_main,
   c(
     "Metadata",
-    "Table 1: National level data",
-    "Table 2: BNF chapter level data",
-    "Table 3: BNF section level data",
-    "Table 4: BNF paragraph level data",
-    "Table 5: BNF chemical substance level data",
-    "Table 6: BNF presentation level data",
-    "Table 7: SNOMED level data"
+    "Table 1: Region level data",
+    "Table 2: BNF chapter level data by region",
+    "Table 3: BNF section level data by region",
+    "Table 4: BNF paragraph level data by region",
+    "Table 5: BNF chemical substance level data by region",
+    "Table 6: BNF presentation level data by region",
+    "Table 7: SNOMED level data by region"
   ),
-  c("Metadata", sheetNames_main)
+  c("Metadata", sheetNames_region)
 )
 
 #save file into outputs folder
@@ -2180,14 +2199,14 @@ Class 5 - drugs prescribed generically with a named supplier",
   )
 
 #create workbook and meta data
-cy_region_wb <- create_wb(sheetNames_main)
+cy_region_wb <- create_wb(sheetNames_region)
 
 create_metadata(cy_region_wb, meta_fields_region_cy, meta_descs_region_cy)
 
 #### National tab
 accessibleTables::write_sheet(
   cy_region_wb,
-  "National",
+  "Region",
   paste0(
     "Prescription Cost Analysis - England ",
     max_data_cy,
@@ -2201,18 +2220,18 @@ accessibleTables::write_sheet(
 )
 
 #left align column A to E
-accessibleTables::format_data(cy_region_wb, "National", c("A", "B", "C"), "left", "")
+accessibleTables::format_data(cy_region_wb, "Region", c("A", "B", "C"), "left", "")
 
 #right align column B and format number
-accessibleTables::format_data(cy_region_wb, "National", c("D"), "right", "#,##0")
+accessibleTables::format_data(cy_region_wb, "Region", c("D"), "right", "#,##0")
 
 #right align column C and D and format numbers
-accessibleTables::format_data(cy_region_wb, "National", c("E", "F"), "right", "#,##0.00")
+accessibleTables::format_data(cy_region_wb, "Region", c("E", "F"), "right", "#,##0.00")
 
-accessibleTables::format_data(cy_region_wb, "National", c("G"), "left", "")
+accessibleTables::format_data(cy_region_wb, "Region", c("G"), "left", "")
 
 #right align column B and format number
-accessibleTables::format_data(cy_region_wb, "National", c("H", "I"), "right", "#,##0")
+accessibleTables::format_data(cy_region_wb, "Region", c("H", "I"), "right", "#,##0")
 
 
 #### BNF CHAPTER tab
@@ -2512,15 +2531,15 @@ accessibleTables::makeCoverSheet(
   sheetNames_main,
   c(
     "Metadata",
-    "Table 1: National level data",
-    "Table 2: BNF chapter level data",
-    "Table 3: BNF section level data",
-    "Table 4: BNF paragraph level data",
-    "Table 5: BNF chemical substance level data",
-    "Table 6: BNF presentation level data",
-    "Table 7: SNOMED level data"
+    "Table 1: Region level data",
+    "Table 2: BNF chapter level data by region",
+    "Table 3: BNF section level data by region",
+    "Table 4: BNF paragraph level data by region",
+    "Table 5: BNF chemical substance level data by region",
+    "Table 6: BNF presentation level data by region",
+    "Table 7: SNOMED level data by region"
   ),
-  c("Metadata", sheetNames_main)
+  c("Metadata", sheetNames_region)
 )
 
 #save file into outputs folder
@@ -2699,7 +2718,7 @@ accessibleTables::write_sheet(
   add_anl_wb,
   "Table_A1",
   paste0(
-    "Table A1: Total items, cost, number of items and cost per person, 2015/2016 to ",
+    "Table A1: Total items, cost, number of items and cost per person, 2016/2017 to ",
     max_data_fy
   ),
   c(
@@ -2727,13 +2746,13 @@ accessibleTables::format_data(add_anl_wb,
 names(add_anl_2) <- c(
   "BNF Chemical Substance Name",
   "BNF Chemical Substance Code",
-  "Total Cost 2015/2016 (GBP) ",
+  "Total Cost 2016/2017 (GBP) ",
   paste0("Total Cost ", max_data_fy_minus_1 , " (GBP)"),
   paste0("Total Cost ", max_data_fy , " (GBP)"),
-  "Rank 2015/2016",
+  "Rank 2016/2017",
   paste0("Rank ", max_data_fy_minus_1),
   paste0("Rank ", max_data_fy),
-  paste0("Change in Costs 2015/2016 to ", max_data_fy, " (GBP)"),
+  paste0("Change in Costs 2016/2017 to ", max_data_fy, " (GBP)"),
   paste0(
     "Change in Costs ",
     max_data_fy_minus_1 ,
@@ -2741,7 +2760,7 @@ names(add_anl_2) <- c(
     max_data_fy,
     " (GBP)"
   ),
-  paste0("Change in Costs 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Costs 2016/2017 to ", max_data_fy, " (%)"),
   paste0("Change in Costs ", max_data_fy_minus_1 , " to ", max_data_fy, " (%)")
 )
 
@@ -2775,15 +2794,15 @@ accessibleTables::format_data(add_anl_wb,
 names(add_anl_3) <- c(
   "BNF Chemical Substance Name",
   "BNF Chemical Substance Code",
-  "Total Items 2015/2016",
+  "Total Items 2016/2017",
   paste0("Total Items ", max_data_fy_minus_1),
   paste0("Total Items ", max_data_fy),
-  "Rank 2015/2016",
+  "Rank 2016/2017",
   paste0("Rank ", max_data_fy_minus_1),
   paste0("Rank ", max_data_fy),
-  paste0("Change in Items 2015/2016 to ", max_data_fy),
+  paste0("Change in Items 2016/2017 to ", max_data_fy),
   paste0("Change in Items ", max_data_fy_minus_1 , " to ", max_data_fy),
-  paste0("Change in Items 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Items 2016/2017 to ", max_data_fy, " (%)"),
   paste0("Change in Items ", max_data_fy_minus_1 , " to ", max_data_fy, " (%)")
 )
 
@@ -2828,7 +2847,7 @@ accessibleTables::write_sheet(
   add_anl_wb,
   "Table_A4",
   paste0(
-    "Table A4: Total items and cost by charge status, 2015/2016 to ",
+    "Table A4: Total items and cost by charge status, 2016/2017 to ",
     max_data_fy
   ),
   c(
@@ -2855,135 +2874,131 @@ accessibleTables::format_data(add_anl_wb,
 
 #additional analysis - table a5
 
+
 names(add_anl_5) <- c(
-  "Financial Year",
-  "Items prescribed
+"Financial Year",
+"Items prescribed
  generically",
-  "Items prescribed
+ "Items prescribed
  and dispensed
  generically",
-  "Items prescribed
+ "Items prescribed
  generically,
  dispensed and
  reimbursed as
  proprietary",
-  "Items prescribed
+ "Items prescribed
  and dispensed
  proprietary",
-  "Dressings and appliances",
-  "Total Items",
-  "Items prescribed
+ "Dressings and appliances",
+ "Total Items",
+ "Items prescribed
  generically
  (%)",
-  "Items prescribed
+ "Items prescribed
+ generically
+ excluding appliances (%)",
+ "Items prescribed
  and dispensed
  generically
  (%)",
-  "Items prescribed generically,
+ "Items prescribed generically,
  dispensed and reimbursed
  as proprietary
  (%)",
-  "Items prescribed
+ "Items prescribed
  and dispensed
  proprietary
  (%)",
-  "Dressings and Appliances prescribed
+ "Dressings and Appliances prescribed
  (%)",
-  "Cost of items
+ "Cost of items
  prescribed
  generically
  (GBP)",
-  "Cost of items
+ "Cost of items
  prescribed and
  dispensed
  generically
  (GBP)",
-  "Cost of items
+ "Cost of items
  prescribed
  generically,
  dispensed and
  reimbursed as
  proprietary
  (GBP)",
-  "Cost of items
+ "Cost of items
  prescribed and
  dispensed
  proprietary
  (GBP)",
-  "Cost of Appliances and Dressings prescribed
- (GBP) ",
-  "Total Cost
+ "Cost of Appliances and Dressings prescribed
  (GBP)",
-  "Cost of items
+ "Total Cost
+ (GBP)",
+ "Cost of items
  prescribed
  generically
  (%)",
-  "Cost of items
+ "Cost of items
+ prescribed
+ generically
+ excluding appliances (%)",
+ "Cost of items
  prescribed and
  dispensed
  generically
  (%)",
-  "Cost of items
+ "Cost of items
  prescribed
  generically,
  dispensed and
  reimbursed as
  proprietary
  (%)",
-  "Cost of items
+ "Cost of items
  prescribed and
  dispensed
  as proprietary
  (%)",
-  "Dressings and appliances
+ "Dressings and appliances
  prescribed
  (%)",
-  "Cost per item
+ "Cost per item
  prescribed
  generically
  (GBP)",
-  "Cost per item
+ "Cost per item
  prescribed and
  dispensed
  generically
  (GBP)",
-  "Cost per item
+ "Cost per item
  prescribed
  generically,
  dispensed and
  reimbursed as
  proprietary
  (GBP)",
-  "Cost per item
+ "Cost per item
  prescribed and
  dispensed
  proprietary
  (GBP)",
-  "Cost per dressing
+ "Cost per dressing
  and appliance
  (GBP)",
-  "Cost Per Item
+ "Cost Per Item
  (GBP)"
 )
-
-add_anl_5 <- add_anl_5 |>
-  mutate(
-    `Items prescribed\n generically\n excluding appliances (%)` = `Items prescribed\n generically` / (`Total Items` - `Dressings and appliances`) * 100,
-    .before = `Items prescribed\n and dispensed\n generically\n (%)`
-  ) |>
-  mutate(
-    `Cost of items\n prescribed\n generically\n excluding appliances (%)` = `Cost of items\n prescribed\n generically\n (GBP)` / (
-      `Total Cost\n (GBP)` - `Cost of Appliances and Dressings prescribed\n (GBP) `
-    ) * 100,
-    .before = `Cost of items\n prescribed and\n dispensed\n generically\n (%)`
-  )
 
 # write data to sheet
 accessibleTables::write_sheet(
   add_anl_wb,
   "Table_A5",
   paste0(
-    "Table A5: Generic Prescribing and dispensing by preparation class, 2015/2016 to ",
+    "Table A5: Generic Prescribing and dispensing by preparation class, 2016/2017 to ",
     max_data_fy
   ),
   c(
@@ -3058,7 +3073,7 @@ accessibleTables::write_sheet(
   add_anl_wb,
   "Table_A6",
   paste0(
-    "Table A6: Generic prescribing and dispensing by BNF Chapters, 2015/2016 to ",
+    "Table A6: Generic prescribing and dispensing by BNF Chapters, 2016/2017 to ",
     max_data_fy
   ),
   c(
@@ -3081,20 +3096,20 @@ accessibleTables::format_data(add_anl_wb, "Table_A6", c("G", "H"), "right", "#,#
 names(add_anl_7) <- c(
   "BNF Chapter Code",
   "BNF Chapter Name",
-  "Total Items 2015/2016",
+  "Total Items 2016/2017",
   paste0("Total Items ", max_data_fy_minus_1),
   paste0("Total Items ", max_data_fy),
-  "Total Cost 2015/2016 (GBP)",
+  "Total Cost 2016/2017 (GBP)",
   paste0("Total Cost ", max_data_fy_minus_1, " (GBP)"),
   paste0("Total Cost ", max_data_fy, " (GBP)"),
-  "Cost Per Item 2015/2016 (GBP)",
+  "Cost Per Item 2016/2017 (GBP)",
   paste0("Cost Per Item ", max_data_fy_minus_1, " (GBP)"),
   paste0("Cost Per Item ", max_data_fy, " (GBP)"),
-  paste0("Change in Items 2015/2016 to ", max_data_fy),
+  paste0("Change in Items 2016/2017 to ", max_data_fy),
   paste0("Change in Items ", max_data_fy_minus_1, " to ", max_data_fy),
-  paste0("Change in Items 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Items 2016/2017 to ", max_data_fy, " (%)"),
   paste0("Change in Items ", max_data_fy_minus_1, " to ", max_data_fy, " (%)"),
-  paste0("Change in Costs 2015/2016 to ", max_data_fy, " (GBP)"),
+  paste0("Change in Costs 2016/2017 to ", max_data_fy, " (GBP)"),
   paste0(
     "Change in Costs ",
     max_data_fy_minus_1,
@@ -3102,9 +3117,9 @@ names(add_anl_7) <- c(
     max_data_fy,
     " (GBP)"
   ),
-  paste0("Change in Costs 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Costs 2016/2017 to ", max_data_fy, " (%)"),
   paste0("Change in Costs ", max_data_fy_minus_1, " to ", max_data_fy, " (%)"),
-  paste0("Change in Costs Per Item 2015/2016 to ", max_data_fy, " (GBP)"),
+  paste0("Change in Costs Per Item 2016/2017 to ", max_data_fy, " (GBP)"),
   paste0(
     "Change in Costs Per Item ",
     max_data_fy_minus_1,
@@ -3112,7 +3127,7 @@ names(add_anl_7) <- c(
     max_data_fy,
     " (GBP)"
   ),
-  paste0("Change in Costs Per Item 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Costs Per Item 2016/2017 to ", max_data_fy, " (%)"),
   paste0(
     "Change in Costs Per Item ",
     max_data_fy_minus_1,
@@ -3127,7 +3142,7 @@ accessibleTables::write_sheet(
   add_anl_wb,
   "Table_A7",
   paste0(
-    "Table A7: Number, cost and cost per item by BNF Chapters, 2015/2016, ",
+    "Table A7: Number, cost and cost per item by BNF Chapters, 2016/2017, ",
     max_data_fy_minus_1,
     " and ",
     max_data_fy
@@ -3178,23 +3193,23 @@ names(add_anl_8) <- c(
   "BNF Section Code",
   "BNF Section Name",
   "Rank
- 2015/2016",
+ 2016/2017",
   paste0("Rank ", max_data_fy_minus_1),
   paste0("Rank ", max_data_fy),
-  "Total Items 2015/2016",
+  "Total Items 2016/2017",
   paste0("Total Items ", max_data_fy_minus_1),
   paste0("Total Items ", max_data_fy),
-  "Total Cost 2015/2016 (GBP)",
+  "Total Cost 2016/2017 (GBP)",
   paste0("Total Cost ", max_data_fy_minus_1, " (GBP)"),
   paste0("Total Cost ", max_data_fy, " (GBP)"),
-  "Cost Per Item 2015/2016 (GBP)",
+  "Cost Per Item 2016/2017 (GBP)",
   paste0("Cost Per Item ", max_data_fy_minus_1, " (GBP)"),
   paste0("Cost Per Item ", max_data_fy, " (GBP)"),
-  paste0("Change in Items 2015/2016 to ", max_data_fy),
+  paste0("Change in Items 2016/2017 to ", max_data_fy),
   paste0("Change in Items ", max_data_fy_minus_1, " to ", max_data_fy),
-  paste0("Change in Items 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Items 2016/2017 to ", max_data_fy, " (%)"),
   paste0("Change in Items ", max_data_fy_minus_1, " to ", max_data_fy, " (%)"),
-  paste0("Change in Costs 2015/2016 to ", max_data_fy, " (GBP)"),
+  paste0("Change in Costs 2016/2017 to ", max_data_fy, " (GBP)"),
   paste0(
     "Change in Costs ",
     max_data_fy_minus_1,
@@ -3202,9 +3217,9 @@ names(add_anl_8) <- c(
     max_data_fy,
     " (GBP)"
   ),
-  paste0("Change in Costs 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Costs 2016/2017 to ", max_data_fy, " (%)"),
   paste0("Change in Costs ", max_data_fy_minus_1, " to ", max_data_fy, " (%)"),
-  paste0("Change in Costs Per Item 2015/2016 to ", max_data_fy, " (GBP)"),
+  paste0("Change in Costs Per Item 2016/2017 to ", max_data_fy, " (GBP)"),
   paste0(
     "Change in Costs Per Item ",
     max_data_fy_minus_1,
@@ -3212,7 +3227,7 @@ names(add_anl_8) <- c(
     max_data_fy,
     " (GBP)"
   ),
-  paste0("Change in Costs Per Item 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Costs Per Item 2016/2017 to ", max_data_fy, " (%)"),
   paste0(
     "Change in Costs Per Item ",
     max_data_fy_minus_1,
@@ -3227,7 +3242,7 @@ accessibleTables::write_sheet(
   add_anl_wb,
   "Table_A8",
   paste0(
-    "Table A8: Top 20 BNF Sections by Cost, 2015/2016, ",
+    "Table A8: Top 20 BNF Sections by Cost, 2016/2017, ",
     max_data_fy_minus_1,
     " and ",
     max_data_fy
@@ -3280,20 +3295,20 @@ accessibleTables::format_data(
 names(add_anl_9) <- c(
   "BNF Section Code",
   "BNF Section Name",
-  "Total Items 2015/2016",
+  "Total Items 2016/2017",
   paste0("Total Items ", max_data_fy_minus_1),
   paste0("Total Items ", max_data_fy),
-  "Total Cost 2015/2016 (GBP)",
+  "Total Cost 2016/2017 (GBP)",
   paste0("Total Cost ", max_data_fy_minus_1, " (GBP)"),
   paste0("Total Cost ", max_data_fy, " (GBP)"),
-  "Cost Per Item 2015/2016 (GBP)",
+  "Cost Per Item 2016/2017 (GBP)",
   paste0("Cost Per Item ", max_data_fy_minus_1, " (GBP)"),
   paste0("Cost Per Item ", max_data_fy, " (GBP)"),
-  paste0("Change in Items 2015/2016 to ", max_data_fy),
+  paste0("Change in Items 2016/2017 to ", max_data_fy),
   paste0("Change in Items ", max_data_fy_minus_1, " to ", max_data_fy),
-  paste0("Change in Items 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Items 2016/2017 to ", max_data_fy, " (%)"),
   paste0("Change in Items ", max_data_fy_minus_1, " to ", max_data_fy, " (%)"),
-  paste0("Change in Costs 2015/2016 to ", max_data_fy, " (GBP)"),
+  paste0("Change in Costs 2016/2017 to ", max_data_fy, " (GBP)"),
   paste0(
     "Change in Costs ",
     max_data_fy_minus_1,
@@ -3301,9 +3316,9 @@ names(add_anl_9) <- c(
     max_data_fy,
     " (GBP)"
   ),
-  paste0("Change in Costs 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Costs 2016/2017 to ", max_data_fy, " (%)"),
   paste0("Change in Costs ", max_data_fy_minus_1, " to ", max_data_fy, " (%)"),
-  paste0("Change in Costs Per Item 2015/2016 to ", max_data_fy, " (GBP)"),
+  paste0("Change in Costs Per Item 2016/2017 to ", max_data_fy, " (GBP)"),
   paste0(
     "Change in Costs Per Item ",
     max_data_fy_minus_1,
@@ -3311,7 +3326,7 @@ names(add_anl_9) <- c(
     max_data_fy,
     " (GBP)"
   ),
-  paste0("Change in Costs Per Item 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Costs Per Item 2016/2017 to ", max_data_fy, " (%)"),
   paste0(
     "Change in Costs Per Item ",
     max_data_fy_minus_1,
@@ -3326,7 +3341,7 @@ accessibleTables::write_sheet(
   add_anl_wb,
   "Table_A9",
   paste0(
-    "Table A9: Top 20 BNF Sections by increase in cost, 2015/2016, ",
+    "Table A9: Top 20 BNF Sections by increase in cost, 2016/2017, ",
     max_data_fy_minus_1,
     " and ",
     max_data_fy
@@ -3378,20 +3393,20 @@ accessibleTables::format_data(
 names(add_anl_10) <- c(
   "BNF Section Code",
   "BNF Section Name",
-  "Total Items 2015/2016",
+  "Total Items 2016/2017",
   paste0("Total Items ", max_data_fy_minus_1),
   paste0("Total Items ", max_data_fy),
-  "Total Cost 2015/2016 (GBP)",
+  "Total Cost 2016/2017 (GBP)",
   paste0("Total Cost ", max_data_fy_minus_1, " (GBP)"),
   paste0("Total Cost ", max_data_fy, " (GBP)"),
-  "Cost Per Item 2015/2016 (GBP)",
+  "Cost Per Item 2016/2017 (GBP)",
   paste0("Cost Per Item ", max_data_fy_minus_1, " (GBP)"),
   paste0("Cost Per Item ", max_data_fy, " (GBP)"),
-  paste0("Change in Items 2015/2016 to ", max_data_fy),
+  paste0("Change in Items 2016/2017 to ", max_data_fy),
   paste0("Change in Items ", max_data_fy_minus_1, " to ", max_data_fy),
-  paste0("Change in Items 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Items 2016/2017 to ", max_data_fy, " (%)"),
   paste0("Change in Items ", max_data_fy_minus_1, " to ", max_data_fy, " (%)"),
-  paste0("Change in Costs 2015/2016 to ", max_data_fy, " (GBP)"),
+  paste0("Change in Costs 2016/2017 to ", max_data_fy, " (GBP)"),
   paste0(
     "Change in Costs ",
     max_data_fy_minus_1,
@@ -3399,9 +3414,9 @@ names(add_anl_10) <- c(
     max_data_fy,
     " (GBP)"
   ),
-  paste0("Change in Costs 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Costs 2016/2017 to ", max_data_fy, " (%)"),
   paste0("Change in Costs ", max_data_fy_minus_1, " to ", max_data_fy, " (%)"),
-  paste0("Change in Costs Per Item 2015/2016 to ", max_data_fy, " (GBP)"),
+  paste0("Change in Costs Per Item 2016/2017 to ", max_data_fy, " (GBP)"),
   paste0(
     "Change in Costs Per Item ",
     max_data_fy_minus_1,
@@ -3409,7 +3424,7 @@ names(add_anl_10) <- c(
     max_data_fy,
     " (GBP)"
   ),
-  paste0("Change in Costs Per Item 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Costs Per Item 2016/2017 to ", max_data_fy, " (%)"),
   paste0(
     "Change in Costs Per Item ",
     max_data_fy_minus_1,
@@ -3424,7 +3439,7 @@ accessibleTables::write_sheet(
   add_anl_wb,
   "Table_A10",
   paste0(
-    "Table A10: Top 20 BNF Sections by decrease in cost, 2015/2016, ",
+    "Table A10: Top 20 BNF Sections by decrease in cost, 2016/2017, ",
     max_data_fy_minus_1,
     " and ",
     max_data_fy
@@ -3474,20 +3489,20 @@ accessibleTables::format_data(
 names(add_anl_11) <- c(
   "BNF Presentation Name",
   "Unit of Measure",
-  "Total Cost 2015/2016 (GBP)",
+  "Total Cost 2016/2017 (GBP)",
   paste0("Total Cost ", max_data_fy_minus_1, " (GBP)"),
   paste0("Total Cost ", max_data_fy, " (GBP)"),
-  "Total Items 2015/2016",
+  "Total Items 2016/2017",
   paste0("Total Items ", max_data_fy_minus_1),
   paste0("Total Items ", max_data_fy),
-  "Unit Cost 2015/2016 (GBP)",
+  "Unit Cost 2016/2017 (GBP)",
   paste0("Unit Cost ", max_data_fy_minus_1, " (GBP)"),
   paste0("Unit Cost ", max_data_fy, " (GBP)"),
-  paste0("Change in Items 2015/2016 to ", max_data_fy),
+  paste0("Change in Items 2016/2017 to ", max_data_fy),
   paste0("Change in Items ", max_data_fy_minus_1, " to ", max_data_fy),
-  paste0("Change in Items 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Items 2016/2017 to ", max_data_fy, " (%)"),
   paste0("Change in Items ", max_data_fy_minus_1, " to ", max_data_fy, " (%)"),
-  paste0("Change in Costs 2015/2016 to ", max_data_fy, " (GBP)"),
+  paste0("Change in Costs 2016/2017 to ", max_data_fy, " (GBP)"),
   paste0(
     "Change in Costs ",
     max_data_fy_minus_1,
@@ -3495,9 +3510,9 @@ names(add_anl_11) <- c(
     max_data_fy,
     " (GBP)"
   ),
-  paste0("Change in Costs 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Costs 2016/2017 to ", max_data_fy, " (%)"),
   paste0("Change in Costs ", max_data_fy_minus_1, " to ", max_data_fy, " (%)"),
-  paste0("Change in Unit Cost 2015/2016 to ", max_data_fy, " (GBP)"),
+  paste0("Change in Unit Cost 2016/2017 to ", max_data_fy, " (GBP)"),
   paste0(
     "Change in Unit Cost ",
     max_data_fy_minus_1,
@@ -3505,7 +3520,7 @@ names(add_anl_11) <- c(
     max_data_fy,
     " (GBP)"
   ),
-  paste0("Change in Unit Cost 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Unit Cost 2016/2017 to ", max_data_fy, " (%)"),
   paste0(
     "Change in Unit Cost ",
     max_data_fy_minus_1,
@@ -3520,7 +3535,7 @@ accessibleTables::write_sheet(
   add_anl_wb,
   "Table_A11",
   paste0(
-    "Table A11: Top 20 BNF Presentations by increase in Unit Cost, 2015/2016, ",
+    "Table A11: Top 20 BNF Presentations by increase in Unit Cost, 2016/2017, ",
     max_data_fy_minus_1,
     " and ",
     max_data_fy
@@ -3573,20 +3588,20 @@ accessibleTables::format_data(
 names(add_anl_12) <- c(
   "BNF Presentation Name",
   "Unit of Measure",
-  "Total Cost 2015/2016 (GBP)",
+  "Total Cost 2016/2017 (GBP)",
   paste0("Total Cost ", max_data_fy_minus_1, " (GBP)"),
   paste0("Total Cost ", max_data_fy, " (GBP)"),
-  "Total Items 2015/2016",
+  "Total Items 2016/2017",
   paste0("Total Items ", max_data_fy_minus_1),
   paste0("Total Items ", max_data_fy),
-  "Unit Cost 2015/2016 (GBP)",
+  "Unit Cost 2016/2017 (GBP)",
   paste0("Unit Cost ", max_data_fy_minus_1, " (GBP)"),
   paste0("Unit Cost ", max_data_fy, " (GBP)"),
-  paste0("Change in Items 2015/2016 to ", max_data_fy),
+  paste0("Change in Items 2016/2017 to ", max_data_fy),
   paste0("Change in Items ", max_data_fy_minus_1, " to ", max_data_fy),
-  paste0("Change in Items 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Items 2016/2017 to ", max_data_fy, " (%)"),
   paste0("Change in Items ", max_data_fy_minus_1, " to ", max_data_fy, " (%)"),
-  paste0("Change in Costs 2015/2016 to ", max_data_fy, " (GBP)"),
+  paste0("Change in Costs 2016/2017 to ", max_data_fy, " (GBP)"),
   paste0(
     "Change in Costs ",
     max_data_fy_minus_1,
@@ -3594,9 +3609,9 @@ names(add_anl_12) <- c(
     max_data_fy,
     " (GBP)"
   ),
-  paste0("Change in Costs 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Costs 2016/2017 to ", max_data_fy, " (%)"),
   paste0("Change in Costs ", max_data_fy_minus_1, " to ", max_data_fy, " (%)"),
-  paste0("Change in Unit Cost 2015/2016 to ", max_data_fy, " (GBP)"),
+  paste0("Change in Unit Cost 2016/2017 to ", max_data_fy, " (GBP)"),
   paste0(
     "Change in Unit Cost ",
     max_data_fy_minus_1,
@@ -3604,7 +3619,7 @@ names(add_anl_12) <- c(
     max_data_fy,
     " (GBP)"
   ),
-  paste0("Change in Unit Cost 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Unit Cost 2016/2017 to ", max_data_fy, " (%)"),
   paste0(
     "Change in Unit Cost ",
     max_data_fy_minus_1,
@@ -3619,7 +3634,7 @@ accessibleTables::write_sheet(
   add_anl_wb,
   "Table_A12",
   paste0(
-    "Table A12: Top 20 BNF Presentations by decrease in Unit Cost, 2015/2016, ",
+    "Table A12: Top 20 BNF Presentations by decrease in Unit Cost, 2016/2017, ",
     max_data_fy_minus_1,
     " and ",
     max_data_fy
@@ -3672,20 +3687,20 @@ accessibleTables::format_data(
 names(add_anl_13) <- c(
   "BNF Presentation Name",
   "Unit of Measure",
-  "Total Cost 2015/2016 (GBP)",
+  "Total Cost 2016/2017 (GBP)",
   paste0("Total Cost ", max_data_fy_minus_1, " (GBP)"),
   paste0("Total Cost ", max_data_fy, " (GBP)"),
-  "Total Items 2015/2016",
+  "Total Items 2016/2017",
   paste0("Total Items ", max_data_fy_minus_1),
   paste0("Total Items ", max_data_fy),
-  "Unit Cost 2015/2016 (GBP)",
+  "Unit Cost 2016/2017 (GBP)",
   paste0("Unit Cost ", max_data_fy_minus_1, " (GBP)"),
   paste0("Unit Cost ", max_data_fy, " (GBP)"),
-  paste0("Change in Items 2015/2016 to ", max_data_fy),
+  paste0("Change in Items 2016/2017 to ", max_data_fy),
   paste0("Change in Items ", max_data_fy_minus_1, " to ", max_data_fy),
-  paste0("Change in Items 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Items 2016/2017 to ", max_data_fy, " (%)"),
   paste0("Change in Items ", max_data_fy_minus_1, " to ", max_data_fy, " (%)"),
-  paste0("Change in Costs 2015/2016 to ", max_data_fy, " (GBP)"),
+  paste0("Change in Costs 2016/2017 to ", max_data_fy, " (GBP)"),
   paste0(
     "Change in Costs ",
     max_data_fy_minus_1,
@@ -3693,9 +3708,9 @@ names(add_anl_13) <- c(
     max_data_fy,
     " (GBP)"
   ),
-  paste0("Change in Costs 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Costs 2016/2017 to ", max_data_fy, " (%)"),
   paste0("Change in Costs ", max_data_fy_minus_1, " to ", max_data_fy, " (%)"),
-  paste0("Change in Unit Cost 2015/2016 to ", max_data_fy, " (GBP)"),
+  paste0("Change in Unit Cost 2016/2017 to ", max_data_fy, " (GBP)"),
   paste0(
     "Change in Unit Cost ",
     max_data_fy_minus_1,
@@ -3703,7 +3718,7 @@ names(add_anl_13) <- c(
     max_data_fy,
     " (GBP)"
   ),
-  paste0("Change in Unit Cost 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Unit Cost 2016/2017 to ", max_data_fy, " (%)"),
   paste0(
     "Change in Unit Cost ",
     max_data_fy_minus_1,
@@ -3718,7 +3733,7 @@ accessibleTables::write_sheet(
   add_anl_wb,
   "Table_A13",
   paste0(
-    "Table A13: Top 20 BNF Presentations by increase in Costs, 2015/2016, ",
+    "Table A13: Top 20 BNF Presentations by increase in Costs, 2016/2017, ",
     max_data_fy_minus_1,
     " and ",
     max_data_fy
@@ -3771,20 +3786,20 @@ format_data(
 names(add_anl_14) <- c(
   "BNF Presentation Name",
   "Unit of Measure",
-  "Total Cost 2015/2016 (GBP)",
+  "Total Cost 2016/2017 (GBP)",
   paste0("Total Cost ", max_data_fy_minus_1, " (GBP)"),
   paste0("Total Cost ", max_data_fy, " (GBP)"),
-  "Total Items 2015/2016",
+  "Total Items 2016/2017",
   paste0("Total Items ", max_data_fy_minus_1),
   paste0("Total Items ", max_data_fy),
-  "Unit Cost 2015/2016 (GBP)",
+  "Unit Cost 2016/2017 (GBP)",
   paste0("Unit Cost ", max_data_fy_minus_1, " (GBP)"),
   paste0("Unit Cost ", max_data_fy, " (GBP)"),
-  paste0("Change in Items 2015/2016 to ", max_data_fy),
+  paste0("Change in Items 2016/2017 to ", max_data_fy),
   paste0("Change in Items ", max_data_fy_minus_1, " to ", max_data_fy),
-  paste0("Change in Items 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Items 2016/2017 to ", max_data_fy, " (%)"),
   paste0("Change in Items ", max_data_fy_minus_1, " to ", max_data_fy, " (%)"),
-  paste0("Change in Costs 2015/2016 to ", max_data_fy, " (GBP)"),
+  paste0("Change in Costs 2016/2017 to ", max_data_fy, " (GBP)"),
   paste0(
     "Change in Costs ",
     max_data_fy_minus_1,
@@ -3792,9 +3807,9 @@ names(add_anl_14) <- c(
     max_data_fy,
     " (GBP)"
   ),
-  paste0("Change in Costs 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Costs 2016/2017 to ", max_data_fy, " (%)"),
   paste0("Change in Costs ", max_data_fy_minus_1, " to ", max_data_fy, " (%)"),
-  paste0("Change in Unit Cost 2015/2016 to ", max_data_fy, " (GBP)"),
+  paste0("Change in Unit Cost 2016/2017 to ", max_data_fy, " (GBP)"),
   paste0(
     "Change in Unit Cost ",
     max_data_fy_minus_1,
@@ -3802,7 +3817,7 @@ names(add_anl_14) <- c(
     max_data_fy,
     " (GBP)"
   ),
-  paste0("Change in Unit Cost 2015/2016 to ", max_data_fy, " (%)"),
+  paste0("Change in Unit Cost 2016/2017 to ", max_data_fy, " (%)"),
   paste0(
     "Change in Unit Cost ",
     max_data_fy_minus_1,
@@ -3817,7 +3832,7 @@ accessibleTables::write_sheet(
   add_anl_wb,
   "Table_A14",
   paste0(
-    "Table A14: Top 20 BNF Presentations by decrease in Costs, 2015/2016, ",
+    "Table A14: Top 20 BNF Presentations by decrease in Costs, 2016/2017, ",
     max_data_fy_minus_1,
     " and ",
     max_data_fy
@@ -3875,7 +3890,7 @@ accessibleTables::makeCoverSheet(
   c(
     "Metadata",
     paste0(
-      "Table A1: Total items, cost, number of items and cost per person, 2015/2016 to ",
+      "Table A1: Total items, cost, number of items and cost per person, 2016/2017 to ",
       max_data_fy
     ),
     paste0("Table A2: Top 20 drugs by cost, ", max_data_fy),
@@ -3885,7 +3900,7 @@ accessibleTables::makeCoverSheet(
       max_data_fy
     ),
     paste0(
-      "Table A5: Generic Prescribing and dispensing by preparation class, 2015/2016 to ",
+      "Table A5: Generic Prescribing and dispensing by preparation class, 2016/2017 to ",
       max_data_fy
     ),
     paste0(
@@ -3893,51 +3908,51 @@ accessibleTables::makeCoverSheet(
       max_data_fy
     ),
     paste0(
-      "Table A7: Number, cost and cost per item by BNF Chapters, 2015/2016, ",
+      "Table A7: Number, cost and cost per item by BNF Chapters, 2016/2017, ",
       max_data_fy_minus_1,
-      " and",
+      " and ",
       max_data_fy
     ),
     paste0(
-      "Table A8: Top 20 BNF Sections by cost, 2015/2016, ",
+      "Table A8: Top 20 BNF Sections by cost, 2016/2017, ",
       max_data_fy_minus_1,
-      " and",
+      " and ",
       max_data_fy
     ),
     paste0(
-      "Table A9: Top 20 BNF Sections by increase in cost, 2015/2016, ",
+      "Table A9: Top 20 BNF Sections by increase in cost, 2016/2017, ",
       max_data_fy_minus_1,
-      " and",
+      " and ",
       max_data_fy
     ),
     paste0(
-      "Table A10: Top 20 BNF Sections by decrease in cost, 2015/2016, ",
+      "Table A10: Top 20 BNF Sections by decrease in cost, 2016/2017, ",
       max_data_fy_minus_1,
-      " and",
+      " and ",
       max_data_fy
     ),
     paste0(
-      "Table A11: Top 20 BNF Presentations by increase in Unit Cost, 2015/2016, ",
+      "Table A11: Top 20 BNF Presentations by increase in Unit Cost, 2016/2017, ",
       max_data_fy_minus_1,
-      " and",
+      " and ",
       max_data_fy
     ),
     paste0(
-      "Table A12: Top 20 BNF Presentations by decrease in Unit Cost, 2015/2016, ",
+      "Table A12: Top 20 BNF Presentations by decrease in Unit Cost, 2016/2017, ",
       max_data_fy_minus_1,
-      " and",
+      " and ",
       max_data_fy
     ),
     paste0(
-      "Table A13: Top 20 BNF Presentations by increase in Costs, 2015/2016, ",
+      "Table A13: Top 20 BNF Presentations by increase in Costs, 2016/2017, ",
       max_data_fy_minus_1,
-      " and",
+      " and ",
       max_data_fy
     ),
     paste0(
-      "Table A14: Top 20 BNF Presentations by decrease in Costs, 2015/2016, ",
+      "Table A14: Top 20 BNF Presentations by decrease in Costs, 2016/2017, ",
       max_data_fy_minus_1,
-      " and",
+      " and ",
       max_data_fy
     )
     
