@@ -41,10 +41,10 @@ if (Sys.getenv("GITHUB_PAT") == "") {
 
 # load GITHUB_KEY if available in environment or enter if not
 
-if (Sys.getenv("DB_DWCP_USERNAME") == "") {
+if (Sys.getenv("FABRIC_PASSWORD") == "") {
   usethis::edit_r_environ()
   stop(
-    "You need to set your DB_DWCP_USERNAME = YOUR DWCP USERNAME and  DB_DWCP_PASSWORD = YOUR DWCP PASSWORD in the .Renviron file which pops up. Please restart your R Studio after this and re-run the pipeline."
+    "You need to set your FABRIC_USERNAME = YOUR Fabric USERNAME and  FABRIC_PASSWORD = YOUR Fabric PASSWORD in the .Renviron file which pops up. Please restart your R Studio after this and re-run the pipeline."
   )
 }
 
