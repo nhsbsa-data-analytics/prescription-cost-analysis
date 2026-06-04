@@ -191,6 +191,7 @@ nat_data_fy_agg$BNF_Paragraphs <- DBI::dbGetQuery(con, paste0("SELECT * FROM [na
 nat_data_fy_agg$Chemical_Substances <- DBI::dbGetQuery(con, paste0("SELECT * FROM [national].chem_sub_total_fy_", as.character(config$fy_suffix)))
 nat_data_fy_agg$Presentations <- DBI::dbGetQuery(con, paste0("SELECT * FROM [national].presentation_total_fy_", as.character(config$fy_suffix)))
 nat_data_fy_agg$SNOMED_Code <- DBI::dbGetQuery(con, paste0("SELECT * FROM [national].snomed_total_fy_", as.character(config$fy_suffix)))
+
 #replace NA with blanks
 nat_data_fy_agg$National[is.na(nat_data_fy_agg$National)] <- ""
 nat_data_fy_agg$BNF_Chapters[is.na(nat_data_fy_agg$BNF_Chapters)] <- ""
@@ -263,6 +264,7 @@ icb_data_fy_agg$BNF_Paragraphs <- DBI::dbGetQuery(con, paste0("SELECT * FROM [ic
 icb_data_fy_agg$Chemical_Substances <- DBI::dbGetQuery(con, paste0("SELECT * FROM [icb].icb_chem_sub_total_fy_", as.character(config$fy_suffix)))
 icb_data_fy_agg$Presentations <- DBI::dbGetQuery(con, paste0("SELECT * FROM [icb].icb_presentation_total_fy_", as.character(config$fy_suffix)))
 icb_data_fy_agg$SNOMED_Code <- DBI::dbGetQuery(con, paste0("SELECT * FROM [icb].icb_snomed_total_fy_", as.character(config$fy_suffix)))
+
 #replace NA with blanks
 icb_data_fy_agg$National[is.na(icb_data_fy_agg$National)] <- ""
 icb_data_fy_agg$BNF_Chapters[is.na(icb_data_fy_agg$BNF_Chapters)] <- ""
@@ -329,10 +331,10 @@ add_anl_1 <-
 
 dev_nations_data <- data.frame(
   "Country" = c("England", "Wales", "Scotland", "Northern Ireland"),
-  "TOTAL_ITEMS" = c(
+  "total_items" = c(
     add_anl_1 |>
-      filter(YEAR_DESC == max_data_fy_minus_1) |>
-      select(TOTAL_ITEMS) |>
+      filter(year_desc == max_data_fy_minus_1) |>
+      select(total_items) |>
       pull(),
     wa_pca |>
       select(TOTAL_ITEMS) |>
@@ -344,10 +346,10 @@ dev_nations_data <- data.frame(
       select(TOTAL_ITEMS) |>
       pull()
   ),
-  "TOTAL_COSTS" = c(
+  "total_costs" = c(
     add_anl_1 |>
-      filter(YEAR_DESC == max_data_fy_minus_1) |>
-      select(TOTAL_NIC) |>
+      filter(year_desc == max_data_fy_minus_1) |>
+      select(total_nic) |>
       pull(),
     wa_pca |>
       select(TOTAL_COST) |>
@@ -359,28 +361,32 @@ dev_nations_data <- data.frame(
       select(TOTAL_COST) |>
       pull()
   ),
-  "POP" = c(
+  "pop" = c(
     en_ons_national_pop |>
+      filter(!is.na(ENPOP)) |>
       filter(YEAR == max(YEAR)) |>
       select(ENPOP) |>
       pull(),
     wa_ons_national_pop |>
+      filter(!is.na(WAPOP)) |>
       filter(YEAR == max(YEAR)) |>
       select(WAPOP) |>
       pull(),
     sc_ons_national_pop |>
+      filter(!is.na(SCPOP)) |>
       filter(YEAR == max(YEAR)) |>
       select(SCPOP) |>
       pull(),
     ni_ons_national_pop |>
+      filter(!is.na(NIPOP)) |>
       filter(YEAR == max(YEAR)) |>
       select(NIPOP) |>
       pull()
   )
 ) |>
   mutate(
-    ITEMS_PER_CAPITA = round(TOTAL_ITEMS / POP, 1),
-    COSTS_PER_CAPITA = round(TOTAL_COSTS / POP, 2)
+    items_per_capita = round(total_items / pop, 1),
+    costs_per_capita = round(total_costs / pop, 2)
   )
 
 add_anl_2 <- DBI::dbGetQuery(con, paste0("SELECT * FROM [additional_analysis].top_chem_sub_costs_", as.character(config$fy_suffix)))
@@ -408,7 +414,7 @@ figure_1_data <- add_anl_1 |>
   select(year_desc, total_nic)
 
 table_1 <- figure_1_data |>
-  mutate(TOTAL_NIC = format(total_nic, big.mark = ",")) |>
+  mutate(total_nic = format(total_nic, big.mark = ",")) |>
   rename("Financial year" = 1,
          "Net ingredient cost (£)" = 2)
 
@@ -523,15 +529,15 @@ figure_2$x$hc_opts$xAxis$lineWidth <- 1
 figure_2$x$hc_opts$xAxis$lineColor <- "#E8EDEE"
 
 # figure 3
-figure_3_data <- nat_data_fy |>
-  group_by(BNF_CHAPTER, CHAPTER_DESCR) |>
-  summarise(TOTAL_NIC = sum(TOTAL_NIC)) |>
+figure_3_data <- nat_data_fy_agg$SNOMED_Code |>
+  group_by(bnf_chapter, chapter_descr) |>
+  summarise(total_nic = sum(item_pay_dr_nic)) |>
   ungroup()
 
 
 table_3 <- figure_3_data |>
-  mutate(TOTAL_NIC = format(
-    TOTAL_NIC,
+  mutate(total_nic = format(
+    total_nic,
     big.mark = ",",
     nsmall = 2,
     digits = 2,
@@ -546,8 +552,8 @@ table_3 <- figure_3_data |>
 
 figure_3 <- nhsbsaVis::basic_chart_hc(
   figure_3_data,
-  x = BNF_CHAPTER,
-  y = TOTAL_NIC,
+  x = bnf_chapter,
+  y = total_nic,
   type = "column",
   xLab = "BNF chapter",
   yLab = "Cost of items dispensed (£)",
@@ -558,7 +564,7 @@ figure_3 <- nhsbsaVis::basic_chart_hc(
 
 figure_3$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
   "function(){
-                                                       var ynum = this.point.TOTAL_NIC ;
+                                                       var ynum = this.point.total_nic ;
 
                                                        if(ynum >= 1000000){
                                                        result = ynum/1000000
@@ -577,26 +583,26 @@ figure_3$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
 figure_3$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 
 # figure 4
-figure_4_data <- pca_bnf_costs_index(con = con)
+figure_4_data <- DBI::dbGetQuery(con, paste0("SELECT * FROM [additional_analysis].pca_bnf_costs_index_", as.character(config$fy_suffix)))
 
 table_4 <- figure_4_data |>
-  mutate(VALUE = format(round(VALUE, 1), big.mark = ",")) |>
-  select(-CHAPTER_DESCR) |>
-  pivot_wider(names_from = BNF_CHAPTER, values_from = VALUE) |>
+  mutate(value = format(round(value, 1), big.mark = ",")) |>
+  select(-chapter_descr) |>
+  pivot_wider(names_from = bnf_chapter, values_from = value) |>
   rename("Financial year" = 1)
 
 
 figure_4 <- nhsbsaVis::group_chart_hc(
   figure_4_data,
-  x = YEAR_DESC,
-  y = VALUE,
-  group = BNF_CHAPTER,
+  x = year_desc,
+  y = value,
+  group = bnf_chapter,
   type = "line",
   xLab = "Financial year",
   yLab = "Index",
   title = ""
 ) |>
-  hc_subtitle(text = "Index: 2014/2015 = 100", align = "left") |>
+  hc_subtitle(text = "Index: 2016/2017 = 100", align = "left") |>
   hc_yAxis(plotLines = list(list(
     color = "#768692",
     width = 1.5,
@@ -607,13 +613,13 @@ figure_4 <- nhsbsaVis::group_chart_hc(
 figure_4$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 
 # figure 5
-figure_5_data <- nat_data_fy |>
-  group_by(BNF_CHAPTER, CHAPTER_DESCR) |>
-  summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS)) |>
+figure_5_data <- nat_data_fy_agg$SNOMED_Code |>
+  group_by(bnf_chapter, chapter_descr) |>
+  summarise(total_items = sum(item_count)) |>
   ungroup()
 
 table_5 <- figure_5_data |>
-  mutate(TOTAL_ITEMS = format(TOTAL_ITEMS, big.mark = ",")) |>
+  mutate(total_items = format(total_items, big.mark = ",")) |>
   rename(
     "BNF chapter code" = 1,
     "BNF chapter name" = 2,
@@ -622,8 +628,8 @@ table_5 <- figure_5_data |>
 
 figure_5 <-  nhsbsaVis::basic_chart_hc(
   figure_5_data,
-  x = BNF_CHAPTER,
-  y = TOTAL_ITEMS,
+  x = bnf_chapter,
+  y = total_items,
   type = "column",
   xLab = "BNF chapter",
   yLab = "Number of items dispensed",
@@ -635,7 +641,7 @@ figure_5 <-  nhsbsaVis::basic_chart_hc(
 
 figure_5$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
   "function(){
-                                                       var ynum = this.point.TOTAL_ITEMS ;
+                                                       var ynum = this.point.total_items ;
                                                        if(ynum >= 1000000) {
                                                        result = ynum/1000000
                                                        result = result.toPrecision(3) + 'M'
@@ -649,26 +655,26 @@ figure_5$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
 figure_5$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 
 # figure 6
-figure_6_data <- pca_bnf_items_index(con = con)
+figure_6_data <- DBI::dbGetQuery(con, paste0("SELECT * FROM [additional_analysis].pca_bnf_items_index_", as.character(config$fy_suffix)))
 
 table_6 <- figure_6_data |>
-  mutate(VALUE = format(round(VALUE, 1), big.mark = ",")) |>
-  select(-CHAPTER_DESCR) |>
-  pivot_wider(names_from = BNF_CHAPTER, values_from = VALUE) |>
+  mutate(value = format(round(value, 1), big.mark = ",")) |>
+  select(-chapter_descr) |>
+  pivot_wider(names_from = bnf_chapter, values_from = value) |>
   rename("Financial year" = 1)
 
 
 figure_6 <- nhsbsaVis::group_chart_hc(
   figure_6_data,
-  x = YEAR_DESC,
-  y = VALUE,
-  group = BNF_CHAPTER,
+  x = year_desc,
+  y = value,
+  group = bnf_chapter,
   type = "line",
   xLab = "Financial year",
   yLab = "Index",
   title = ""
 ) |>
-  hc_subtitle(text = "Index: 2014/2015 = 100", align = "left") |>
+  hc_subtitle(text = "Index: 2016/2017 = 100", align = "left") |>
   hc_yAxis(plotLines = list(list(
     color = "#768692",
     width = 1.5,
@@ -681,20 +687,20 @@ figure_6$x$hc_opts$series[[1]]$dataLabels$allowOverlap <- TRUE
 # figure 7
 figure_7_data <- add_anl_5 |>
   mutate(
-    GEN_ITEMS = PRESC_GEN_ITEMS,
-    TOTAL_ITEMS = TOTAL_ITEMS - APPLIANCE_ITEMS,
-    GEN_NIC = PRESC_GEN_NIC,
-    TOTAL_NIC = TOTAL_NIC - APPLIANCE_NIC
+    gen_items = presc_gen_items,
+    total_items = total_items - appliance_items,
+    gen_nic = presc_gen_nic,
+    total_nic = total_nic - appliance_nic
   ) |>
-  mutate(Items = GEN_ITEMS / TOTAL_ITEMS * 100,
-         `Net ingredient cost` = GEN_NIC / TOTAL_NIC * 100) |>
-  select(-(GEN_ITEMS:TOTAL_NIC)) |>
+  mutate(Items = gen_items / total_items * 100,
+         `Net ingredient cost` = gen_nic / total_nic * 100) |>
+  select(-(gen_items:total_nic)) |>
   pivot_longer(
     cols = c(Items, `Net ingredient cost`),
     names_to = "MEASURE",
     values_to = "VALUE"
   ) |>
-  select(YEAR_DESC, MEASURE, VALUE)
+  select(year_desc, MEASURE, VALUE)
 
 table_7 <- figure_7_data |>
   mutate(VALUE = format(round(VALUE, 1), big.mark = ",")) |>
@@ -708,7 +714,7 @@ table_7 <- figure_7_data |>
 
 figure_7 <- nhsbsaVis::group_chart_hc(
   figure_7_data,
-  x = YEAR_DESC,
+  x = year_desc,
   y = VALUE,
   group = MEASURE,
   type = "line",
@@ -723,7 +729,7 @@ figure_7$x$hc_opts$xAxis$lineColor <- "#E8EDEE"
 
 # figure 8
 figure_8_df <- add_anl_5 |>
-  filter(YEAR_DESC == max(YEAR_DESC))
+  filter(year_desc == max(year_desc))
 
 
 figure_8_data <- data.frame(
@@ -744,12 +750,12 @@ figure_8_data <- data.frame(
     "Dispensed<br>proprietary"
   ),
   weight = c(
-    figure_8_df$APPLIANCE_ITEMS[1],
-    figure_8_df$PRESC_GEN_ITEMS[1],
-    figure_8_df$PRESC_DISP_PROP_ITEMS[1],
-    figure_8_df$PRESC_DISP_GEN_ITEMS[1],
-    figure_8_df$PRESC_GEN_DISP_PROP_ITEMS[1],
-    figure_8_df$PRESC_DISP_PROP_ITEMS[1]
+    figure_8_df$appliance_items[1],
+    as.numeric(figure_8_df$presc_gen_items[1]),
+    figure_8_df$presc_disp_prop_items[1],
+    figure_8_df$presc_disp_gen_items[1],
+    figure_8_df$presc_gen_disp_prop_items[1],
+    figure_8_df$presc_disp_prop_items[1]
   )
 )
 
@@ -806,16 +812,15 @@ figure_8 <- highchart() |>
 
 # figure 9
 figure_9_data <- add_anl_2 |>
-  group_by(CHEMICAL_SUBSTANCE_BNF_DESCR, BNF_CHEMICAL_SUBSTANCE) |>
-  rename(TOTAL_NIC = 5) |>
-  summarise(TOTAL_NIC = sum(TOTAL_NIC)) |>
+  group_by(chemical_substance_bnf_descr, bnf_chemical_substance) |>
+  summarise(total_nic = sum(max_fy_total_nic)) |>
   ungroup() |>
-  mutate(RANK = row_number(desc(TOTAL_NIC))) |>
-  filter(RANK <= 10) |>
-  arrange(RANK)
+  mutate(rank = row_number(desc(total_nic))) |>
+  filter(rank <= 10) |>
+  arrange(rank)
 
 table_9 <- figure_9_data |>
-  select(-RANK) |>
+  select(-rank) |>
   rename(
     "Chemical substance name" = 1,
     "Chemical substance BNF code" = 2,
@@ -825,8 +830,8 @@ table_9 <- figure_9_data |>
 
 figure_9 <- nhsbsaVis::basic_chart_hc(
   figure_9_data,
-  x = CHEMICAL_SUBSTANCE_BNF_DESCR,
-  y = TOTAL_NIC,
+  x = chemical_substance_bnf_descr,
+  y = total_nic,
   type = "bar",
   xLab = "Chemical substance",
   yLab = "Cost of items dispensed (£)",
@@ -850,16 +855,15 @@ figure_9$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
 
 # figure 10
 figure_10_data <- add_anl_3 |>
-  group_by(CHEMICAL_SUBSTANCE_BNF_DESCR, BNF_CHEMICAL_SUBSTANCE) |>
-  rename(TOTAL_ITEMS = 5) |>
-  summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS)) |>
+  group_by(chemical_substance_bnf_descr, bnf_chemical_substance) |>
+  summarise(total_items = sum(max_fy_total_items)) |>
   ungroup() |>
-  mutate(RANK = row_number(desc(TOTAL_ITEMS))) |>
-  filter(RANK <= 10) |>
-  arrange(RANK)
+  mutate(rank = row_number(desc(total_items))) |>
+  filter(rank <= 10) |>
+  arrange(rank)
 
 table_10 <- figure_10_data |>
-  select(-RANK) |>
+  select(-rank) |>
   rename(
     "Chemical substance name" = 1,
     "Chemical substance BNF code" = 2,
@@ -869,8 +873,8 @@ table_10 <- figure_10_data |>
 
 figure_10 <- nhsbsaVis::basic_chart_hc(
   figure_10_data,
-  x = CHEMICAL_SUBSTANCE_BNF_DESCR,
-  y = TOTAL_ITEMS,
+  x = chemical_substance_bnf_descr,
+  y = total_items,
   type = "bar",
   xLab = "Chemical substance",
   yLab = "Number of items dispensed",
@@ -893,7 +897,7 @@ figure_10$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
 
 # figure 11
 figure_11_data <-  icb_data_fy_agg$National |>
-  dplyr::select(`ICB Code`, `Total Cost (£)`) |>
+  dplyr::select(stp_code, item_pay_dr_nic) |>
   dplyr::rename(ICB_CODE = 1, TOTAL_NIC = 2) |>
   dplyr::group_by(ICB_CODE) |>
   dplyr::summarise(TOTAL_NIC = sum(TOTAL_NIC, na.rm = T), .groups = "drop") |>
@@ -909,8 +913,8 @@ table_11 <- figure_11_data |>
 
 figure_11 <- nhsbsaVis::icb_map(
   data = icb_data_fy_agg$National,
-  icb_code_column = "ICB Code",
-  value_column = "Total Cost (£)",
+  icb_code_column = "stp_code",
+  value_column = "item_pay_dr_nic",
   geo_data = icb_geo_data,
   icb_population = icb_pop,
   currency = TRUE,
@@ -921,7 +925,7 @@ figure_11 <- nhsbsaVis::icb_map(
 
 # figure 12
 figure_12_data <-  icb_data_fy_agg$National |>
-  dplyr::select(`ICB Code`, `Total Items`) |>
+  dplyr::select(stp_code, item_count) |>
   dplyr::rename(ICB_CODE = 1, TOTAL_ITEMS = 2) |>
   dplyr::group_by(ICB_CODE) |>
   dplyr::summarise(TOTAL_ITEMS = sum(TOTAL_ITEMS, na.rm = T),
@@ -937,8 +941,8 @@ table_12 <- figure_12_data |>
 
 figure_12 <- nhsbsaVis::icb_map(
   data = icb_data_fy_agg$National,
-  icb_code_column = "ICB Code",
-  value_column = "Total Items",
+  icb_code_column = "stp_code",
+  value_column = "item_count",
   geo_data = icb_geo_data,
   icb_population = icb_pop,
   currency = FALSE,
@@ -952,7 +956,7 @@ figure_13_data <- add_anl_11 |>
   rename(UNIT_COST_CHANGE = 23,
          DISP_PRESEN_BNF_DESCR = 1) |>
   slice_max(UNIT_COST_CHANGE, n = 10) |>
-  select(DISP_PRESEN_BNF_DESCR, VMPP_UOM, UNIT_COST_CHANGE)
+  select(DISP_PRESEN_BNF_DESCR, vmpp_uom, UNIT_COST_CHANGE)
 
 table_13 <- figure_13_data |>
   mutate(UNIT_COST_CHANGE = format(round(UNIT_COST_CHANGE), big.mark = ",")) |>
@@ -978,7 +982,7 @@ figure_14_data <- add_anl_12 |>
   rename(UNIT_COST_CHANGE = 23,
          DISP_PRESEN_BNF_DESCR = 1) |>
   slice_min(UNIT_COST_CHANGE, n = 10) |>
-  select(DISP_PRESEN_BNF_DESCR, VMPP_UOM, UNIT_COST_CHANGE)
+  select(DISP_PRESEN_BNF_DESCR, vmpp_uom, UNIT_COST_CHANGE)
 
 table_14 <- figure_14_data |>
   mutate(UNIT_COST_CHANGE = format(round(UNIT_COST_CHANGE, 1), big.mark = ",")) |>
@@ -1004,7 +1008,7 @@ figure_14 <- figure_14_data |>
 figure_15_data <- add_anl_13 |>
   rename(NIC_CHANGE = 17, DISP_PRESEN_BNF_DESCR = 1) |>
   slice_max(NIC_CHANGE, n = 10) |>
-  select(DISP_PRESEN_BNF_DESCR, VMPP_UOM, NIC_CHANGE)
+  select(DISP_PRESEN_BNF_DESCR, vmpp_uom, NIC_CHANGE)
 
 table_15 <- figure_15_data |>
   mutate(NIC_CHANGE = format(NIC_CHANGE, big.mark = ",")) |>
@@ -1043,7 +1047,7 @@ figure_15$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
 figure_16_data <- add_anl_14 |>
   rename(NIC_CHANGE = 17, DISP_PRESEN_BNF_DESCR = 1) |>
   slice_min(NIC_CHANGE, n = 10) |>
-  select(DISP_PRESEN_BNF_DESCR, VMPP_UOM, NIC_CHANGE)
+  select(DISP_PRESEN_BNF_DESCR, vmpp_uom, NIC_CHANGE)
 
 table_16 <- figure_16_data |>
   mutate(NIC_CHANGE = format(NIC_CHANGE, big.mark = ",")) |>
@@ -1081,19 +1085,19 @@ figure_16$x$hc_opts$series[[1]]$dataLabels$formatter <- JS(
 
 # figure 17
 figure_17_data <- dev_nations_data |>
-  arrange(desc(COSTS_PER_CAPITA)) |>
-  select(Country, POP, TOTAL_COSTS, COSTS_PER_CAPITA)
+  arrange(desc(costs_per_capita)) |>
+  select(Country, pop, total_costs, costs_per_capita)
 
 table_17 <- figure_17_data |>
-  select(Country, COSTS_PER_CAPITA) |>
-  mutate(COSTS_PER_CAPITA = format(round(COSTS_PER_CAPITA, 2), big.mark = ",")) |>
+  select(Country, costs_per_capita) |>
+  mutate(costs_per_capita = format(round(costs_per_capita, 2), big.mark = ",")) |>
   rename("Cost per person (£)" = 2)
 
 figure_17 <-
   nhsbsaVis::basic_chart_hc(
     figure_17_data,
     x = Country,
-    y = COSTS_PER_CAPITA,
+    y = costs_per_capita,
     type = "column",
     xLab = "Country",
     yLab = "Cost per person (£)",
@@ -1105,19 +1109,19 @@ figure_17 <-
 
 # figure 16
 figure_18_data <- dev_nations_data |>
-  arrange(desc(ITEMS_PER_CAPITA)) |>
-  select(Country, POP, TOTAL_ITEMS, ITEMS_PER_CAPITA)
+  arrange(desc(items_per_capita)) |>
+  select(Country, pop, total_items, items_per_capita)
 
 table_18 <- figure_18_data |>
-  select(Country, ITEMS_PER_CAPITA) |>
-  mutate(ITEMS_PER_CAPITA = format(signif(ITEMS_PER_CAPITA, 3), big.mark = ",")) |>
+  select(Country, items_per_capita) |>
+  mutate(items_per_capita = format(signif(items_per_capita, 3), big.mark = ",")) |>
   rename("Items per person" = 2)
 
 figure_18 <-
   nhsbsaVis::basic_chart_hc(
     figure_18_data,
     x = Country,
-    y = ITEMS_PER_CAPITA,
+    y = items_per_capita,
     type = "column",
     xLab = "Country",
     yLab = "Items per person",
@@ -1313,8 +1317,8 @@ if (makeSheet == 1) {
 
 # 12. Automate tidy dates -------
 #tidy max year to automate title
-year <- stp_data_fy |>
-  select(YEAR_DESC) |>
+year <- nat_data_fy_agg$National |>
+  select(`Financial Year`) |>
   unique() |>
   pull()
 
@@ -1324,21 +1328,19 @@ year_tidy <- paste0(substr(year, 1, 5), substr(year, 8, 9))
 
 rmarkdown::render("pca-narrative-markdown.Rmd",
                   output_format = "html_document",
-                  output_file = "outputs/pca_summary_narrative_2024_25_v001.html")
+                  output_file = "outputs/pca_summary_narrative_2025_26_v001.html")
 
 
 rmarkdown::render("pca-narrative-markdown.Rmd",
                   output_format = "word_document",
-                  output_file = "outputs/pca_summary_narrative_2024_25_v001.docx")
+                  output_file = "outputs/pca_summary_narrative_2025_26_v001.docx")
 
-log_print("Narrative markdown generated", hide_notes = TRUE)
 
-rmarkdown::render("pca-background-june-2025.Rmd",
+rmarkdown::render("pca-background-june-2026.Rmd",
                   output_format = "html_document",
-                  output_file = "outputs/pca_background_info_methodology_june2025_v001.html")
+                  output_file = "outputs/pca_background_info_methodology_june2026_v001.html")
 
-rmarkdown::render("pca-background-june-2025.Rmd",
+rmarkdown::render("pca-background-june-2026.Rmd",
                   output_format = "word_document",
                   output_file = "outputs/pca_background_info_methodology_june2025_v001.docx")
 
-log_print("Background markdown generated", hide_notes = TRUE)
